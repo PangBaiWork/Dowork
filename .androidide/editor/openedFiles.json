@@ -1,110 +1,35 @@
 {
   "allFiles": [
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork1.0/app/src/main/res/layout/activity_main.xml",
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/layout/activity_main.xml",
       "selection": {
         "end": {
-          "column": 39,
+          "column": 9,
           "index": -1,
-          "line": 18
+          "line": 17
         },
         "start": {
-          "column": 24,
+          "column": 9,
           "index": -1,
-          "line": 18
+          "line": 17
         }
       }
     },
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork1.0/app/src/main/java/com/pangbai/dowork/tool/util.java",
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/java/com/pangbai/dowork/MainActivity.java",
       "selection": {
         "end": {
-          "column": 86,
+          "column": 18,
           "index": -1,
-          "line": 35
+          "line": 79
         },
         "start": {
-          "column": 86,
+          "column": 18,
           "index": -1,
-          "line": 35
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork1.0/app/src/main/java/com/pangbai/dowork/MainActivity.java",
-      "selection": {
-        "end": {
-          "column": 39,
-          "index": -1,
-          "line": 32
-        },
-        "start": {
-          "column": 39,
-          "index": -1,
-          "line": 32
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork1.0/app/build.gradle",
-      "selection": {
-        "end": {
-          "column": 8,
-          "index": -1,
-          "line": 13
-        },
-        "start": {
-          "column": 8,
-          "index": -1,
-          "line": 13
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork1.0/app/src/main/AndroidManifest.xml",
-      "selection": {
-        "end": {
-          "column": 40,
-          "index": -1,
-          "line": 34
-        },
-        "start": {
-          "column": 40,
-          "index": -1,
-          "line": 34
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork1.0/app/src/main/res/values/themes.xml",
-      "selection": {
-        "end": {
-          "column": 42,
-          "index": -1,
-          "line": 30
-        },
-        "start": {
-          "column": 42,
-          "index": -1,
-          "line": 30
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork1.0/app/src/main/res/menu/menu.xml",
-      "selection": {
-        "end": {
-          "column": 43,
-          "index": -1,
-          "line": 8
-        },
-        "start": {
-          "column": 43,
-          "index": -1,
-          "line": 8
+          "line": 79
         }
       }
     }
   ],
-  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Dowork1.0/app/src/main/res/menu/menu.xml"
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/java/com/pangbai/dowork/MainActivity.java"
 }
