@@ -31,13 +31,17 @@ public class util {
     public static void fullScreen(Window window, boolean isTransparent){
 //	  activityTo.startActivity(new Context,main.class,true );
         View decorView = window.getDecorView();
+         int uiOptions;
         if(isTransparent){
-
-            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE| View.SYSTEM_UI_FLAG_VISIBLE);
+             uiOptions=View.SYSTEM_UI_FLAG_LAYOUT_STABLE| View.SYSTEM_UI_FLAG_VISIBLE;
             window.setStatusBarColor(Color.TRANSPARENT);
         }else{
-            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE| View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION  
+           | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            
         }
+        decorView.setSystemUiVisibility(uiOptions);
+        window.setNavigationBarColor(Color.TRANSPARENT);
     }
 
     public static int Dp2Px(Context context, float dp) {

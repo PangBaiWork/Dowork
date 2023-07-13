@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+      util.fullScreen(getWindow(),false);
         new Init(MainActivity.this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //viewPager = binding.tabPager;
 
 
-        binding.button.setOnClickListener(new View.OnClickListener() {
+       binding.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 util.startActivity(MainActivity.this,TermActivity.class,false);

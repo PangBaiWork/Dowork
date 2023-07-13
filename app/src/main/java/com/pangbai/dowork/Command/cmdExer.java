@@ -1,41 +1,42 @@
 package com.pangbai.dowork.Command;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class cmdExer {
-
-    public static cmdResult execute(String command) {
-        StringBuilder output = new StringBuilder();
+    public static boolean execute(String command) {
+        Process process = null;
+        BufferedReader reader = null;
         try {
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            process = new ProcessBuilder()
+                .command("sh", "-c", command)
+                .redirectErrorStream(true)
+                .start();
+
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
+                System.out.println(line);
             }
+
             int exitCode = process.waitFor();
-            return new cmdResult(exitCode == 0, output.toString());
-        } catch (Exception e) {
-            return new cmdResult(false, e.getLocalizedMessage());
-        }
-    }
-
-    public static class cmdResult {
-        private final boolean isSuccessful;
-        private final String output;
-
-        public cmdResult(boolean isSuccessful, String output) {
-            this.isSuccessful = isSuccessful;
-            this.output = output;
-        }
-
-        public boolean isSuccessful() {
-            return isSuccessful;
-        }
-
-        public String getOutput() {
-            return output;
+            return exitCode == 0;
+        } catch (IOException | InterruptedException e) {
+            
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (process != null) {
+                process.destroy();
+            }
         }
     }
 }

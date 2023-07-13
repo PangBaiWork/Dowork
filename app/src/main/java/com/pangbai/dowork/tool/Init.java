@@ -25,7 +25,7 @@ public class Init {
                     File bin= new File(files.getAbsolutePath()+"/usr/bin");
                     File dowork= new File(files.getAbsolutePath()+"/dowork");
                     if(bin.exists()){
-                        cmdExer.cmdResult result;
+                        Boolean result;
                         String binPath= bin.getAbsolutePath();
                         String chmod="chmod +x -R ";
                         String busybox=binPath+"/busybox"+" --install -s " +binPath;
@@ -33,9 +33,9 @@ public class Init {
                         result=cmdExer.execute(chmod+binPath);
                         result=cmdExer.execute(chmod+dowork);
 
-                        Log.e("初始化",""+result.getOutput());
+                        Log.e("初始化",""+result);
                         result=cmdExer.execute(busybox);
-                        Log.e("初始化",""+result.getOutput());
+                        Log.e("初始化",""+result);
                     }
                     mDialog.dismiss();
                     util.ensureStoragePermissionGranted(ct);
