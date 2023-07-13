@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name">Dowork</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+
+
+    <string-array name="ct_type_string">
+        <item>Proot</item>
+        <item>Chroot</item>
+    </string-array>
+    <string-array name="ct_type_init">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="ct_distrib_string">
+        <item>debian</item>
+        <item>centos</item>
+        <item>archlinux</item>
+        <item>fedora</item>
+        <item>kali</item>
+        <item>ubuntu</item>
+        <item>alpine</item>
+        <item>opensuse</item>
+        <item>oracle</item>
+    </string-array>
+    <string-array name="debian_version">
+        <item>bookworm</item>
+        <item>bullseye</item>
+        <item>buster</item>
+        <item>sid</item>
+    </string-array>
+    <string-array name="centos_version">
+        <item>7</item>
+        <item>8-Stream</item>
+        <item>9-Stream</item>
+    </string-array>
+
+    <string-array name="archlinux_version">
+        <item>current</item>
+    </string-array>
+
+    <string-array name="fedora_version">
+        <item>35</item>
+        <item>36</item>
+        <item>37</item>
+    </string-array>
+
+    <string-array name="kali_version">
+        <item>current</item>
+    </string-array>
+
+    <string-array name="ubuntu_version">
+        <item>bionic</item>
+        <item>focal</item>
+        <item>jammy</item>
+        <item>kinetic</item>
+        <item>xenial</item>
+    </string-array>
+    <string-array name="alpine_version">
+        <item>3.14</item>
+        <item>3.15</item>
+        <item>3.16</item>
+        <item>3.17</item>
+        <item>edge</item>
+    </string-array>
+
+    <string-array name="opensuse_version">
+        <item>15.3</item>
+        <item>15.4</item>
+        <item>tumbleweed</item>
+    </string-array>
+    <string-array name="oracle_version">
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+    <string-array name="ct_arch">
+        <item>aarch64</item>
+        <item>arm</item>
+        <item>x86-64</item>
+        <item>i386</item>
+    </string-array>
+</resources>
