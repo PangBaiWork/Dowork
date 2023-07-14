@@ -4,14 +4,59 @@
       "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/layout/activity_main.xml",
       "selection": {
         "end": {
-          "column": 9,
+          "column": 41,
           "index": -1,
-          "line": 17
+          "line": 19
         },
         "start": {
-          "column": 9,
+          "column": 41,
           "index": -1,
-          "line": 17
+          "line": 19
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/values/themes.xml",
+      "selection": {
+        "end": {
+          "column": 30,
+          "index": -1,
+          "line": 37
+        },
+        "start": {
+          "column": 30,
+          "index": -1,
+          "line": 37
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/values/colors.xml",
+      "selection": {
+        "end": {
+          "column": 12,
+          "index": -1,
+          "line": 12
+        },
+        "start": {
+          "column": 12,
+          "index": -1,
+          "line": 12
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/color/nav_icon.xml",
+      "selection": {
+        "end": {
+          "column": 64,
+          "index": -1,
+          "line": 2
+        },
+        "start": {
+          "column": 64,
+          "index": -1,
+          "line": 2
         }
       }
     },
@@ -19,12 +64,12 @@
       "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/java/com/pangbai/dowork/MainActivity.java",
       "selection": {
         "end": {
-          "column": 18,
+          "column": 8,
           "index": -1,
           "line": 79
         },
         "start": {
-          "column": 18,
+          "column": 8,
           "index": -1,
           "line": 79
         }

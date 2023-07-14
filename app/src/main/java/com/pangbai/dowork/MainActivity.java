@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public boolean onNavigationItemSelected(MenuItem arg0) {
+        
       return true;
   }
 }

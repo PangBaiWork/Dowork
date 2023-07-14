@@ -34,6 +34,10 @@
         <!-- 项目中button不规范使用会造成样式变形，这里把button样式覆盖为最普通的样式，以避免老代码样式走样-->
     </style>
 
+<style name="navButton" parent="Theme.AppCompat.Light">
+    <item name="colorPrimary"></item>
+    <item name="android:textColorSecondary">@android:color/black</item>
+</style>
 
 
 </resources>
