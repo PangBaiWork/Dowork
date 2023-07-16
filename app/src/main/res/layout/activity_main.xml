@@ -2,31 +2,34 @@
 <RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_height="match_parent"
 	android:layout_width="match_parent"
 	android:background="@color/colorPrimary"
 	android:orientation="vertical">
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+	<androidx.fragment.app.FragmentContainerView
+		android:layout_alignParentTop="true"
+		android:id="@+id/nav_fragment"
+		android:name="androidx.navigation.fragment.NavHostFragment"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		app:defaultNavHost="true"
+		app:navGraph="@navigation/mobile_navigation" />
+	<com.google.android.material.bottomnavigation.BottomNavigationView
 		android:layout_width="match_parent"
 		android:background="@drawable/tab_menu_bg"
 		app:menu="@menu/bottom_nav_menu"
-       app:elevation="10dp"
+        app:elevation="10dp"
 		app:itemIconTint="@color/nav_icon"
 		android:layout_alignParentBottom="true"
 		android:id="@+id/nav_view"
-		android:layout_height="wrap_content"/>
+		android:layout_height="wrap_content"
+		tools:ignore="VisualLintBottomNav" />
 
     
-    <fragment
-        android:id="@+id/nav_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/mobile_navigation" />
 
 
-	
-	
+
+
 </RelativeLayout>
 

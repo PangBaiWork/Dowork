@@ -2,28 +2,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_item1">
+    app:startDestination="@id/navigation_item1">
 
     <fragment
         android:id="@+id/navigation_item1"
-        android:name="androidx.fragment.app.Fragment"
+        android:name="com.pangbai.dowork.fragment.containerFragment"
         android:label="容器"
         tools:layout="@layout/fragment_container" />
 
     <fragment
         android:id="@+id/navigation_item2"
-        android:name="androidx.fragment.app.Fragment"
+        android:name="com.pangbai.dowork.fragment.containerFragment"
         android:label="更多"
         tools:layout="@layout/fragment_display" />
 
     <fragment
-        android:id="@+id/navigation_item2"
-        android:name="androidx.fragment.app.Fragment"
+        android:id="@+id/navigation_item3"
+        android:name="com.pangbai.dowork.fragment.containerFragment"
         android:label="显示"
         tools:layout="@layout/fragment_display" />
      <fragment
-        android:id="@+id/navigation_item2"
-        android:name="androidx.fragment.app.Fragment"
+        android:id="@+id/navigation_item4"
+         android:name="com.pangbai.dowork.fragment.containerFragment"
         android:label="设置"
         tools:layout="@layout/fragment_container" />
 </navigation>
