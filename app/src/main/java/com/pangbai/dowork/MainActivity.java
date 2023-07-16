@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity
 
     binding.navView.setOnItemSelectedListener(this);
    // binding.navView.setupWithNavController();
+        
     /*binding.button.setOnClickListener(
         new View.OnClickListener() {
           @Override
