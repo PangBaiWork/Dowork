@@ -28,6 +28,10 @@ public class util {
             ct.startActivity(it, ActivityOptions.makeSceneTransitionAnimation(ct).toBundle());
         }
 
+    
+    
+    
+    
     public static void fullScreen(Window window, boolean isTransparent){
 //	  activityTo.startActivity(new Context,main.class,true );
         View decorView = window.getDecorView();
@@ -36,22 +40,34 @@ public class util {
              uiOptions=View.SYSTEM_UI_FLAG_LAYOUT_STABLE| View.SYSTEM_UI_FLAG_VISIBLE;
             window.setStatusBarColor(Color.TRANSPARENT);
         }else{
-            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION  
-           | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            
+            uiOptions=View.SYSTEM_UI_FLAG_LAYOUT_STABLE| View.SYSTEM_UI_FLAG_VISIBLE;
+      window.setNavigationBarColor(Color.parseColor("#162039"));
         }
         decorView.setSystemUiVisibility(uiOptions);
-        window.setNavigationBarColor(Color.TRANSPARENT);
+
+      //  window.setNavigationBarColor(Color.TRANSPARENT);
     }
 
+    
+    
+    
+    
     public static int Dp2Px(Context context, float dp) {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
     }
+    
+    
+    
     public static int Px2Dp(Context context, float px) {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) (px / scale + 0.5f);
     }
+    
+    
+    
+    
+    
     public static CustomDialog popLoading(Context ct,String str){
         CustomDialog mDialog = new CustomDialog(ct);
                 mDialog.show();

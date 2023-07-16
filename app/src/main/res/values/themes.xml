@@ -23,21 +23,18 @@
             <item name="colorPrimaryDark">#ffffff</item>
             <item name="colorAccent">#000000</item>
         </style>
+    
     <style name="ATheme" parent="Theme.AppCompat.DayNight.NoActionBar">
 
         <item name="android:colorPrimary">#162039</item>
         <item name="android:colorPrimaryDark">#162039</item>
-        <item name="android:statusBarColor">#162039</item>
+        <item name="android:statusBarColor">#1D2846</item>
         <item name="android:colorAccent">#162039</item>
 
 
         <!-- 项目中button不规范使用会造成样式变形，这里把button样式覆盖为最普通的样式，以避免老代码样式走样-->
     </style>
 
-<style name="navButton" parent="Theme.AppCompat.Light">
-    <item name="colorPrimary"></item>
-    <item name="android:textColorSecondary">@android:color/black</item>
-</style>
 
 
 </resources>

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-    implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
+    implements View.OnClickListener, BottomNavigationView.OnItemSelectedListener {
   private TabLayout tabLayout;
   private ViewPager viewPager;
   private ActivityMainBinding binding;
@@ -33,23 +33,25 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    util.fullScreen(getWindow(), false);
+   util.fullScreen(getWindow(), false);
     new Init(MainActivity.this);
     binding = ActivityMainBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
     // tabLayout = binding.tab;
     // viewPager = binding.tabPager;
 
-    binding.navView.setOnNavigationItemSelectedListener(this);
-
-    binding.button.setOnClickListener(
+    binding.navView.setOnItemSelectedListener(this);
+   // binding.navView.setupWithNavController();
+    /*binding.button.setOnClickListener(
         new View.OnClickListener() {
           @Override
           public void onClick(View view) {
             util.startActivity(MainActivity.this, TermActivity.class, false);
           }
-        });
+        });*/
+        
   }
+    
 
   public void setTablayout() {
     List<String> title = new ArrayList<>();
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public boolean onNavigationItemSelected(MenuItem arg0) {
-        
-      return true;
+      
+        return true;
   }
 }

@@ -1,0 +1,31 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_item1">
+
+    <fragment
+        android:id="@+id/navigation_item1"
+        android:name="androidx.fragment.app.Fragment"
+        android:label="容器"
+        tools:layout="@layout/fragment_container" />
+
+    <fragment
+        android:id="@+id/navigation_item2"
+        android:name="androidx.fragment.app.Fragment"
+        android:label="更多"
+        tools:layout="@layout/fragment_display" />
+
+    <fragment
+        android:id="@+id/navigation_item2"
+        android:name="androidx.fragment.app.Fragment"
+        android:label="显示"
+        tools:layout="@layout/fragment_display" />
+     <fragment
+        android:id="@+id/navigation_item2"
+        android:name="androidx.fragment.app.Fragment"
+        android:label="设置"
+        tools:layout="@layout/fragment_container" />
+</navigation>
+
+
