@@ -27,6 +27,7 @@
     <style name="ATheme" parent="Theme.AppCompat.DayNight.NoActionBar">
 
         <item name="android:colorPrimary">#162039</item>
+        <item name="android:windowBackground">@drawable/bg_activity_start</item>
         <item name="android:colorPrimaryDark">#162039</item>
         <item name="android:statusBarColor">#1D2846</item>
         <item name="android:colorAccent">#162039</item>

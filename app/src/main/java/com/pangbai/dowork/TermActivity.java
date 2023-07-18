@@ -1,13 +1,9 @@
 package com.pangbai.dowork;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.LinearLayout;
-import android.graphics.Color;
 
 import com.pangbai.dowork.Command.CommandBuilder;
-import com.pangbai.dowork.databinding.ActivityMainBinding;
 import com.pangbai.dowork.databinding.ActivityTermBinding;
 import com.pangbai.dowork.tool.util;
 import com.pangbai.view.ExtraKeysView;
@@ -38,7 +34,7 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
 
         /*设置窗口布局
         **/
-        getWindow().setBackgroundDrawableResource(R.drawable.term_bg);
+        getWindow().setBackgroundDrawableResource(R.drawable.bg_term);
         util.fullScreen(getWindow(),true);
         termBgView=binding.termbgview;
         mBuilder=new CommandBuilder(this,termBgView,30);
