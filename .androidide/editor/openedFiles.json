@@ -4,14 +4,14 @@
       "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/layout/activity_main.xml",
       "selection": {
         "end": {
-          "column": 0,
+          "column": 17,
           "index": -1,
-          "line": 0
+          "line": 30
         },
         "start": {
-          "column": 0,
+          "column": 17,
           "index": -1,
-          "line": 0
+          "line": 30
         }
       }
     },
@@ -19,44 +19,14 @@
       "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/values/colors.xml",
       "selection": {
         "end": {
-          "column": 38,
+          "column": 11,
           "index": -1,
-          "line": 9
+          "line": 5
         },
         "start": {
-          "column": 32,
+          "column": 11,
           "index": -1,
-          "line": 9
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/.gitignore",
-      "selection": {
-        "end": {
-          "column": 0,
-          "index": -1,
-          "line": 0
-        },
-        "start": {
-          "column": 0,
-          "index": -1,
-          "line": 0
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/layout/fragment_container.xml",
-      "selection": {
-        "end": {
-          "column": 0,
-          "index": -1,
-          "line": 90
-        },
-        "start": {
-          "column": 0,
-          "index": -1,
-          "line": 90
+          "line": 5
         }
       }
     },
@@ -76,5 +46,5 @@
       }
     }
   ],
-  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/layout/fragment_container.xml"
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/layout/activity_main.xml"
 }
