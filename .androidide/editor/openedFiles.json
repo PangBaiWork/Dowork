@@ -6,12 +6,42 @@
         "end": {
           "column": 0,
           "index": -1,
-          "line": 17
+          "line": 0
         },
         "start": {
           "column": 0,
           "index": -1,
-          "line": 17
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/values/colors.xml",
+      "selection": {
+        "end": {
+          "column": 38,
+          "index": -1,
+          "line": 9
+        },
+        "start": {
+          "column": 32,
+          "index": -1,
+          "line": 9
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/.gitignore",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": -1,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": -1,
+          "line": 0
         }
       }
     },
@@ -19,62 +49,32 @@
       "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/layout/fragment_container.xml",
       "selection": {
         "end": {
-          "column": 34,
+          "column": 0,
           "index": -1,
-          "line": 22
+          "line": 90
         },
         "start": {
-          "column": 34,
+          "column": 0,
           "index": -1,
-          "line": 22
+          "line": 90
         }
       }
     },
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/build.gradle",
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/java/com/pangbai/view/CustomTextView.java",
       "selection": {
         "end": {
-          "column": 61,
+          "column": 30,
           "index": -1,
-          "line": 67
+          "line": 59
         },
         "start": {
-          "column": 61,
+          "column": 30,
           "index": -1,
-          "line": 67
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/java/com/pangbai/dowork/MainActivity.java",
-      "selection": {
-        "end": {
-          "column": 8,
-          "index": -1,
-          "line": 45
-        },
-        "start": {
-          "column": 8,
-          "index": -1,
-          "line": 45
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/navigation/mobile_navigation.xml",
-      "selection": {
-        "end": {
-          "column": 26,
-          "index": -1,
-          "line": 9
-        },
-        "start": {
-          "column": 26,
-          "index": -1,
-          "line": 9
+          "line": 59
         }
       }
     }
   ],
-  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/java/com/pangbai/dowork/MainActivity.java"
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/res/layout/fragment_container.xml"
 }

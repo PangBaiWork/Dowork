@@ -34,7 +34,7 @@ public class CommandBuilder {
             if (textcolor != 0)
                 cmdView.mRenderer.deffontcolor = textcolor;
 
-            cmdView.setProcess(cmd, "/data/data/com.pangbai.dowork/files/usr/bin", args, envp, 0);
+            cmdView.setProcess(cmd, "/data/data/com.pangbai.dowork/files/dowork/cli", args, envp, 0);
 
             cmdView.runProcess();
 
