@@ -1,31 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+<androidx.cardview.widget.CardView
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_height="100dp"
+     android:layout_width="match_parent"
+     android:layout_marginLeft="6dp"
+     app:cardBackgroundColor="#F2F3F5"
+     app:cardCornerRadius="20dp"
+     android:layout_weight="4">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+         android:layout_height="match_parent"
+         android:layout_width="match_parent"
+         android:orientation="horizontal">
+
+        <LinearLayout
+             android:layout_height="60dp"
+             android:layout_width="60dp"
+             android:background="@drawable/ct_icon_kali"
+             android:layout_margin="15dp"
+             android:layout_gravity="center_vertical|left">
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/container_size"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:gravity="left"
+             android:paddingRight="6dp"
+             android:textSize="15sp"
+            android:ellipsize="end"
+             android:textColor="#000000"
+             android:layout_weight="1"
+             android:layout_gravity="center_vertical"
+             android:text="Debian\nDebian GNU/Linux 11 (bullseye)"
+             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/container_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textSize="18sp" />
+        <LinearLayout
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:layout_margin="10dp"
+             android:orientation="vertical"
+             android:layout_gravity="center_vertical|right"
+             android:id="@+id/ct_action">
 
-        <ImageView
-            android:id="@+id/container_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="TODO" />
+            <LinearLayout
+                 android:layout_height="30dp"
+                 android:layout_width="30dp"
+                 android:layout_weight="1"
+                 android:id="@+id/ct_action_exe">
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="30dp"
+                 android:layout_width="30dp"
+                 android:layout_weight="1"
+                 android:id="@+id/ct_action_configure">
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
