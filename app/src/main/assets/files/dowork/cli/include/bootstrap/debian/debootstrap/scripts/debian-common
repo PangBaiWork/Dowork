@@ -29,8 +29,31 @@ work_out_debs () {
 
 	case $MIRRORS in
 	    https://*)
-		base="$base apt-transport-https ca-certificates"
+		case "$CODENAME" in
+			# apt-transport-https exists from lenny to stretch
+			lenny|squeeze|wheezy|jessie*|stretch)
+			base="$base apt-transport-https ca-certificates"
+			;;
+			*)
+			base="$base ca-certificates"
+			;;
+		esac
 		;;
+	esac
+
+	# On suites >= bookworm, either we set up a merged-/usr system
+	# via setup_merged_usr, or we deliberately avoided that migration
+	# by creating the flag file. This means there's no need for the
+	# live migration 'usrmerge' package and its extra dependencies:
+	# we can install the empty 'usr-is-merged' metapackage to indicate
+	# that the transition has been done.
+	case "$CODENAME" in
+		etch*|lenny|squeeze|wheezy|jessie*|stretch|buster|bullseye)
+			;;
+		*)
+			required="$required usr-is-merged"
+			EXCLUDE_DEPENDENCY="$EXCLUDE_DEPENDENCY usrmerge"
+			;;
 	esac
 }
 
@@ -49,7 +72,7 @@ first_stage_install () {
 	if [ "$CODENAME" = "stretch" ] && [ -z "$MERGED_USR" ]; then
 		MERGED_USR="no"
 	fi
-		
+
 	setup_merged_usr
 	extract $required
 
@@ -58,12 +81,13 @@ first_stage_install () {
 	: >"$TARGET/var/lib/dpkg/available"
 
 	setup_etc
-if [ ! -e "$TARGET/etc/fstab" ]; then
-  echo '# UNCONFIGURED FSTAB FOR BASE SYSTEM' > "$TARGET/etc/fstab"
-  if $(chown 0:0 "$TARGET/etc/fstab"); then
+	if [ ! -e "$TARGET/etc/fstab" ]; then
+		echo '# UNCONFIGURED FSTAB FOR BASE SYSTEM' > "$TARGET/etc/fstab"
+	  if $(chown 0:0 "$TARGET/etc/fstab"); then
     chmod 644 "$TARGET/etc/fstab"
   fi
-fi
+	fi
+
 	setup_devices
 
 	if doing_variant fakechroot || [ "$CONTAINER" = "docker" ]; then

@@ -36,7 +36,7 @@ do_install()
     msg -n "Retrieving rootfs archive ... "
     local repo_url="${SOURCE_PATH%/}/${SUITE}"
     local rootfs_name=$(wget -q -O - "${repo_url}/releases/${ARCH}/latest-releases.yaml" | grep -m1 "file: alpine-minirootfs" | awk '{print $2}')
-    wget -q -O - "${repo_url}/releases/${ARCH}/${rootfs_name}" |proot  --link2symlink tar xz -C "${CHROOT_DIR}"
+    wget -q -O - "${repo_url}/releases/${ARCH}/${rootfs_name}" | ${tar_prefix} tar xz -C "${CHROOT_DIR}"
     is_ok "fail" "done" || return 1
 
     component_exec core/emulator core/mnt core/net

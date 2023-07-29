@@ -3,13 +3,13 @@
      <item
         android:id="@+id/navigation_item1"
         android:icon="@drawable/menu_unnull"
-        android:title="容器" />
+        android:title="主页" />
      <item
-        android:id="@+id/navigation_item3"
-        android:icon="@drawable/menu_more"
-        android:title="更多" />
-    <item
         android:id="@+id/navigation_item2"
+        android:icon="@drawable/menu_more"
+        android:title="容器" />
+    <item
+        android:id="@+id/navigation_item3"
         android:icon="@drawable/menu_display"
         android:title="显示" />
    

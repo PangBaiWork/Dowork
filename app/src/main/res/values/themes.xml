@@ -31,11 +31,14 @@
         <item name="android:colorPrimaryDark">#162039</item>
         <item name="android:statusBarColor">#1D2846</item>
         <item name="android:colorAccent">#162039</item>
-
-
+        <item name="colorAccent">#ffffff</item>
         <!-- 项目中button不规范使用会造成样式变形，这里把button样式覆盖为最普通的样式，以避免老代码样式走样-->
     </style>
 
+    <style name="defaultTextStyle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#000000</item>
+    </style>
 
 
 </resources>

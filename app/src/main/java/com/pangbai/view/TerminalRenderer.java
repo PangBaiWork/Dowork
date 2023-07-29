@@ -33,13 +33,15 @@ public final class TerminalRenderer {
     private final int mFontAscent;
     /** The {@link #mFontLineSpacing} + {@link #mFontAscent}. */
    public final int mFontLineSpacingAndAscent;
-
+  // public boolean isRunningInActivity=true;
+    int mDefColor;
     private final float[] asciiMeasures = new float[127];
   public  void setShadow(int color){
 		mTextPaint.setShadowLayer(5,0,0,color);
 		
 	}
-    public TerminalRenderer(int textSize, Typeface typeface) {
+    public TerminalRenderer(int textSize, Typeface typeface,int mDefColor) {
+      this.mDefColor=mDefColor;
 		deffontcolor=Color.WHITE;
         mTextSize = textSize;
         mTypeface = typeface;
@@ -257,7 +259,11 @@ public final class TerminalRenderer {
             //mTextPaint.setColor(foreColor);
 			if (foreColor == -1) {
 				//默认字体颜色
-             mTextPaint.setColor(deffontcolor);
+                if(mDefColor!=0)
+                    mTextPaint.setColor(mDefColor);
+                else
+                    mTextPaint.setColor(deffontcolor);
+
             } else {
                 mTextPaint.setColor(foreColor);
             }

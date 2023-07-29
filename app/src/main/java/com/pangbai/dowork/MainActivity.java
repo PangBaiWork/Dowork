@@ -1,5 +1,8 @@
 package com.pangbai.dowork;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.fragment.NavHostFragment;
@@ -8,6 +11,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -19,6 +23,7 @@ public class MainActivity extends AppCompatActivity
     implements View.OnClickListener, BottomNavigationView.OnItemSelectedListener {
   private TabLayout tabLayout;
   private ViewPager viewPager;
+    private static final int REQUEST_CODE = 1;
   private ActivityMainBinding binding;
 
   @Override
@@ -28,22 +33,17 @@ public class MainActivity extends AppCompatActivity
     new Init(MainActivity.this);
     binding = ActivityMainBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
-    // tabLayout = binding.tab;
-    // viewPager = binding.tabPager;
+
 
     binding.navView.setOnItemSelectedListener(this);
 
      NavHostFragment host=(NavHostFragment)getSupportFragmentManager().findFragmentById(R.id.nav_fragment);
     NavigationUI.setupWithNavController(binding.navView,host.getNavController());
-        
-    /*binding.button.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            util.startActivity(MainActivity.this, TermActivity.class, false);
-          }
-        });*/
-        
+
+
+      }
+
+
   }
     
 
@@ -56,4 +56,19 @@ public class MainActivity extends AppCompatActivity
       
         return true;
   }
+
+
+    /////////////////////////////////////////////悬浮窗权限回调
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if (Settings.canDrawOverlays(this)) {
+
+            } else {
+                Toast.makeText(getApplication(), "请开启悬浮窗权限", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }
+

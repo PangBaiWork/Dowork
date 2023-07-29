@@ -32,7 +32,7 @@ public final class ExtraKeysView extends GridLayout {
     private static final int BUTTON_COLOR = 0x00000000;
     private static final int INTERESTING_COLOR = 0xFF80DEEA;
     private static final int BUTTON_PRESSED_COLOR = 0x7FFFFFFF;
-    public static TerminalView terminalView=null ;
+    public  TerminalView terminalView=null ;
     public ExtraKeysView(Context context, TerminalView terminalView) {
         super(context);
 		this.terminalView=terminalView;
@@ -85,7 +85,7 @@ public final class ExtraKeysView extends GridLayout {
         put("F12", KeyEvent.KEYCODE_F12);
     }};
     
-    static void sendKey(View view, String keyName) {
+     void sendKey(View view, String keyName) {
      //   SuperTerminalView terminalView = view.findViewById(R.id.terminal_view);
         if (keyCodesForString.containsKey(keyName)) {
             int keyCode = keyCodesForString.get(keyName);

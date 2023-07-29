@@ -3,7 +3,7 @@
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
 # 31 doesn't support while rpm2cpio in busybox doesn't support zstd
-[ -n "${SUITE}" ] || SUITE="30"
+[ -n "${SUITE}" ] || SUITE="37"
 
 if [ -z "${ARCH}" ]
 then
@@ -33,16 +33,20 @@ do_install()
 
     msg ":: Installing ${COMPONENT} ... "
 
-    local core_packages="acl alternatives audit-libs basesystem bash brotli bzip2-libs ca-certificates coreutils coreutils-common cracklib crypto-policies cryptsetup-libs curl cyrus-sasl-lib dbus dbus-broker dbus-common device-mapper device-mapper-libs dnf dnf-data dnf-yum elfutils-default-yama-scope elfutils-libelf elfutils-libs expat fedora-gpg-keys fedora-release fedora-release-common fedora-repos file-libs filesystem findutils gawk gdbm-libs glib2 glibc glibc-common glibc-minimal-langpack gmp gnupg2 gnutls gpgme grep gzip ima-evm-utils iptables-libs json-c keyutils-libs kmod-libs krb5-libs libacl libarchive libargon2 libassuan libattr libblkid libcap libcap-ng libcom_err libcomps libcurl libdb libdb-utils libdnf libfdisk libffi libgcc libgcrypt libgpg-error libidn2 libksba libmetalink libmodulemd1 libmount libnghttp2 libnsl2 libpcap libpsl libpwquality librepo libreport-filesystem libseccomp libselinux libsemanage libsepol libsigsegv libsmartcols libsolv libssh libsss_idmap libsss_nss_idmap libstdc++ libtasn1 libtirpc libunistring libusbx libutempter libuuid libverto libxcrypt libxml2 libyaml libzstd lua-libs lz4-libs mpfr ncurses ncurses-base ncurses-libs nettle npth openldap openssl-libs p11-kit p11-kit-trust pam pcre pcre2 popt publicsuffix-list-dafsa python3 python3-dnf python3-gpg python3-hawkey python3-libcomps python3-libdnf python3-libs python3-rpm python-pip-wheel python-setuptools-wheel qrencode-libs readline rootfiles rpm rpm-build-libs rpm-libs rpm-sign-libs sed setup shadow-utils sqlite-libs sssd-client sudo systemd systemd-libs systemd-pam systemd-rpm-macros tar tzdata util-linux vim-minimal xz-libs zchunk-libs zlib"
+    local core_packages="alternatives audit-libs authselect authselect-libs basesystem bash bzip2-libs ca-certificates coreutils coreutils-common cracklib crypto-policies cryptsetup-libs curl cyrus-sasl-lib dbus dbus-broker dbus-common device-mapper device-mapper-libs diffutils dnf dnf-data elfutils-default-yama-scope elfutils-libelf elfutils-libs expat file-libs filesystem findutils gawk gdbm-libs glib2 glibc glibc-common glibc-minimal-langpack gmp gnupg2 gnutls gpgme grep gzip ima-evm-utils json-c keyutils-libs kmod-libs krb5-libs libacl libarchive libargon2 libassuan libattr libb2 libblkid libbpf libbrotli libcap libcap-ng libcom_err libcomps libcurl libdb libdnf libeconf libevent libfdisk libffi libfsverity libgcc libgcrypt libgomp libgpg-error libidn2 libksba libmodulemd libmount libnghttp2 libnsl2 libpsl libpwquality librepo libreport-filesystem libseccomp libselinux libsemanage libsepol libsigsegv libsmartcols libsolv libssh libssh-config libstdc++ libtasn1 libtirpc libunistring libuser libutempter libuuid libverto libxcrypt libxkbcommon libxml2 libyaml libzstd lua-libs lz4-libs mpdecimal mpfr ncurses-base ncurses-libs nettle npth openldap openssl openssl-libs p11-kit p11-kit-trust pam pam-libs pcre pcre2 pcre2-syntax popt publicsuffix-list-dafsa python-pip-wheel python-setuptools-wheel python3 python3-dnf python3-gpg python3-hawkey python3-libcomps python3-libdnf python3-libs python3-rpm qrencode-libs readline rootfiles rpm rpm-build-libs rpm-libs rpm-sign-libs sed setup shadow-utils sqlite-libs sudo systemd systemd-libs systemd-networkd systemd-pam tar tpm2-tss tzdata util-linux util-linux-core util-linux-user vim-data vim-minimal xkeyboard-config xz-libs yum zchunk-libs zlib fedora-release-identity-container fedora-gpg-keys fedora-repos fedora-release fedora-release-common fedora-repos-modular glibc-locale-source"
+
 
     local repo_url
     if [ "${ARCH}" = "i386" ]
-    then repo_url="${SOURCE_PATH%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
-    else repo_url="${SOURCE_PATH%/}/releases/${SUITE}/Everything/${ARCH}/os"
+    then 
+    	repo_url="${SOURCE_PATH%/}/fedora-secondary/releases/${SUITE}/Everything/${ARCH}/os"
+	else
+		repo_url="${SOURCE_PATH%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os"
+		wget -q ${SOURCE_PATH%/}/fedora/linux/releases/${SUITE}/Everything/${ARCH}/os || repo_url="${SOURCE_PATH%/}/releases/${SUITE}/Everything/${ARCH}/os"
     fi
 
     msg -n "Preparing for deployment ... "
-   proot  --link2symlink  tar xzf "${COMPONENT_DIR}/filesystem.tgz" -C "${CHROOT_DIR}"
+  ${tar_prefix}  tar xzf "${COMPONENT_DIR}/filesystem.tgz" -C "${CHROOT_DIR}"
     is_ok "fail" "done" || return 1
 
     msg -n "Retrieving packages list ... "
@@ -76,15 +80,16 @@ do_install()
         done
         [ "${package}" = "filesystem" ] && { msg "done"; continue; }
         # unpack
-        (cd "${CHROOT_DIR}"; rpm2cpio "./tmp/${pkg_file}" | cpio -idmu >/dev/null)
+        (cd "${CHROOT_DIR}"; rpm2cpio "./tmp/${pkg_file}" | ${tar_prefix} cpio -idmu --quiet >/dev/null)
         is_ok "fail" "done" || return 1
     done
 
     component_exec core/emulator
-
+      return 1
     msg "Installing packages ... "
     chroot_exec /bin/rpm -i --force --nosignature --nodeps /tmp/*.rpm
-    is_ok || return 1
+    
+    #is_ok || return 1
 
     msg -n "Clearing cache ... "
     rm -rf "${CHROOT_DIR}"/tmp/*

@@ -1,4 +1,4 @@
-#!/data/data/com.pangbai.dowork/files/usr/bin/sh  -x
+#!/data/data/com.pangbai.dowork/files/usr/bin/sh -x
 ################################################################################
 #
 # Linux Deploy CLI
@@ -6,12 +6,12 @@
 #
 ################################################################################
 
-VERSION="2.4.1"
+VERSION="2.5.1"
 
 ################################################################################
 # Common
 ################################################################################
-
+tar_prefix="proot  --link2symlink "
 msg()
 {
     echo "$@"
@@ -55,24 +55,6 @@ get_platform()
         echo "unknown"
     ;;
     esac
-}
-
-get_qemu()
-{
-    local arch="$1"
-    local qemu=""
-    local host_platform=$(get_platform)
-    local guest_platform=$(get_platform "${arch}")
-    if [ "${host_platform}" != "${guest_platform}" ]; then
-        case "${guest_platform}" in
-        arm) qemu="qemu-arm-static" ;;
-        arm_64) qemu="qemu-aarch64-static" ;;
-        x86) qemu="qemu-i386-static" ;;
-        x86_64) qemu="qemu-x86_64-static" ;;
-        *) qemu="" ;;
-        esac
-    fi
-    echo ${qemu}
 }
 
 get_uuid()
@@ -138,7 +120,7 @@ is_archive()
 {
     local src="$1"
     [ -n "${src}" ] || return 1
-    if [ -z "${src##*gz}" -o -z "${src##*bz2}" -o -z "${src##*xz}" ]; then
+    if [ -z "${src##*gz}" -o -z "${src##*bz2}" -o -z "${src##*xz}" -o -z "${src##*zst}" ]; then
         return 0
     fi
     return 1
@@ -224,12 +206,23 @@ chroot_exec()
     chroot)
         if [ -n "${username}" ]; then
             if [ $# -gt 0 ]; then
-                chroot "${CHROOT_DIR}" /bin/su - ${username} -c "$*"
+                chroot ${METHOD_OPTIONS} "${CHROOT_DIR}" /bin/su - ${username} -c "$*"
             else
-                chroot "${CHROOT_DIR}" /bin/su - ${username}
+                chroot ${METHOD_OPTIONS} "${CHROOT_DIR}" /bin/su - ${username}
             fi
         else
-            PATH="${path}" chroot "${CHROOT_DIR}" $*
+            PATH="${path}" chroot ${METHOD_OPTIONS} "${CHROOT_DIR}" $*
+        fi
+    ;;
+    unshare)
+        if [ -n "${username}" ]; then
+            if [ $# -gt 0 ]; then
+                unshare ${METHOD_OPTIONS} -R "${CHROOT_DIR}" /bin/su - ${username} -c "$*"
+            else
+                unshare ${METHOD_OPTIONS} -R "${CHROOT_DIR}" /bin/su - ${username}
+            fi
+        else
+            PATH="${path}" unshare ${METHOD_OPTIONS} -R "${CHROOT_DIR}" $*
         fi
     ;;
     proot)
@@ -241,33 +234,20 @@ chroot_exec()
             mounts="${mounts} -b ${MOUNTS// / -b }"
         fi
         local emulator
-        if [ -z "${EMULATOR}" ]; then
-            EMULATOR=$(get_qemu ${ARCH})
-        fi
         if [ -n "${EMULATOR}" ]; then
             emulator="-q ${EMULATOR}"
         fi
         if [ -n "${username}" ]; then
             if [ $# -gt 0 ]; then
-                proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  /bin/su - ${username} -c "$*"
+                proot   -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  /bin/su - ${username} -c "$*"
             else
-                proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  /bin/su - ${username}
+                proot  -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  /bin/su - ${username}
             fi
         else
-            PATH="${path}" proot -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l $*
+            PATH="${path}" proot  -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  $*
         fi
     ;;
     esac
-}
-
-sync_env()
-{
-    local env_url="$1"
-    [ -n "${env_url}" ] || return 1
-    msg -n "Synchronization with server ... "
-    [ -e "${ENV_DIR}" ] || mkdir -p "${ENV_DIR}"
-    wget -q -O - "${env_url}" | proot  --link2symlink tar xz -C "${ENV_DIR}" 1>&2
-    is_ok "fail" "done"
 }
 
 ################################################################################
@@ -549,8 +529,10 @@ container_mounted()
 {
     if [ "${METHOD}" = "chroot" ]; then
         is_mounted "${CHROOT_DIR}"
-    else
-        return 0
+    elif [ "${METHOD}" = "unshare" ]; then
+        is_mounted "${CHROOT_DIR}"
+	else
+		return 0
     fi
 }
 
@@ -690,7 +672,7 @@ mount_part()
 
 container_mount()
 {
-    [ "${METHOD}" = "chroot" ] || return 0
+    [ "${METHOD}" = "chroot" ] || [ "${METHOD}" = "unshare" ] || return 0
 
     if [ $# -eq 0 ]; then
         container_mount root proc sys dev shm pts fd tty tun binfmt_misc
@@ -818,9 +800,9 @@ rootfs_import()
     *tar)
         msg -n "Importing rootfs from tar archive ... "
         if [ -e "${rootfs_file}" ]; then
-         proot  --link2symlink   tar xf "${rootfs_file}" -C "${CHROOT_DIR}"
+            ${tar_prefix}  tar axf "${rootfs_file}" -C "${CHROOT_DIR}"
         elif [ -z "${rootfs_file##http*}" ]; then
-            wget -q -O - "${rootfs_file}" | proot  --link2symlink tar x -C "${CHROOT_DIR}"
+            wget -q -O - "${rootfs_file}" | ${tar_prefix} tar x -C "${CHROOT_DIR}"
         else
             msg "fail"; return 1
         fi
@@ -829,9 +811,9 @@ rootfs_import()
     *gz)
         msg -n "Importing rootfs from tar.gz archive ... "
         if [ -e "${rootfs_file}" ]; then
-          proot  --link2symlink  tar xzf "${rootfs_file}" -C "${CHROOT_DIR}"
+          ${tar_prefix}  tar axf "${rootfs_file}" -C "${CHROOT_DIR}"
         elif [ -z "${rootfs_file##http*}" ]; then
-            wget -q -O - "${rootfs_file}" | proot  --link2symlink tar xz -C "${CHROOT_DIR}"
+            wget -q -O - "${rootfs_file}" | ${tar_prefix} tar xz -C "${CHROOT_DIR}"
         else
             msg "fail"; return 1
         fi
@@ -840,9 +822,9 @@ rootfs_import()
     *bz2)
         msg -n "Importing rootfs from tar.bz2 archive ... "
         if [ -e "${rootfs_file}" ]; then
-          proot  --link2symlink tar xjf "${rootfs_file}" -C "${CHROOT_DIR}"
+          ${tar_prefix}  tar axf "${rootfs_file}" -C "${CHROOT_DIR}"
         elif [ -z "${rootfs_file##http*}" ]; then
-            wget -q -O - "${rootfs_file}" | proot  --link2symlink tar xj -C "${CHROOT_DIR}"
+            wget -q -O - "${rootfs_file}" | ${tar_prefix} tar xj -C "${CHROOT_DIR}"
         else
             msg "fail"; return 1
         fi
@@ -851,16 +833,27 @@ rootfs_import()
     *xz)
         msg -n "Importing rootfs from tar.xz archive ... "
         if [ -e "${rootfs_file}" ]; then
-           proot  --link2symlink tar xJf "${rootfs_file}" -C "${CHROOT_DIR}"
+          ${tar_prefix}  tar axf "${rootfs_file}" -C "${CHROOT_DIR}"
         elif [ -z "${rootfs_file##http*}" ]; then
-            wget -q -O - "${rootfs_file}" | proot  --link2symlink  tar xJ -C "${CHROOT_DIR}"
+            wget -q -O - "${rootfs_file}" | ${tar_prefix} tar xJ -C "${CHROOT_DIR}"
+        else
+            msg "fail"; return 1
+        fi
+        is_ok "fail" "done" || return 1
+    ;;
+    *zst)
+        msg -n "Importing rootfs from tar.zst archive ... "
+        if [ -e "${rootfs_file}" ]; then
+          ${tar_prefix}  tar axf "${rootfs_file}" -C "${CHROOT_DIR}"
+        elif [ -z "${rootfs_file##http*}" ]; then
+            wget -q -O - "${rootfs_file}" |  ${tar_prefix} tar x --zstd -C "${CHROOT_DIR}"
         else
             msg "fail"; return 1
         fi
         is_ok "fail" "done" || return 1
     ;;
     *)
-        msg "Incorrect filename, supported only tar, tar.gz, tar.bz2 or tar.xz archives."
+        msg "Incorrect filename, supported only tar, tar.gz, tar.bz2 tar.xz or tar.zst archives."
         return 1
     ;;
     esac
@@ -877,21 +870,26 @@ rootfs_export()
     case "${rootfs_file}" in
     *gz)
         msg -n "Exporting rootfs as tar.gz archive ... "
-      proot  --link2symlink  tar czvf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . >/dev/null
+       ${tar_prefix} tar acf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . >/dev/null
         is_ok "fail" "done" || return 1
     ;;
     *bz2)
         msg -n "Exporting rootfs as tar.bz2 archive ... "
-      proot  --link2symlink   tar cjvf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . >/dev/null
+      ${tar_prefix}  tar acf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . >/dev/null
         is_ok "fail" "done" || return 1
     ;;
     *xz)
         msg -n "Exporting rootfs as tar.xz archive ... "
-     proot  --link2symlink tar cJvf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . >/dev/null
+      ${tar_prefix}  tar acf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . >/dev/null
+        is_ok "fail" "done" || return 1
+    ;;
+    *zst)
+        msg -n "Exporting rootfs as tar.zst archive ... "
+      ${tar_prefix}  tar acf "${rootfs_file}" --exclude='./dev' --exclude='./sys' --exclude='./proc' -C "${CHROOT_DIR}" . >/dev/null
         is_ok "fail" "done" || return 1
     ;;
     *)
-        msg "Incorrect filename, supported only gz, bz2 or xz archives."
+        msg "Incorrect filename, supported only gz, bz2 xz or zst archives."
         return 1
     ;;
     esac
@@ -944,8 +942,6 @@ container_status()
     local supported_fs=$(printf '%s ' $(grep -v nodev /proc/filesystems | sort))
     msg "${supported_fs}"
 
-    [ -n "${CHROOT_DIR}" ] || return 0
-
     msg -n "Installed system: "
     local linux_version=$([ -r "${CHROOT_DIR}/etc/os-release" ] && . "${CHROOT_DIR}/etc/os-release"; [ -n "${PRETTY_NAME}" ] && echo "${PRETTY_NAME}" || echo "unknown")
     msg "${linux_version}"
@@ -955,53 +951,11 @@ container_status()
     component_exec "${INCLUDE}"
 
     msg "Mounted parts: "
-    local is_mnt=0
     local item
     for item in $(grep "${CHROOT_DIR%/}" /proc/mounts | awk '{print $2}' | sed "s|${CHROOT_DIR%/}/*|/|g")
     do
         msg "* ${item}"
-        local is_mnt=1
     done
-    [ "${is_mnt}" -ne 1 ] && msg " ...nothing mounted"
-
-    msg "Available mount points: "
-    local is_mountpoints=0
-    local mp
-    for mp in $(grep -v "${CHROOT_DIR%/}" /proc/mounts | grep ^/ | awk '{print $2":"$3}')
-    do
-        local part=$(echo ${mp} | awk -F: '{print $1}')
-        local fstype=$(echo ${mp} | awk -F: '{print $2}')
-        local block_size=$(stat -c '%s' -f ${part})
-        local available=$(stat -c '%a' -f ${part} | awk '{printf("%.1f",$1*'${block_size}'/1024/1024/1024)}')
-        local total=$(stat -c '%b' -f ${part} | awk '{printf("%.1f",$1*'${block_size}'/1024/1024/1024)}')
-        if [ -n "${available}" -a -n "${total}" ]; then
-            msg "* ${part}  ${available}/${total} GB (${fstype})"
-            is_mountpoints=1
-        fi
-    done
-    [ "${is_mountpoints}" -ne 1 ] && msg " ...no mount points"
-
-    msg "Available partitions: "
-    local is_partitions=0
-    local dev
-    for dev in /sys/block/*/dev
-    do
-        if [ -f ${dev} ]; then
-            local devname=$(echo ${dev} | sed -e 's@/dev@@' -e 's@.*/@@')
-            [ -e "/dev/${devname}" ] && local devpath="/dev/${devname}"
-            [ -e "/dev/block/${devname}" ] && local devpath="/dev/block/${devname}"
-            [ -n "${devpath}" ] && local parts=$(fdisk -l ${devpath} 2>/dev/null | grep ^/dev/ | awk '{print $1}')
-            local part
-            for part in ${parts}
-            do
-                local size=$(fdisk -l ${part} 2>/dev/null | grep 'Disk.*bytes' | awk '{ sub(/,/,""); print $3" "$4}')
-                local type=$(fdisk -l ${devpath} 2>/dev/null | grep ^${part} | tr -d '*' | awk '{str=$6; for (i=7;i<=10;i++) if ($i!="") str=str" "$i; printf("%s",str)}')
-                msg "* ${part}  ${size} (${type})"
-                local is_partitions=1
-            done
-        fi
-    done
-    [ "${is_partitions}" -ne 1 ] && msg " ...no available partitions"
 }
 
 helper()
@@ -1031,8 +985,8 @@ COMMANDS:
       -i - install without configure
       -c - configure without install
       -n NAME - skip installation of this component
-   import FILE|URL - import a rootfs into the current container from archive (tgz, tbz2 or txz)
-   export FILE - export the current container as a rootfs archive (tgz, tbz2 or txz)
+   import FILE|URL - import a rootfs into the current container from archive (tgz, tbz2 txz or zst)
+   export FILE - export the current container as a rootfs archive (tgz, tbz2 txz or zst)
    shell [-u USER] [COMMAND] - execute the specified command in the container, by default /bin/bash
       -u USER - switch to the specified user
    mount - mount the container
@@ -1041,7 +995,6 @@ COMMANDS:
       -m - mount the container before start
    stop [-u] [NAME ...] - stop all included or only specified components
       -u - unmount the container after stop
-   sync URL - synchronize with the operating environment with server
    status [NAME ...] - display the status of the container and components
    help [NAME ...] - show this help or help of components
 
@@ -1086,6 +1039,9 @@ fi
 if [ -z "${CHROOT_DIR}" ]; then
     CHROOT_DIR="${ENV_DIR}/mnt"
 fi
+#if [ -z "${METHOD}" ]; then
+    #METHOD="chroot"
+#fi
 
 # parse options
 OPTIND=1
@@ -1132,14 +1088,13 @@ params_read "${CONF_FILE}"
 WITHOUT_CHECK="false"
 WITHOUT_DEPENDS="false"
 REVERSE_DEPENDS="false"
-
 EXCLUDE_COMPONENTS=""
 case "${METHOD}" in
 proot)
     CHROOT_DIR="${TARGET_PATH}"
 ;;
 *)
-    METHOD="chroot"
+ 
 ;;
 esac
 
@@ -1314,9 +1269,6 @@ stop)
     if [ "${umount_flag}" = "true" ]; then
         container_umount
     fi
-;;
-sync)
-    sync_env "$@"
 ;;
 status)
     if [ $# -gt 0 ]; then

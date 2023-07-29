@@ -69,7 +69,7 @@ do_install()
     local repo_url="${SOURCE_PATH%/}/${SUITE}/os/${ARCH}"
 
     msg -n "Preparing for deployment ... "
-   proot  --link2symlink  tar xzf "${COMPONENT_DIR}/filesystem.tgz" -C "${CHROOT_DIR}"
+   ${tar_prefix} tar xzf "${COMPONENT_DIR}/filesystem.tgz" -C "${CHROOT_DIR}"
     is_ok "fail" "done" || return 1
 
     msg -n "Retrieving packages list ... "
@@ -103,7 +103,7 @@ do_install()
         done
         [ "${package}" = "filesystem" ] && { msg "done"; continue; }
         # unpack
-        (cd "${CHROOT_DIR}"; rpm2cpio "./tmp/${pkg_file}" |    proot  --link2symlink  cpio -idmu >/dev/null)
+        (cd "${CHROOT_DIR}"; rpm2cpio "./tmp/${pkg_file}" | ${tar_prefix} cpio -idmu >/dev/null)
         is_ok "fail" "done" || return 1
     done
 
@@ -111,7 +111,7 @@ do_install()
 
     msg "Installing packages ... "
     chroot_exec /bin/rpm -i --force --nosignature --nodeps /tmp/*.rpm
-    is_ok || return 1
+  #  is_ok || return 1
 
     msg -n "Clearing cache ... "
     rm -rf "${CHROOT_DIR}"/tmp/*

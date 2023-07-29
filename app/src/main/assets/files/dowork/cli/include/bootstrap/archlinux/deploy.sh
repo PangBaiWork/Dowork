@@ -68,7 +68,7 @@ do_install()
     is_ok "fail" "done" || return 1
 
     msg -n "Retrieving packages list ... "
-    local core_files=$(wget -q -O - "${repo_url}/core.db.tar.gz" | proot  --link2symlink  tar xOz | grep '.pkg.tar.xz$' | grep -v -e '^linux-' -e '^grub-' -e '^efibootmgr-' -e '^openssh-' | sort)
+    local core_files=$(wget -q -O - "${repo_url}/core.db.tar.gz" | ${tar_prefix} tar xOz | grep '.pkg.tar.xz$' | grep -v -e '^linux-' -e '^grub-' -e '^efibootmgr-' -e '^openssh-' -e 'ca-certificates-cacert' -e 'iptables-nft' -e 'openssl-cryptodev' -e 'systemd-resolvconf' -e 'debug' -e 'qgpgme' -e '^gcc-' -e 'libgccjit' -e 'llvm-libs' | sort)
     is_ok "fail" "done" || return 1
 
     msg "Retrieving packages: "
@@ -84,7 +84,7 @@ do_install()
             sleep 30s
         done
         # unpack
-       proot  --link2symlink tar xJf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc' --exclude='.INSTALL' --exclude='.MTREE' --exclude='.PKGINFO'
+      ${tar_prefix}  tar xJf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc' --exclude='.INSTALL' --exclude='.MTREE' --exclude='.PKGINFO'
         is_ok "fail" "done" || return 1
     done
 
@@ -95,7 +95,9 @@ do_install()
     is_ok "fail" "done"
 
     msg "Installing packages: "
-    pacman_install base $(echo ${core_files} | sed 's/-[0-9].*$//') ${EXTRA_PACKAGES}
+    # We must update the certificate before install
+	chroot_exec -u root update-ca-trust
+    pacman_install base $(echo ${core_files} | sed 's/ /\n/g' | awk '{ sub(/-[0-9].*$/,""); print $1 }') ${EXTRA_PACKAGES}
     is_ok || return 1
 
     msg -n "Clearing cache ... "

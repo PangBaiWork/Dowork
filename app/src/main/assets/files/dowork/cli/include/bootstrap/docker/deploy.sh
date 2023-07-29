@@ -34,7 +34,7 @@ do_install()
     wget -q -O - --header "Authorization: Bearer ${token}" "https://registry-1.docker.io/v2/${image}/manifests/${manifest}" | tr '\n' ' ' | tr '{}' '\n' | grep 'tar.gzip.*digest' | grep -oE 'sha256:[0-9a-f]{64}' | while read digest
     do
       msg -n " * ${digest} ... "
-      wget -q -O - --header "Authorization: Bearer ${token}" "https://registry-1.docker.io/v2/${image}/blobs/${digest}" | proot  --link2symlink  tar xz -C "${CHROOT_DIR}"
+      wget -q -O - --header "Authorization: Bearer ${token}" "https://registry-1.docker.io/v2/${image}/blobs/${digest}" | ${tar_prefix} tar xz -C "${CHROOT_DIR}"
       is_ok "fail" "done"
     done
 

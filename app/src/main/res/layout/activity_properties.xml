@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:background="#000000"
+        android:elevation="5dp"
+        android:layout_height="60dp">
+        <LinearLayout
+            android:layout_gravity="center_vertical|left"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                android:id="@+id/ct_exit"
+                android:background="@drawable/left_arrow"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:id="@+id/ct_name"
+                android:text="Debian"
+                android:textSize="20sp"
+                style="@style/defaultTextStyle"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_gravity="center_vertical|right"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/ct_action_run"
+            android:background="@drawable/ct_run_task"/>
+    
+</androidx.cardview.widget.CardView>
+
+    <FrameLayout
+        android:id="@+id/frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

@@ -26,8 +26,8 @@ slackpkg_install()
     local packages="$@"
     [ -n "${packages}" ] || return 1
     (set -e
-        chroot_exec -u root slackpkg -checkgpg=off -batch=on -default_answer=y update || true
-        chroot_exec -u root slackpkg -checkgpg=off -batch=on -default_answer=y install ${packages}
+        chroot_exec -u root "yes | slackpkg -checkgpg=off -batch=on -default_answer=y update" || true
+        chroot_exec -u root "yes | slackpkg -checkgpg=off -batch=on -default_answer=y install ${packages}"
     exit 0)
     return $?
 }
@@ -39,7 +39,8 @@ slackpkg_repository()
     fi
     local repo_url
     case "$(get_platform ${ARCH})" in
-    arm*) repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/" ;;
+    arm) repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/" ;;
+    arm_64) repo_url="${SOURCE_PATH%/}/slackwareaarch64-current/" ;;
     x86) repo_url="${SOURCE_PATH%/}/slackware-${SUITE}/" ;;
     x86_64) repo_url="${SOURCE_PATH%/}/slackware64-${SUITE}/" ;;
     *) return 1 ;;
@@ -57,13 +58,14 @@ do_install()
 
     local repo_url
     case "$(get_platform ${ARCH})" in
-    arm*) repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/slackware" ;;
+    arm) repo_url="${SOURCE_PATH%/}/slackwarearm-${SUITE}/slackware" ;;
+    arm_64) repo_url="${SOURCE_PATH%/}/slackwareaarch64-current/slackware" ;;
     x86) repo_url="${SOURCE_PATH%/}/slackware-${SUITE}/slackware" ;;
     x86_64) repo_url="${SOURCE_PATH%/}/slackware64-${SUITE}/slackware64" ;;
     esac
 
     local cache_dir="${CHROOT_DIR}/tmp"
-    local base_packages="l/glibc l/glibc-i18n l/libtermcap l/ncurses ap/diffutils ap/groff ap/man ap/slackpkg ap/sudo n/gnupg n/wget"
+    local base_packages="l/glibc l/glibc-i18n l/ncurses ap/diffutils ap/groff ap/man ap/slackpkg ap/sudo n/gnupg n/wget l/libunistring n/ca-certificates n/openssl d/perl"
 
     msg -n "Preparing for deployment ... "
     (set -e
@@ -96,9 +98,9 @@ do_install()
         done
         # unpack
         case "${pkg_file}" in
-        *gz) proot  --link2symlink tar xzf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
-        *bz2) proot  --link2symlink tar xjf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
-        *xz) proot  --link2symlink tar xJf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
+        *gz) ${tar_prefix} tar xzf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
+        *bz2) ${tar_prefix} tar xjf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
+        *xz) ${tar_prefix} tar xJf "${cache_dir}/${pkg_file}" -C "${CHROOT_DIR}" --exclude='./dev' --exclude='./sys' --exclude='./proc';;
         *) msg "fail"; return 1;;
         esac
         is_ok "fail" "done" || return 1
@@ -113,6 +115,8 @@ do_install()
 
     msg -n "Updating repository ... "
     slackpkg_repository
+    chroot_exec -u root "yes | slackpkg update gpg"
+    chroot_exec -u root update-ca-certificates
     is_ok "fail" "done"
 
     msg -n "Clearing cache ... "

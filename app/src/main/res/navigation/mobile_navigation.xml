@@ -6,26 +6,26 @@
 
     <fragment
         android:id="@+id/navigation_item1"
-        android:name="com.pangbai.dowork.fragment.containerFragment"
-        android:label="容器"
-        tools:layout="@layout/fragment_container" />
+        android:name="com.pangbai.dowork.fragment.dashboardFragment"
+        android:label="主页"
+        tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_item2"
         android:name="com.pangbai.dowork.fragment.containerFragment"
-        android:label="更多"
+        android:label="容器"
         tools:layout="@layout/fragment_display" />
 
     <fragment
         android:id="@+id/navigation_item3"
-        android:name="com.pangbai.dowork.fragment.containerFragment"
+        android:name="com.pangbai.dowork.fragment.diaplayFragment"
         android:label="显示"
         tools:layout="@layout/fragment_display" />
      <fragment
         android:id="@+id/navigation_item4"
-         android:name="com.pangbai.dowork.fragment.containerFragment"
+         android:name="com.pangbai.dowork.fragment.settingFragment"
         android:label="设置"
-        tools:layout="@layout/fragment_container" />
+        tools:layout="@layout/fragment_dashboard" />
 </navigation>
 
 

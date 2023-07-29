@@ -5,11 +5,12 @@ import android.util.Log;
 
 import com.pangbai.dowork.Command.CommandBuilder;
 import com.pangbai.dowork.databinding.ActivityTermBinding;
+import com.pangbai.dowork.preference.TermPreference;
 import com.pangbai.dowork.tool.util;
 import com.pangbai.view.ExtraKeysView;
 import android.widget.RelativeLayout;
 import android.view.ViewGroup;
-import com.pangbai.dowork.tool.Preference;
+
 import android.view.View.OnClickListener;
 import android.view.View;
 
@@ -22,6 +23,9 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
     @Override
     public void onClick(View p1) {
     }
+
+
+   public TermPreference mTermSetting;
     public ActivityTermBinding binding;
     RelativeLayout termBgView;
     CommandBuilder mBuilder;
@@ -36,8 +40,9 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
         **/
         getWindow().setBackgroundDrawableResource(R.drawable.bg_term);
         util.fullScreen(getWindow(),true);
+        mTermSetting=new TermPreference(this);
         termBgView=binding.termbgview;
-        mBuilder=new CommandBuilder(this,termBgView,30);
+        mBuilder=new CommandBuilder(this,termBgView);
 
         binding.ExtraKey.addView(mBuilder.keysView);
 
@@ -46,15 +51,15 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
         /*
         *键盘生成
          */
-        Preference mSetting=new Preference(this);
 
-        mSetting.readkeys();
+
+        mTermSetting.readkeys();
         ViewGroup.LayoutParams   lp= mBuilder.keysView.getLayoutParams();
-        lp.height= (int)((37.5*mSetting.mExtraKeys.length)*getResources().getDisplayMetrics().density + 0.5);
+        lp.height= (int)((37.5*mTermSetting.mExtraKeys.length)*getResources().getDisplayMetrics().density + 0.5);
         lp.width=-1;
         Log.e("term",""+lp.height);
         mBuilder.keysView.setLayoutParams(lp);
-        mBuilder.keysView.reload(mSetting.mExtraKeys, ExtraKeysView.defaultCharDisplay);
+        mBuilder.keysView.reload(mTermSetting.mExtraKeys, ExtraKeysView.defaultCharDisplay);
 
     }
 

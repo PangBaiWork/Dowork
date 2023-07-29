@@ -2,10 +2,12 @@ package com.pangbai.view;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Handler;
@@ -447,12 +449,12 @@ public class TerminalView extends View {
      * @param textSize the new font size, in density-independent pixels.
      */
     public void setTextSize(int textSize) {
-        mRenderer = new TerminalRenderer(textSize, mRenderer == null ? Typeface.MONOSPACE : mRenderer.mTypeface);
+        mRenderer = new TerminalRenderer(textSize, mRenderer == null ? Typeface.MONOSPACE : mRenderer.mTypeface,getDefTextColor());
         updateSize();
     }
 
     public void setTypeface(Typeface newTypeface) {
-        mRenderer = new TerminalRenderer(mRenderer.mTextSize, newTypeface);
+        mRenderer = new TerminalRenderer(mRenderer.mTextSize, newTypeface,getDefTextColor());
         updateSize();
         invalidate();
     }
@@ -911,7 +913,8 @@ public class TerminalView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         if (mEmulator == null) {
-            canvas.drawColor(0XFF000000);
+          // canvas.drawColor(0XFF000000);
+           canvas.drawColor(0X40000000);
         } else {
             // render the terminal view and highlight any selected text
             int[] sel = mDefaultSelectors;
@@ -929,7 +932,11 @@ public class TerminalView extends View {
     public TerminalSession getCurrentSession() {
         return mTermSession;
     }
-
+   public int getDefTextColor(){
+        if(!isViewInActivity(this))
+            return Color.BLUE;
+        return 0;
+   }
     private CharSequence getText() {
         return mEmulator.getScreen().getSelectedText(0, mTopRow, mEmulator.mColumns, mTopRow + mEmulator.mRows);
     }
@@ -1181,6 +1188,11 @@ public class TerminalView extends View {
             mTextSelectionCursorController.render();
     }
 
+    public static boolean isViewInActivity(View view) {
+        Context context = view.getContext();
+        return context instanceof Activity;
+    }
+
     public boolean isSelectingText() {
         if (mTextSelectionCursorController != null) {
             return mTextSelectionCursorController.isActive();
@@ -1286,4 +1298,12 @@ public class TerminalView extends View {
         }
     }
 
+
+
+
+
+
+
 }
+
+

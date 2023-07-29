@@ -3,14 +3,61 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:orientation="vertical"
+	android:padding="30dp"
 	android:layout_height="match_parent">
 
+	<LinearLayout
+		android:layout_gravity="center_horizontal"
+		android:layout_width="230dp"
+		android:gravity="center"
+		android:background="@drawable/view_circle"
+		android:layout_height="40dp">
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:layout_weight="1"
+			style="@style/defaultTextStyle"
 
-	<TextView
-		android:layout_width="wrap_content"
+			android:text="内置X服务器"/>
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:layout_weight="1"
+			style="@style/defaultTextStyle"
+			android:textColor="#ffffff"
+			android:background="#000000"
+			android:text="外部X服务器"/>
+
+	</LinearLayout>
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="display"
-		android:textAppearance="?android:attr/textAppearanceLarge"/>
+		android:layout_marginTop="10dp"
+		android:orientation="vertical">
+
+		<Switch
+
+			android:id="@+id/switch1"
+			style="@style/defaultTextStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:checked="true"
+			android:layout_gravity="center_horizontal"
+			android:switchPadding="30dp"
+			android:text="Switch"
+			android:textColor="@android:color/white" />
+
+		<SurfaceView
+			android:id="@+id/surfaceView"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1" />
+	</LinearLayout>
+
 
 </LinearLayout>
 

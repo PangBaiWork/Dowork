@@ -1,18 +1,24 @@
 package com.pangbai.view;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 
+import com.pangbai.dowork.TermActivity;
+import com.pangbai.dowork.preference.TermPreference;
+import com.pangbai.dowork.service.mainService;
 import com.pangbai.terminal.TerminalSession;
 import com.pangbai.terminal.TerminalSessionClient;
 
@@ -24,31 +30,62 @@ public final class SuperTerminalView extends TerminalView {
     ClipData clipData;
     // Terminal
     private ExtraKeysView mkeys;
-    private Activity mContext = null;
+    private TermActivity mTermActivity = null;
     private SuperTerminalView thiz = null;
     private TerminalSessionClient mTerminalSessionClient = null;
     private TerminalViewClient mTerminalViewClient = null;
     private boolean set_done = false;
     private boolean run_done = false;
+    static int  currentsize=30;
+    public int[] textSizes;
+    TermPreference termPreference;
 
-    public SuperTerminalView(Activity context) {
+
+    public SuperTerminalView(TermActivity context) {
         this(context, (AttributeSet) null);
-        this.mContext = context;
+
+        this.mTermActivity = context;
         this.thiz = this;
         mTerminalSessionClient = new TSC();
         mTerminalViewClient = new TVC();
        //触摸
+
        // if (Command.roll) {
             setFocusable(true);
             setFocusableInTouchMode(true);
        // }
-        clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-
+        clipboardManager = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+        //配置文件准备
+        termPreference=mTermActivity.mTermSetting;
+        textSizes=  getDefaultFontSizes(context);
+        currentsize= termPreference.getIntStoredAsString(termPreference.fontSize,textSizes[0]);
+        setTextSize(currentsize);
 
     }
 
+
     public SuperTerminalView(Context context, AttributeSet attributes) {
         super(context, attributes);
+        mTerminalSessionClient = new TSC();
+        mTerminalViewClient = new TVC();
+        clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        textSizes=getDefaultFontSizes(context);
+        setTextSize(textSizes[0]);
+    }
+
+    public static int[] getDefaultFontSizes(Context context) {
+        float dipInPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, context.getResources().getDisplayMetrics());
+        int[] sizes = new int[3];
+        // This is a bit arbitrary and sub-optimal. We want to give a sensible default for minimum font size
+        // to prevent invisible text due to zoom be mistake:
+        sizes[1] = (int) (4f * dipInPixels); // min
+        // http://www.google.com/design/spec/style/typography.html#typography-line-height
+        int defaultFontSize = Math.round(12 * dipInPixels);
+        // Make it divisible by 2 since that is the minimal adjustment step:
+        if (defaultFontSize % 2 == 1) defaultFontSize--;
+        sizes[0] = defaultFontSize; // default
+        sizes[2] = 256; // max
+        return sizes;
     }
 
     public boolean setProcess(String cmd, String cwd, String[] argv, String[] envp, int rows) {
@@ -63,7 +100,6 @@ public final class SuperTerminalView extends TerminalView {
 
     public boolean runProcess() {
         if (run_done) {
-
             return false;
         }
         setTerminalViewClient(mTerminalViewClient);
@@ -72,7 +108,6 @@ public final class SuperTerminalView extends TerminalView {
     }
 
     private class TSC implements TerminalSessionClient {
-
         @Override
         public void onColorsChanged(TerminalSession session) {
         }
@@ -103,18 +138,35 @@ public final class SuperTerminalView extends TerminalView {
         @Override
         public void onSessionFinished(TerminalSession finishedSession) {
 
+
             Handler mHander = new Handler(Looper.getMainLooper());
             mHander.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    ((ViewGroup) thiz.getParent()).removeView(thiz);
-                    mContext.finish();
-                    mContext = null;
-                    thiz = null;
                     mTerminalSession = null;
-                    mTerminalSessionClient = null;
-                    mTerminalViewClient = null;
-                    //	ActivityTo.startActivity(mContext,main.class,true);
+                   // mTerminalSessionClient = null;
+                  //  mTerminalViewClient = null;
+                    thiz = null;
+                   View parent=(View)getParent();
+                   if (parent!=null)
+                       parent.setVisibility(View.GONE);
+
+
+                 if (isViewInActivity(SuperTerminalView.this)){
+                    // ((ViewGroup) thiz.getParent()).removeView(thiz);
+                     mTerminalSessionClient = null;
+                     mTerminalViewClient = null;
+                     mkeys.removeAllViews();
+                     mkeys=null;
+                     mTermActivity.finish();
+                    mTermActivity=null;}else {
+                     Intent mIntent=new Intent(getContext(), mainService.class);
+                     mIntent.putExtra("action",mainService.action_success);
+                     getContext().startService(mIntent);
+                 }
+
+
+
                 }
             }, 2 * 1000);
         }
@@ -190,16 +242,32 @@ public final class SuperTerminalView extends TerminalView {
         @Override
         public void onSingleTapUp(MotionEvent e) {
             //if (Command.roll) {
-
-                InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (mTermActivity==null)
+                    return;
+                InputMethodManager inputMethodManager = (InputMethodManager) mTermActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
            // }
         }
 
-        @Override
-        public float onScale(float scale) {
+   /*  @Override
+      public float onScale(float scale) {
             return 0;
-        }
+        }*/
+   @Override
+   public float onScale(float scale) {
+       if (scale < 0.9f || scale > 1.1f) {
+           boolean increase = scale > 1.f;
+           int fontSize =termPreference.getIntStoredAsString(termPreference.fontSize,textSizes[0]);
+           fontSize += (increase ? 1 : -1) * 2;
+           fontSize = Math.max(textSizes[1], Math.min(fontSize, textSizes[2]));
+           termPreference.setIntStoredAsString(termPreference.fontSize,fontSize,false);
+           setTextSize(fontSize);
+           //setFontSize(fontSize);
+          // changeFontSize(increase);
+           return 1.0f;
+       }
+       return scale;
+   }
 
         @Override
         public boolean onLongPress(MotionEvent event) {

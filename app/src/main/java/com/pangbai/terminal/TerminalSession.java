@@ -34,7 +34,7 @@ public final class TerminalSession extends TerminalOutput {
 
     private static final int MSG_NEW_INPUT = 1;
     private static final int MSG_PROCESS_EXITED = 4;
-
+   public static int EXITCODE=-1;
     public final String mHandle = UUID.randomUUID().toString();
 
    public  TerminalEmulator mEmulator;
@@ -409,6 +409,8 @@ public void writeDe(String com){
                     exitDescription += " (signal " + (-exitCode) + ")";
                 }
                 exitDescription += " - 将在2s后退出]";
+                EXITCODE=exitCode;
+
 
                 byte[] bytesToWrite = exitDescription.getBytes(StandardCharsets.UTF_8);
                 mEmulator.append(bytesToWrite, bytesToWrite.length);

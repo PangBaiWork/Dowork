@@ -2,6 +2,9 @@ package com.pangbai.dowork.tool;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.pangbai.dowork.Command.cmdExer;
@@ -10,11 +13,31 @@ import com.pangbai.view.CustomDialog;
 import java.io.File;
 
 public class Init {
+    public static String filesDirPath;
+
+   public static String linuxDeployDirPath;
+   public static  String fontPath;
+   public  static  String keyPath;
+   public static String binDirPath;
+ //  public static String shellPath;
+   public static String busyboxPath;
     public  Init(Activity ct){
 
+
+
         File files=ct.getFilesDir();
+
+        filesDirPath=files.getAbsolutePath();
+        fontPath=filesDirPath+"/dowork/terminal/font.ttf";
+        linuxDeployDirPath=filesDirPath+"/dowork/cli";
+        binDirPath=filesDirPath+"/usr/bin";
+        //    shellPath=binDirPath+"/sh";
+        keyPath=filesDirPath+"/dowork/terminal/keys";
+        busyboxPath=binDirPath+"/busybox";
+
         if(!files.exists())
             files.mkdir();
+
         Log.e("初始化",""+(files.list().length));
         if(files.list().length<3) {
              CustomDialog mDialog= util.popLoading(ct,"初始化中");
@@ -22,17 +45,16 @@ public class Init {
                 @Override
                 public  void  run(){
                     IO.copyAssetsDirToSDCard(ct,"files",files.getParentFile().getAbsolutePath());
-                    File bin= new File(files.getAbsolutePath()+"/usr/bin");
-                    File dowork= new File(files.getAbsolutePath()+"/dowork");
+                   File bin= new File(binDirPath);
+                   //File dowork= new File(files.getAbsolutePath()+"/dowork");
                     if(bin.exists()){
                         Boolean result;
-                        String binPath= bin.getAbsolutePath();
+                     //   String binPath= bin.getAbsolutePath();
                         String chmod="chmod +x -R ";
-                        String busybox=binPath+"/busybox"+" --install -s " +binPath;
+                        String busybox=busyboxPath+" --install -s " +binDirPath;
                       //  Log.e("初始化",cmd);
-                        result=cmdExer.execute(chmod+binPath);
-                        result=cmdExer.execute(chmod+dowork);
-
+                        result=cmdExer.execute(chmod+binDirPath);
+                        //result=cmdExer.execute(chmod+linuxDeployDirPath);
                         Log.e("初始化",""+result);
                         result=cmdExer.execute(busybox);
                         Log.e("初始化",""+result);
@@ -42,9 +64,11 @@ public class Init {
 
                 }
             }.start();
+     }
 
 
-     }
-     }
+    }
+
+
 
 }

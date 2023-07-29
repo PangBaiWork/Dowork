@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class cmdExer {
+  private static Process process = null;
     public static boolean execute(String command) {
-        Process process = null;
+
         BufferedReader reader = null;
         try {
             process = new ProcessBuilder()
@@ -39,4 +40,7 @@ public class cmdExer {
             }
         }
     }
+
+
+
 }

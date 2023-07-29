@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash -x
+#!/bin/sh
 # Linux Deploy Component
 # (c) Anton Skshidlevsky <meefik@gmail.com>, GPLv3
 
@@ -51,7 +51,7 @@ do_configure()
 do_start()
 {
     msg -n ":: Starting ${COMPONENT} ... "
-    is_stopped /var/run/sshd.pid /run/sshd.pid
+    is_stopped /var/run/sshd.pid /run/sshd.pid || test $(pidof sshd) -eq 0
     is_ok "skip" || return 0
     make_dirs /run/sshd /var/run/sshd
     # generate keys
