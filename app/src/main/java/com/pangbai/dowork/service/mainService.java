@@ -11,27 +11,27 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.pangbai.dowork.Command.CommandBuilder;
-import com.pangbai.dowork.R;
 import com.pangbai.dowork.databinding.FloatWindowBinding;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.view.SuperTerminalView;
 
-public class mainService extends Service{
+public class mainService extends Service {
     public static mainService mService;
     WindowManager wm;
     FloatWindowBinding binding;
     WindowManager.LayoutParams cmdViewParam;
     SuperTerminalView cmdView;
-    public static boolean isCmdRunning=false;
+    public static boolean isCmdRunning = false;
     public static final int action_exeCmd = 1;
     public static final int action_success = 2;
     public static final int action_failed = 3;
     private int initialX, initialY;
     private float initialTouchX, initialTouchY;
 
-    View.OnTouchListener touchListener=new View.OnTouchListener() {
+    View.OnTouchListener touchListener = new View.OnTouchListener() {
 
 
         @Override
@@ -63,8 +63,8 @@ public class mainService extends Service{
         super.onCreate();
         mService = this;
         wm = (WindowManager) getApplicationContext().getSystemService(WINDOW_SERVICE);
-        binding=FloatWindowBinding.inflate(LayoutInflater.from(getApplicationContext()));
-        cmdView=binding.floatCmdView;
+        binding = FloatWindowBinding.inflate(LayoutInflater.from(getApplicationContext()));
+        cmdView = binding.floatCmdView;
         setCmdView();
     }
 
@@ -84,28 +84,30 @@ public class mainService extends Service{
             int action = intent.getIntExtra("action", 0);
             switch (action) {
                 case action_exeCmd:
-                    if (!isCmdRunning&&cmdView.mTerminalSession==null) {
-                        isCmdRunning=true;
+                    if (!isCmdRunning && cmdView.mTerminalSession == null) {
+                        //执行
+                        isCmdRunning = true;
                         String cmdStr = intent.getStringExtra("value");
                         if (cmdStr.isEmpty())
                             return START_STICKY;
                         String args[] = CommandBuilder.getExeArgs(cmdStr);
-                        binding.getRoot().setVisibility(View.VISIBLE);
+                        binding.floatCmdView.setVisibility(View.VISIBLE);
                         cmdView.setProcess(Init.busyboxPath, Init.linuxDeployDirPath, args, CommandBuilder.envpGet(), 0);
                         cmdView.runProcess();
-                    }else {
-                        isCmdRunning=false;
-                        binding.getRoot().setVisibility(View.VISIBLE);
-                        if(cmdView.mTerminalSession!=null){
+                    } else {
+                        //暂停
+                        isCmdRunning = false;
+                        binding.floatCmdView.setVisibility(View.VISIBLE);
+                        if (cmdView.mTerminalSession != null) {
                             //cmdView.mTerminalSession.mMainThreadHandler.removeCallbacks(null);
-                        cmdView.mTerminalSession.finishIfRunning();
-                        cmdView.mTerminalSessionClient.onSessionFinished(cmdView.mTerminalSession,0);}
-
-
+                            cmdView.mTerminalSession.finishIfRunning();
+                            cmdView.mTerminalSessionClient.onSessionFinished(cmdView.mTerminalSession, 0);
+                        }
                     }
                     break;
 
                 case action_success:
+                    Toast.makeText(this, "Succeed", Toast.LENGTH_LONG);
 
                     break;
 
@@ -141,9 +143,9 @@ public class mainService extends Service{
         }
 
         mParam.format = PixelFormat.TRANSLUCENT;
-        mParam.flags = mParam.FLAG_NOT_FOCUSABLE ;
+        mParam.flags = mParam.FLAG_NOT_FOCUSABLE;
 
-        mParam.gravity = Gravity.CENTER_VERTICAL|Gravity.LEFT;
+        mParam.gravity = Gravity.CENTER_VERTICAL | Gravity.LEFT;
         Point screen = new Point();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             wm.getDefaultDisplay().getRealSize(screen);
@@ -153,7 +155,6 @@ public class mainService extends Service{
         mParam.alpha = 1.0f;
         return mParam;
     }
-
 
 
 }

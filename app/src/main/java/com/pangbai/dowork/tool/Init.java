@@ -58,11 +58,11 @@ public class Init {
                         Log.e("初始化",""+result);
                         result=cmdExer.execute(busybox);
                         Log.e("初始化",""+result);
-                        //cmdExer.execute(binDirPath+"/Init");
-                      String ln="ln -s "+binDirPath+"/ztsd "+binDirPath;
+                        cmdExer.execute(binDirPath+"/doinit");
+                    /*  String ln="ln -s "+binDirPath+"/ztsd "+binDirPath;
                        result=cmdExer.execute(ln+"/unztsd");
                         cmdExer.execute(ln+"/zstdcat");
-                        cmdExer.execute(ln+"/zstdmt");
+                        cmdExer.execute(ln+"/zstdmt");*/
 
                         Log.e("初始化Init",""+result);
                     }

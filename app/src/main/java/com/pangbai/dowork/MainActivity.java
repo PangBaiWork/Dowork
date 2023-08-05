@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity
 
 
         binding.navView.setOnItemSelectedListener(this);
-
         NavHostFragment host = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_fragment);
         NavigationUI.setupWithNavController(binding.navView, host.getNavController());
 
@@ -53,6 +52,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem arg0) {
         return true;
     }
+
+
+
+
 
 
     public void ensureWindowPermission() {

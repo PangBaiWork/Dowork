@@ -64,11 +64,16 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
             PrefStore.dumpProperties(this);
             finish();
         }else if (view==binding.ctActionRun){
+            if (mainService.isCmdRunning)
+                binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
+            else
+                binding.ctActionRun.setBackgroundResource(R.drawable.stop);
             PrefStore.dumpProperties(this);
             Intent mIntent=new Intent(this, mainService.class);
             mIntent.putExtra("action",mainService.action_exeCmd);
             mIntent.putExtra("value", Init.linuxDeployDirPath+"/cli.sh deploy");
             startService(mIntent);
+
             //Toast.makeText(this, "嘿嘿", Toast.LENGTH_SHORT).show();
 
         }

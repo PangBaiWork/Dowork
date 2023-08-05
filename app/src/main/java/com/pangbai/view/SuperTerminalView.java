@@ -147,9 +147,10 @@ public final class SuperTerminalView extends TerminalView {
                    // mTerminalSessionClient = null;
                   //  mTerminalViewClient = null;
                     thiz = null;
-                   View parent=(View)getParent();
+                 /*  View parent=(View)getParent();
                    if (parent!=null)
-                       parent.setVisibility(View.GONE);
+                       parent.setVisibility(View.GONE);*/
+                    SuperTerminalView.this.setVisibility(GONE);
 
 
                  if (isViewInActivity(SuperTerminalView.this)){
