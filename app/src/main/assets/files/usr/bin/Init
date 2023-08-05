@@ -1,0 +1,5 @@
+BIN="$(dirname "$0")"
+cd $BIN
+ln -s $BIN/zstd $BIN/unzstd
+ln -s $BIN/zstd $BIN/zstdcat
+ln -s $BIN/zstd $BIN/zstdmt

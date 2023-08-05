@@ -50,14 +50,21 @@ public class Init {
                     if(bin.exists()){
                         Boolean result;
                      //   String binPath= bin.getAbsolutePath();
-                        String chmod="chmod +x -R ";
+                        String chmod="chmod 777 -R ";
                         String busybox=busyboxPath+" --install -s " +binDirPath;
                       //  Log.e("初始化",cmd);
                         result=cmdExer.execute(chmod+binDirPath);
-                        //result=cmdExer.execute(chmod+linuxDeployDirPath);
+                        result=cmdExer.execute(chmod+linuxDeployDirPath);
                         Log.e("初始化",""+result);
                         result=cmdExer.execute(busybox);
                         Log.e("初始化",""+result);
+                        //cmdExer.execute(binDirPath+"/Init");
+                      String ln="ln -s "+binDirPath+"/ztsd "+binDirPath;
+                       result=cmdExer.execute(ln+"/unztsd");
+                        cmdExer.execute(ln+"/zstdcat");
+                        cmdExer.execute(ln+"/zstdmt");
+
+                        Log.e("初始化Init",""+result);
                     }
                     mDialog.dismiss();
                     util.ensureStoragePermissionGranted(ct);

@@ -32,7 +32,7 @@ public final class SuperTerminalView extends TerminalView {
     private ExtraKeysView mkeys;
     private TermActivity mTermActivity = null;
     private SuperTerminalView thiz = null;
-    private TerminalSessionClient mTerminalSessionClient = null;
+    public TerminalSessionClient mTerminalSessionClient = null;
     private TerminalViewClient mTerminalViewClient = null;
     private boolean set_done = false;
     private boolean run_done = false;
@@ -136,7 +136,7 @@ public final class SuperTerminalView extends TerminalView {
         }
 
         @Override
-        public void onSessionFinished(TerminalSession finishedSession) {
+        public void onSessionFinished(TerminalSession finishedSession,int DelayTime) {
 
 
             Handler mHander = new Handler(Looper.getMainLooper());
@@ -160,15 +160,19 @@ public final class SuperTerminalView extends TerminalView {
                      mkeys=null;
                      mTermActivity.finish();
                     mTermActivity=null;}else {
+
                      Intent mIntent=new Intent(getContext(), mainService.class);
-                     mIntent.putExtra("action",mainService.action_success);
+                     if (TerminalSession.EXITCODE==0)
+                        mIntent.putExtra("action",mainService.action_success);
+                     else
+                         mIntent.putExtra("action",mainService.action_failed);
                      getContext().startService(mIntent);
                  }
 
 
 
                 }
-            }, 2 * 1000);
+            }, DelayTime * 1000);
         }
 
         @Override

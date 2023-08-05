@@ -24,8 +24,10 @@ public class mainService extends Service{
     FloatWindowBinding binding;
     WindowManager.LayoutParams cmdViewParam;
     SuperTerminalView cmdView;
+    public static boolean isCmdRunning=false;
     public static final int action_exeCmd = 1;
     public static final int action_success = 2;
+    public static final int action_failed = 3;
     private int initialX, initialY;
     private float initialTouchX, initialTouchY;
 
@@ -82,14 +84,25 @@ public class mainService extends Service{
             int action = intent.getIntExtra("action", 0);
             switch (action) {
                 case action_exeCmd:
+                    if (!isCmdRunning&&cmdView.mTerminalSession==null) {
+                        isCmdRunning=true;
+                        String cmdStr = intent.getStringExtra("value");
+                        if (cmdStr.isEmpty())
+                            return START_STICKY;
+                        String args[] = CommandBuilder.getExeArgs(cmdStr);
+                        binding.getRoot().setVisibility(View.VISIBLE);
+                        cmdView.setProcess(Init.busyboxPath, Init.linuxDeployDirPath, args, CommandBuilder.envpGet(), 0);
+                        cmdView.runProcess();
+                    }else {
+                        isCmdRunning=false;
+                        binding.getRoot().setVisibility(View.VISIBLE);
+                        if(cmdView.mTerminalSession!=null){
+                            //cmdView.mTerminalSession.mMainThreadHandler.removeCallbacks(null);
+                        cmdView.mTerminalSession.finishIfRunning();
+                        cmdView.mTerminalSessionClient.onSessionFinished(cmdView.mTerminalSession,0);}
 
-                    String cmdStr = intent.getStringExtra("value");
-                    if (cmdStr.isEmpty())
-                        return START_STICKY;
-                    String args[] = CommandBuilder.getExeArgs(cmdStr);
-                    binding.getRoot().setVisibility(View.VISIBLE);
-                    cmdView.setProcess(Init.busyboxPath, Init.linuxDeployDirPath, args, CommandBuilder.envpGet(), 0);
-                    cmdView.runProcess();
+
+                    }
                     break;
 
                 case action_success:

@@ -11,7 +11,7 @@ public interface TerminalSessionClient {
 
     void onTitleChanged(TerminalSession changedSession);
 
-    void onSessionFinished(TerminalSession finishedSession);
+    void onSessionFinished(TerminalSession finishedSession, int DelayTime);
 
     void onCopyTextToClipboard(TerminalSession session, String text);
 

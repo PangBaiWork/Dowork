@@ -408,7 +408,7 @@ public void writeDe(String com){
                     // Negated signal.
                     exitDescription += " (signal " + (-exitCode) + ")";
                 }
-                exitDescription += " - 将在2s后退出]";
+                exitDescription += " - Exiting ]";
                 EXITCODE=exitCode;
 
 
@@ -416,7 +416,7 @@ public void writeDe(String com){
                 mEmulator.append(bytesToWrite, bytesToWrite.length);
                 notifyScreenUpdate();
 
-                mClient.onSessionFinished(TerminalSession.this);
+                mClient.onSessionFinished(TerminalSession.this,0);
             }
         }
 
