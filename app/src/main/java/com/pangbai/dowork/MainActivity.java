@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity
                         "退出",
                         () -> {Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                                 Uri.parse("package:" + getPackageName()));
-                                Toast.makeText(this, "请授予悬浮窗权限", Toast.LENGTH_LONG);
+                                Toast.makeText(this, "请授予悬浮窗权限", Toast.LENGTH_LONG).show();
                                 startActivityForResult(intent, REQUEST_CODE_FLOATING_WINDOW);},
                         () -> finish());
 

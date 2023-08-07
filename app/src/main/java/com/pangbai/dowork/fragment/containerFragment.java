@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pangbai.dowork.PropertiesActivity;
 import com.pangbai.dowork.R;
 import com.pangbai.dowork.databinding.FragmentContainerBinding;
-import com.pangbai.dowork.tool.IO;
 import com.pangbai.dowork.tool.containerInfor;
 import com.pangbai.dowork.tool.ctAdapter;
 import com.pangbai.dowork.tool.uiThreadUtil;
@@ -26,7 +25,6 @@ import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.view.dialogUtils;
 
 import java.io.File;
-import java.util.Currency;
 import java.util.List;
 
 public class containerFragment extends Fragment implements View.OnClickListener,ctAdapter.OnItemChange{
@@ -59,6 +57,7 @@ public class containerFragment extends Fragment implements View.OnClickListener,
     public void onClick(View view) {
         if (view == binding.ctAdd) {
             util.startActivity(getActivity(), PropertiesActivity.class, false);
+
         }else if (view==binding.ctDelete){
             if (currentContainer!=null)
                     dialogUtils.showConfirmationDialog(getContext(),
@@ -67,26 +66,33 @@ public class containerFragment extends Fragment implements View.OnClickListener,
                             "确认删除",
                             "取消",
                             () -> {
-                                Dialog mdialog= dialogUtils.showCustomLayoutDialog(getContext(),"删除容器"+currentContainer.name, R.layout.layout_loading);
+                                Dialog mdialog= dialogUtils.showCustomLayoutDialog(getContext(),"删除容器"+currentContainer.name, R.layout.dialog_loading);
                                 new Thread(){
                                     @Override
                                     public void run() {
                                      containerInfor.reMoveContainer(currentContainer);
                                      mdialog.dismiss();
                                      containerInfor.ctList.remove(currentContainer);
-                                        uiThreadUtil.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                adapter.notifyDataSetChanged();
-                                            }
-                                        });
+                                        uiThreadUtil.runOnUiThread(() -> adapter.notifyDataSetChanged());
                                     }}.start();},
                             null);
+
         }else if (view==binding.ctRename){
-            //dialogUtils.showCustomLayoutDialog(getContext(),"重命名")
-            File oldFile = PrefStore.getPropertiesConfFile(getContext());
-          //  File newFile = new File(PrefStore.getEnvDir(getContext()) + "/config/" + newName + ".conf");
-          // oldFile.renameTo(newFile);
+            dialogUtils.showInputDialog(getContext(),
+                    "重命名容器",
+                    (dialogUtils.DialogInputListener) userInput -> {
+                        if (containerInfor.getContainerByName(userInput)!=null){
+                            Toast.makeText(getActivity(),"重命名失败,容器已存在",Toast.LENGTH_LONG).show();
+                            return;}
+                        File oldFile = PrefStore.getPropertiesConfFile(getContext());
+                        File newFile = new File(PrefStore.getEnvDir(getContext()) + "/config/" + userInput + ".conf");
+                        oldFile.renameTo(newFile);
+                        currentContainer.name=userInput;
+                        adapter.notifyDataSetChanged();
+                        PrefStore.changeProfile(getContext(),userInput);
+            });
+
+
         }
     }
 

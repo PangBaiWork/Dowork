@@ -112,7 +112,7 @@ public class mainService extends Service {
                     break;
 
                 case action_success:
-                    Toast.makeText(this, "Succeed", Toast.LENGTH_LONG);
+                    Toast.makeText(this, "Succeed", Toast.LENGTH_LONG).show();
 
                     mCallback.callback();
 

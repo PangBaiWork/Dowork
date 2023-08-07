@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -18,6 +19,9 @@ public class dialogUtils {
     }
     public interface OnNegativeClickListener {
         void onNegativeButtonClick();
+    }
+    public interface DialogInputListener {
+        void onConfirm(String userInput);
     }
 
 
@@ -67,4 +71,36 @@ public class dialogUtils {
         alertDialog.show();
         return alertDialog;
     }
+
+    public static void showInputDialog(Context context, String title, final DialogInputListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_input, null);
+
+        EditText inputEditText = dialogView.findViewById(R.id.dialog_text_input);
+
+        builder.setView(dialogView)
+                .setTitle(title)
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String userInput = inputEditText.getText().toString();
+                        if (listener != null) {
+                            listener.onConfirm(userInput);
+                        }
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+        inputEditText.requestFocus();
+    }
+
+
 }

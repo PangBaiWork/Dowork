@@ -40,7 +40,7 @@ public class Init {
 
 
         if(files.list().length<3) {
-          Dialog mdialog= dialogUtils.showCustomLayoutDialog(ct, "初始化中",R.layout.layout_loading);
+          Dialog mdialog= dialogUtils.showCustomLayoutDialog(ct, "初始化中",R.layout.dialog_loading);
             new Thread(){
                 @Override
                 public  void  run(){
