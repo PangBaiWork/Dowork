@@ -1,9 +1,12 @@
 package com.pangbai.dowork.service;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.view.Gravity;
@@ -30,10 +33,10 @@ public class mainService extends Service {
     public static final int action_failed = 3;
     private int initialX, initialY;
     private float initialTouchX, initialTouchY;
+    serviceCallback mCallback;
+
 
     View.OnTouchListener touchListener = new View.OnTouchListener() {
-
-
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
@@ -58,6 +61,8 @@ public class mainService extends Service {
         }
     };
 
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -72,7 +77,7 @@ public class mainService extends Service {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         //throw new UnsupportedOperationException("Not yet implemented");
-        return null;
+        return new MyBinder();
     }
 
     @Override
@@ -109,7 +114,10 @@ public class mainService extends Service {
                 case action_success:
                     Toast.makeText(this, "Succeed", Toast.LENGTH_LONG);
 
+                    mCallback.callback();
+
                     break;
+
 
 
             }
@@ -129,6 +137,9 @@ public class mainService extends Service {
         wm.addView(binding.getRoot(), cmdViewParam);
         cmdView.setBackgroundColor(0x40000000);
         binding.floatCmdView.setOnTouchListener(touchListener);
+    }
+    public void setCallback(serviceCallback callback){
+        this.mCallback=callback;
     }
 
     private WindowManager.LayoutParams getCmdParams() {
@@ -154,6 +165,12 @@ public class mainService extends Service {
         mParam.width = WindowManager.LayoutParams.WRAP_CONTENT;
         mParam.alpha = 1.0f;
         return mParam;
+    }
+
+    public class MyBinder extends Binder {
+        public mainService getService() {
+            return mainService.this;
+        }
     }
 
 

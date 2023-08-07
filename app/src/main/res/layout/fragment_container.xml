@@ -13,74 +13,54 @@
         android:padding="30dp">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/ct_chroot"
+            android:id="@+id/ct_bar"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginBottom="3dp"
-            android:visibility="gone"
-            app:cardBackgroundColor="@color/colorAccent"
-            app:cardCornerRadius="20dp">
-
-            <TextView
-                style="@style/defaultTextStyle"
-                android:layout_width="110dp"
-                android:layout_height="40dp"
-                android:background="@drawable/view_circle"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="     CHROOT     " />
-
-            <LinearLayout
-                android:id="@+id/ct_chroot_add"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical|right"
-                android:background="@drawable/add" />
-        </androidx.cardview.widget.CardView>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/ct_chroot_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ct_chroot"
-            android:layerType="hardware"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never"
-            android:scrollbars="none" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/ct_proot"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/ct_chroot_list"
             android:layout_marginBottom="6dp"
             android:visibility="gone"
             app:cardBackgroundColor="@color/colorAccent"
             app:cardCornerRadius="20dp">
 
             <TextView
-                android:id="@+id/testid"
+                android:id="@+id/ct_method"
                 style="@style/defaultTextStyle"
                 android:layout_width="110dp"
                 android:layout_height="40dp"
                 android:background="@drawable/view_circle"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="     PROOT     " />
-
+                android:text="PROOT" />
             <LinearLayout
-                android:id="@+id/ct_proot_add"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|right"
-                android:background="@drawable/add" />
+                android:orientation="horizontal">
+                <RelativeLayout
+                    android:id="@+id/ct_delete"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/add"
+                    android:layout_marginRight="4dp"
+                    android:rotation="45"/>
+                <RelativeLayout
+                    android:id="@+id/ct_rename"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/edit"
+                    android:layout_marginRight="4dp" />
+                <RelativeLayout
+                    android:id="@+id/ct_add"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/add" />
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/ct_proot_list"
+            android:id="@+id/ct_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/ct_proot"
+            android:layout_below="@id/ct_bar"
             android:layerType="hardware"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never"

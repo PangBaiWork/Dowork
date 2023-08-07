@@ -6,12 +6,17 @@ import java.io.InputStreamReader;
 
 public class cmdExer {
   private static Process process = null;
-    public static boolean execute(String command) {
-
+    public static boolean execute(String command,boolean su) {
         BufferedReader reader = null;
+        String shell;
+        if (su)
+            shell="su";
+        else
+            shell="sh";
+
         try {
             process = new ProcessBuilder()
-                .command("sh", "-c", command)
+                .command(shell, "-c", command)
                 .redirectErrorStream(true)
                 .start();
 

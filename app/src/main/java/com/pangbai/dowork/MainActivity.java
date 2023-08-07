@@ -19,6 +19,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.pangbai.dowork.databinding.ActivityMainBinding;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.util;
+import com.pangbai.linuxdeploy.PrefStore;
+import com.pangbai.view.dialogUtils;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, BottomNavigationView.OnItemSelectedListener {
@@ -61,10 +63,18 @@ public class MainActivity extends AppCompatActivity
     public void ensureWindowPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                Toast.makeText(this, "请授予悬浮窗权限", Toast.LENGTH_LONG);
-                startActivityForResult(intent, REQUEST_CODE_FLOATING_WINDOW);
+
+                dialogUtils.showConfirmationDialog(this,
+                        "权限申请",
+                        "为运行必要服务,请授予本软件权限,开发者承诺权限将只用于服务范围以内的用途",
+                        "授权",
+                        "退出",
+                        () -> {Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:" + getPackageName()));
+                                Toast.makeText(this, "请授予悬浮窗权限", Toast.LENGTH_LONG);
+                                startActivityForResult(intent, REQUEST_CODE_FLOATING_WINDOW);},
+                        () -> finish());
+
             } else {
                 // 已经有悬浮窗权限，可以在此处理相关逻辑
                 new Init(MainActivity.this);

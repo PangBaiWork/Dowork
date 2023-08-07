@@ -19,10 +19,12 @@
         android:label="Dowork"
         android:supportsRtl="true"
         android:theme="@style/mThemeAppCompat">
+
+
         <service
             android:name=".service.mainService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity
             android:name=".PropertiesActivity"

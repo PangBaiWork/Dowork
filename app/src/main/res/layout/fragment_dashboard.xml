@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingLeft="30dp"
+    android:paddingTop="20dp"
     android:paddingRight="30dp">
 
     <LinearLayout
@@ -74,14 +75,14 @@
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:orientation="horizontal">
-                <LinearLayout
+                <RelativeLayout
                     android:layout_height="60dp"
                     android:layout_width="60dp"
                     android:id="@+id/ct_icon"
                     android:background="@drawable/ct_icon_kali"
                     android:layout_margin="15dp"
-                    android:layout_gravity="center_vertical|left">
-                </LinearLayout>
+                    android:layout_gravity="center_vertical|left"/>
+
 
                 <TextView
                     android:layout_height="wrap_content"
@@ -113,15 +114,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/ct_start_stop"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
-                android:background="@drawable/ct_stop"
-                android:orientation="horizontal" />
+                android:background="@drawable/ct_stop" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -129,18 +129,17 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="30dp"
                 android:layout_toLeftOf="@id/ct_terminal"
-                android:text="🔹 Running"
+                android:text="Running"
                 style="@style/defaultTextStyle" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/ct_terminal"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="15dp"
-                android:background="@drawable/ct_terminal"
-                android:orientation="horizontal" />
+                android:background="@drawable/ct_terminal" />
 
         </RelativeLayout>
 

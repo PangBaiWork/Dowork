@@ -15,7 +15,7 @@
             android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="27dp"
                 android:layout_height="27dp"
                 android:id="@+id/ct_exit"
@@ -29,7 +29,7 @@
                 android:textSize="20sp"
                 style="@style/defaultTextStyle"/>
         </LinearLayout>
-        <LinearLayout
+        <RelativeLayout
             android:layout_gravity="center_vertical|right"
             android:layout_width="30dp"
             android:layout_height="30dp"

@@ -586,7 +586,7 @@ public class PrefStore {
      * @param c context
      * @return path of profile
      */
-    static File getPropertiesConfFile(Context c) {
+    public static File getPropertiesConfFile(Context c) {
         return new File(getConfigDir(c) + "/" + getProfileName(c) + ".conf");
     }
 

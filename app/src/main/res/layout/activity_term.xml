@@ -17,25 +17,25 @@
         <RelativeLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:id="@+id/termbgview">
+            android:id="@+id/termbgview"/>
 
-        </RelativeLayout>
+
 
         <LinearLayout
             android:layout_height="match_parent"
             android:layout_width="300dp"
             android:background="#FF815858"
-            android:layout_gravity="start">
+            android:layout_gravity="start"/>
 
-        </LinearLayout>
+
 
         <LinearLayout
             android:layout_height="match_parent"
             android:layout_width="300dp"
             android:background="#FFFABFBF"
-            android:layout_gravity="end">
+            android:layout_gravity="end"/>
 
-        </LinearLayout>
+
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
@@ -44,8 +44,8 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:id="@+id/ExtraKey">
+        android:id="@+id/ExtraKey"/>
 
-    </LinearLayout>
+
 
 </RelativeLayout>

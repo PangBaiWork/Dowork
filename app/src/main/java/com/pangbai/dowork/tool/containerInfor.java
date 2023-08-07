@@ -7,6 +7,7 @@ import com.pangbai.linuxdeploy.ParamUtils;
 import com.pangbai.linuxdeploy.PrefStore;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,16 +15,17 @@ import java.util.Map;
 
 public class containerInfor {
     private static Map<String, Integer> iconMap;
-    public static List<containerInfor> ctList = new ArrayList<containerInfor>();
+    public static List<containerInfor> ctList = new ArrayList<>();
+    public static List<String> nameList;
 
     public String name;
     public String version;
-    public String methon;
+    public String method;
     public int iconId;
     public int size;
 
     public containerInfor(String methon,String name, String version, int iconId) {
-        this.methon=methon;
+        this.method=methon;
         this.name = name;
         this.version = version;
         this.iconId = iconId;
@@ -45,6 +47,7 @@ public class containerInfor {
             }
         }
 
+        nameList=profiles;
         return profiles;
     }
 
@@ -73,11 +76,41 @@ public class containerInfor {
             Map<String, String> osMap = ParamUtils.readConf(osInfor);
             String osName = osMap.get("NAME");
             String osVersion = osMap.get("VERSION");
-            version =  osName+osVersion ;
+            if (osVersion==null)
+                osVersion=osMap.get("BUILD_ID");
+            version =  osName+" "+osVersion ;
+
         }
 
         return new containerInfor(ctMethod,ctName, version, ctIcon);
     }
+
+    public static boolean reMoveContainer(containerInfor infor){
+        File conf = new File(Init.linuxDeployDirPath + "/config/" + infor.name + ".conf");
+        if (conf.exists()) {
+            Map<String, String> ctInfor = ParamUtils.readConf(conf);
+            File container= new File(ctInfor.get("TARGET_PATH"));
+            if (container.exists())
+                if (IO.deleteFolder(container))
+                    return IO.deleteFolder(conf);
+                else
+                    return false;
+            else
+                 return IO.deleteFolder(conf);
+        }else {
+            return false;
+        }
+
+    }
+    public static  containerInfor getContainerByName(String name){
+        for (containerInfor ct:ctList){
+            if (ct.name.equals(name))
+                return ct;
+        }
+        return null;
+    }
+
+
 
 
     static {

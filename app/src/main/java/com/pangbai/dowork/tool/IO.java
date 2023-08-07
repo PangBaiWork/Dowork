@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import com.pangbai.dowork.Command.cmdExer;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -91,6 +93,12 @@ public class IO {
         }
     }
 
+
+
+        public static boolean deleteFolder(File folder) {
+             boolean result=  cmdExer.execute("rm -rf "+folder.getAbsolutePath(),Init.isRoot);
+             return result;
+        }
 
 
 

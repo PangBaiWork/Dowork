@@ -12,10 +12,6 @@ import android.os.Build;
 import android.provider.Settings;
 import android.view.View;
 import android.view.Window;
-import android.widget.TextView;
-
-import com.pangbai.dowork.R;
-import com.pangbai.view.CustomDialog;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -24,13 +20,16 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 
 public class util {
-    public static void startActivity(Activity ct, Class activity, boolean anim) {
+    public static void startActivity(Context ct, Class activity, boolean anim) {
         Intent it = new Intent(ct.getApplicationContext(), activity);
         if (anim) {
             it.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             it.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         }
-        ct.startActivity(it, ActivityOptions.makeSceneTransitionAnimation(ct).toBundle());
+        if (ct instanceof Activity)
+            ct.startActivity(it, ActivityOptions.makeSceneTransitionAnimation((Activity) ct).toBundle());
+        else
+            ct.startActivity(it);
     }
 
 
@@ -63,16 +62,6 @@ public class util {
     }
 
 
-    public static CustomDialog popLoading(Context ct, String str) {
-        CustomDialog mDialog = new CustomDialog(ct);
-        mDialog.show();
-        mDialog.setView(R.layout.layout_loading);
-        TextView text = mDialog.findViewById(R.id.loading_text);
-        text.setText(str);
-
-        mDialog.setProperty(140);
-        return mDialog;
-    }
 
 
     @TargetApi(Build.VERSION_CODES.M)
