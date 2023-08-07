@@ -28,7 +28,8 @@ public class mainService extends Service {
     WindowManager.LayoutParams cmdViewParam;
     SuperTerminalView cmdView;
     public static boolean isCmdRunning = false;
-    public static final int action_exeCmd = 1;
+    public static final int action_exeCmd = 0;
+    public static final int action_stopCmd = 1;
     public static final int action_success = 2;
     public static final int action_failed = 3;
     private int initialX, initialY;
@@ -98,8 +99,9 @@ public class mainService extends Service {
                         String args[] = CommandBuilder.getExeArgs(cmdStr);
                         binding.floatCmdView.setVisibility(View.VISIBLE);
                         cmdView.setProcess(Init.busyboxPath, Init.linuxDeployDirPath, args, CommandBuilder.envpGet(), 0);
-                        cmdView.runProcess();
-                    } else {
+                        cmdView.runProcess();}
+                    break;
+                case action_stopCmd:
                         //暂停
                         isCmdRunning = false;
                         binding.floatCmdView.setVisibility(View.VISIBLE);
@@ -108,13 +110,18 @@ public class mainService extends Service {
                             cmdView.mTerminalSession.finishIfRunning();
                             cmdView.mTerminalSessionClient.onSessionFinished(cmdView.mTerminalSession, 0);
                         }
-                    }
                     break;
 
                 case action_success:
-                    Toast.makeText(this, "Succeed", Toast.LENGTH_LONG).show();
+                   Toast.makeText(this, "Succeed", Toast.LENGTH_LONG).show();
 
-                    mCallback.callback();
+                    mCallback.callback(0);
+
+                    break;
+                case action_failed:
+                    Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
+
+                    mCallback.callback(1);
 
                     break;
 

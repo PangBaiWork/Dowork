@@ -20,7 +20,7 @@ import java.util.List;
 public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
     List<containerInfor> mList;
     OnItemChange ItemChange;
-    private static int selectedPosition = RecyclerView.NO_POSITION;
+    public static int selectedPosition = RecyclerView.NO_POSITION;
     //临时记录上次选择的位置
     int tmp = -1;
     Drawable background;
@@ -86,10 +86,12 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
         holder.ctName.setText(infor.name);
         holder.ctVersion.setText(infor.version);
         // 根据选中的项的位置为每个项设置不同的背景
-        if (position == tmp)
-            holder.itemView.setBackground(background);
+
+
         if (position == selectedPosition)
             holder.itemView.setBackgroundResource(R.drawable.card_border);
+        else
+            holder.itemView.setBackground(background);
     }
 
     @Override

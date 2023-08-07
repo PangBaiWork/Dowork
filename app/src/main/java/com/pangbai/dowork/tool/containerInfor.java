@@ -54,14 +54,14 @@ public class containerInfor {
     public static List<containerInfor> setInforList(List<String> ctName) {
         ctList.clear();
         for (String name:ctName){
-            containerInfor infor=setContainerInfor(name);
+            containerInfor infor=getContainerInfor(name);
             if (infor!=null)
                 ctList.add(infor);
         }
         return ctList;
     }
 
-    public static containerInfor setContainerInfor(String ctName) {
+    public static containerInfor getContainerInfor(String ctName) {
         File conf = new File(Init.linuxDeployDirPath + "/config/" + ctName + ".conf");
         String version = "Unknown";
 

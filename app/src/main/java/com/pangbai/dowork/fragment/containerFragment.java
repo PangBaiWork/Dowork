@@ -59,6 +59,10 @@ public class containerFragment extends Fragment implements View.OnClickListener,
             util.startActivity(getActivity(), PropertiesActivity.class, false);
 
         }else if (view==binding.ctDelete){
+             int containerSize= containerInfor.ctList.size();
+            if (containerSize==1){
+                Toast.makeText(getContext(),"请确保至少一个容器",Toast.LENGTH_SHORT).show();
+                return;}
             if (currentContainer!=null)
                     dialogUtils.showConfirmationDialog(getContext(),
                             "删除容器",
@@ -70,10 +74,16 @@ public class containerFragment extends Fragment implements View.OnClickListener,
                                 new Thread(){
                                     @Override
                                     public void run() {
-                                     containerInfor.reMoveContainer(currentContainer);
+                                    boolean result= containerInfor.reMoveContainer(currentContainer);
                                      mdialog.dismiss();
-                                     containerInfor.ctList.remove(currentContainer);
-                                        uiThreadUtil.runOnUiThread(() -> adapter.notifyDataSetChanged());
+                                     if(!result)
+                                         return;
+                                     if (--ctAdapter.selectedPosition<0)
+                                        ctAdapter.selectedPosition=0;
+                                    containerInfor.ctList.remove(currentContainer);
+                                    currentContainer= containerInfor.ctList.get(ctAdapter.selectedPosition);
+                                    PrefStore.changeProfile(getContext(),currentContainer.name);
+                                        uiThreadUtil.runOnUiThread(() ->{ adapter.notifyDataSetChanged();});
                                     }}.start();},
                             null);
 

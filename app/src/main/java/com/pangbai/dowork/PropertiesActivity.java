@@ -67,25 +67,28 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
             exitConfirm();
 
         } else if (view == binding.ctActionRun) {
-
-            PrefStore.dumpProperties(this);
-            isSaved = true;
             Intent mIntent = new Intent(this, mainService.class);
-            mIntent.putExtra("action", mainService.action_exeCmd);
-            mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh deploy");
-            startService(mIntent);
-            if (mainService.isCmdRunning) {
-                if (serviceConnection != null)
-                    unbindService(serviceConnection);
-                serviceConnection = null;
-                binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
-            } else {
-                serviceConnection = new mainServiceConnection(() -> {
+            if (!mainService.isCmdRunning) {
+                ///////start
+                PrefStore.dumpProperties(this);
+                isSaved = true;
+                mIntent.putExtra("action", mainService.action_exeCmd);
+                mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh deploy");
+                startService(mIntent);
+                serviceConnection = new mainServiceConnection(result -> {
                     if (binding != null)
                         binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
                 });
                 bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
                 binding.ctActionRun.setBackgroundResource(R.drawable.stop);
+            }else {
+                //////stop
+                mIntent.putExtra("action", mainService.action_stopCmd);
+                startService(mIntent);
+                if (serviceConnection != null)
+                    unbindService(serviceConnection);
+                serviceConnection = null;
+                binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
             }
 
         }

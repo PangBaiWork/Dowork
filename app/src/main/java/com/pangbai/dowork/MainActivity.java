@@ -22,8 +22,7 @@ import com.pangbai.dowork.tool.util;
 import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.view.dialogUtils;
 
-public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener, BottomNavigationView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnItemSelectedListener {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private static final int REQUEST_CODE_FLOATING_WINDOW = 1001;
@@ -33,15 +32,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         util.fullScreen(getWindow(), false);
-        //  new Init(MainActivity.this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
 
         binding.navView.setOnItemSelectedListener(this);
         NavHostFragment host = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_fragment);
         NavigationUI.setupWithNavController(binding.navView, host.getNavController());
-
         ensureWindowPermission();
     }
 
@@ -63,7 +59,6 @@ public class MainActivity extends AppCompatActivity
     public void ensureWindowPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
-
                 dialogUtils.showConfirmationDialog(this,
                         "权限申请",
                         "为运行必要服务,请授予本软件权限,开发者承诺权限将只用于服务范围以内的用途",
@@ -74,7 +69,6 @@ public class MainActivity extends AppCompatActivity
                                 Toast.makeText(this, "请授予悬浮窗权限", Toast.LENGTH_LONG).show();
                                 startActivityForResult(intent, REQUEST_CODE_FLOATING_WINDOW);},
                         () -> finish());
-
             } else {
                 // 已经有悬浮窗权限，可以在此处理相关逻辑
                 new Init(MainActivity.this);

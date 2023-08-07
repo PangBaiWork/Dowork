@@ -163,6 +163,7 @@ public final class SuperTerminalView extends TerminalView {
                     mTermActivity=null;}else {
 
                      Intent mIntent=new Intent(getContext(), mainService.class);
+                     mainService.isCmdRunning=false;
                      if (TerminalSession.EXITCODE==0)
                         mIntent.putExtra("action",mainService.action_success);
                      else
