@@ -56,8 +56,18 @@ public class containerFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onClick(View view) {
         if (view == binding.ctAdd) {
-            util.startActivity(getActivity(), PropertiesActivity.class, false);
-
+             dialogUtils.showInputDialog(getContext(),
+                    "创建容器",
+                    (dialogUtils.DialogInputListener) userInput -> {
+                        if (containerInfor.getContainerByName(userInput)!=null){
+                            Toast.makeText(getActivity(),"容器已存在",Toast.LENGTH_LONG).show();
+                            return;}
+                        if(userInput==null)
+                            return ;
+                        PrefStore.changeProfile(getContext(),userInput);
+                        util.startActivity(getActivity(), PropertiesActivity.class, false);
+            });
+            
         }else if (view==binding.ctDelete){
              int containerSize= containerInfor.ctList.size();
             if (containerSize==1){
@@ -110,8 +120,8 @@ public class containerFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onResume() {
         super.onResume();
-
-        adapter.notifyDataSetChanged();
+                new MyAsyncTask(binding.ctList).execute();
+       // adapter.notifyDataSetChanged();
     }
 
     @Override

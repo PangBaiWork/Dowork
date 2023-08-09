@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+APP_PLATFORM := android-21
 LOCAL_PATH := $(call my-dir)
 
 #include $(CLEAR_VARS)

@@ -1,0 +1,35 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/README.md",
+      "selection": {
+        "end": {
+          "column": 11,
+          "index": -1,
+          "line": 5
+        },
+        "start": {
+          "column": 11,
+          "index": -1,
+          "line": 5
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/java/com/pangbai/dowork/fragment/dashboardFragment.java",
+      "selection": {
+        "end": {
+          "column": 5,
+          "index": -1,
+          "line": 16
+        },
+        "start": {
+          "column": 5,
+          "index": -1,
+          "line": 16
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Dowork/app/src/main/java/com/pangbai/dowork/fragment/dashboardFragment.java"
+}
