@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 
 public class cmdExer {
   private static Process process = null;
+  public static String lastLine=null;
     public static boolean execute(String command,boolean su) {
         BufferedReader reader = null;
         String shell;
@@ -24,6 +25,7 @@ public class cmdExer {
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
+                lastLine=line;
             }
 
             int exitCode = process.waitFor();

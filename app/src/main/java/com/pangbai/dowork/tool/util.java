@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 
 public class util {
+
+
     public static void startActivity(Context ct, Class activity, boolean anim) {
         Intent it = new Intent(ct.getApplicationContext(), activity);
         if (anim) {
@@ -38,8 +40,10 @@ public class util {
         View decorView = window.getDecorView();
         int uiOptions;
         if (isTransparent) {
+            //for Terminal
             uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
             window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.BLACK);
         } else {
             uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
             window.setNavigationBarColor(Color.parseColor("#162039"));

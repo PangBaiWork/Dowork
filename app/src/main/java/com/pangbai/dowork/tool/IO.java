@@ -100,6 +100,14 @@ public class IO {
              return result;
         }
 
+        public static String countDirSize(String path){
+        boolean result= cmdExer.execute("du -sh "+path,Init.isRoot);
+        if (result)
+            return cmdExer.lastLine;
+        else
+            return null;
+        }
+
 
 
 }

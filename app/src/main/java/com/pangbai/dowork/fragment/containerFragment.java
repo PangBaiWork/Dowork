@@ -26,11 +26,13 @@ import com.pangbai.view.dialogUtils;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class containerFragment extends Fragment implements View.OnClickListener,ctAdapter.OnItemChange{
     FragmentContainerBinding binding;
     ctAdapter adapter;
     containerInfor currentContainer;
+    private ExecutorService executorService;
 
 
     @Nullable
@@ -168,6 +170,7 @@ public class containerFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        adapter.ItemChange=null;
 
         binding = null;
     }

@@ -7,42 +7,70 @@ package com.pangbai.terminal;
  */
 public interface TerminalSessionClient {
 
-    void onTextChanged(TerminalSession changedSession);
+    default void onTextChanged(TerminalSession changedSession) {
 
-    void onTitleChanged(TerminalSession changedSession);
+    }
+
+    default void onTitleChanged(TerminalSession changedSession) {
+
+    }
 
     void onSessionFinished(TerminalSession finishedSession, int DelayTime);
 
-    void onCopyTextToClipboard(TerminalSession session, String text);
+    default void onCopyTextToClipboard(TerminalSession session, String text) {
 
-    void onPasteTextFromClipboard(TerminalSession session);
+    }
 
-    void onBell(TerminalSession session);
+    default void onPasteTextFromClipboard(TerminalSession session) {
 
-    void onColorsChanged(TerminalSession session);
+    }
 
-    void onTerminalCursorStateChange(boolean state);
+    default void onBell(TerminalSession session) {
+
+    }
+
+    default void onColorsChanged(TerminalSession session) {
+
+    }
+
+    default void onTerminalCursorStateChange(boolean state) {
+
+    }
 
     void setTerminalShellPid(TerminalSession session, int pid);
 
 
+    default Integer getTerminalCursorStyle() {
+        return null;
+    }
 
-    Integer getTerminalCursorStyle();
 
+    default void logError(String tag, String message) {
 
+    }
 
-    void logError(String tag, String message);
+    default void logWarn(String tag, String message) {
 
-    void logWarn(String tag, String message);
+    }
 
-    void logInfo(String tag, String message);
+    default void logInfo(String tag, String message) {
 
-    void logDebug(String tag, String message);
+    }
 
-    void logVerbose(String tag, String message);
+    default void logDebug(String tag, String message) {
 
-    void logStackTraceWithMessage(String tag, String message, Exception e);
+    }
 
-    void logStackTrace(String tag, Exception e);
+    default void logVerbose(String tag, String message) {
+
+    }
+
+    default void logStackTraceWithMessage(String tag, String message, Exception e) {
+
+    }
+
+    default void logStackTrace(String tag, Exception e) {
+
+    }
 
 }

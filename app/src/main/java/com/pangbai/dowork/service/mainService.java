@@ -19,6 +19,8 @@ import android.widget.Toast;
 import com.pangbai.dowork.Command.CommandBuilder;
 import com.pangbai.dowork.databinding.FloatWindowBinding;
 import com.pangbai.dowork.tool.Init;
+import com.pangbai.terminal.TerminalSession;
+import com.pangbai.terminal.TerminalSessionClient;
 import com.pangbai.view.SuperTerminalView;
 
 public class mainService extends Service {
@@ -32,8 +34,10 @@ public class mainService extends Service {
     public static final int action_stopCmd = 1;
     public static final int action_success = 2;
     public static final int action_failed = 3;
+    public static final int action_task = 4;
     private int initialX, initialY;
     private float initialTouchX, initialTouchY;
+   TerminalSession taskSessin;
     serviceCallback mCallback;
 
 
@@ -92,6 +96,7 @@ public class mainService extends Service {
                 case action_exeCmd:
                     if (!isCmdRunning && cmdView.mTerminalSession == null) {
                         //执行
+
                         isCmdRunning = true;
                         String cmdStr = intent.getStringExtra("value");
                         if (cmdStr.isEmpty())
@@ -114,8 +119,8 @@ public class mainService extends Service {
 
                 case action_success:
                    Toast.makeText(this, "Succeed", Toast.LENGTH_LONG).show();
-
-                    mCallback.callback(0);
+                    if (mCallback!=null)
+                        mCallback.callback(0);
 
                     break;
                 case action_failed:
@@ -124,6 +129,25 @@ public class mainService extends Service {
                     mCallback.callback(1);
 
                     break;
+              /*  case action_task:
+                    binding.floatCmdView.setVisibility(View.GONE);
+                    String cmdStr = intent.getStringExtra("value");
+                    if (cmdStr.isEmpty())
+                        return START_STICKY;
+                    String args[] = CommandBuilder.getExeArgs(cmdStr);
+                   TerminalSessionClient client=new TerminalSessionClient() {
+                       @Override
+                       public void onSessionFinished(TerminalSession finishedSession, int DelayTime) {
+                           Toast.makeText(mainService.this,"任务执行完成",Toast.LENGTH_LONG).show();
+                           finishedSession=null;
+                       }
+                       @Override
+                       public void setTerminalShellPid(TerminalSession session, int pid) {
+                       }};
+                    Toast.makeText(mainService.this,args[2],Toast.LENGTH_LONG).show();
+                    taskSessin = new TerminalSession(Init.busyboxPath, Init.linuxDeployDirPath, args, CommandBuilder.envpGet(), 0,client);
+                    taskSessin.initializeEmulator(20,20);
+                    break;*/
 
 
 
@@ -180,5 +204,9 @@ public class mainService extends Service {
         }
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mService=null;
+    }
 }

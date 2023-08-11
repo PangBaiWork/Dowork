@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
     List<containerInfor> mList;
-    OnItemChange ItemChange;
+   public OnItemChange ItemChange;
     public static int selectedPosition = RecyclerView.NO_POSITION;
     //临时记录上次选择的位置
     int tmp = -1;
@@ -55,7 +55,7 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
                 containerInfor current= containerInfor.ctList.get(0);
                 PrefStore.changeProfile(parent.getContext(), current.name);
                 selectedPosition=0;
-                ItemChange.OnItemChange(current);
+               ItemChange.OnItemChange(current);
 
         }
         ////////列表项目点击

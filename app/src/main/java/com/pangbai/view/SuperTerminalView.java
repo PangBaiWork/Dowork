@@ -31,7 +31,7 @@ public final class SuperTerminalView extends TerminalView {
     // Terminal
     private ExtraKeysView mkeys;
     private TermActivity mTermActivity = null;
-    private SuperTerminalView thiz = null;
+    public static SuperTerminalView terminal = null;
     public TerminalSessionClient mTerminalSessionClient = null;
     private TerminalViewClient mTerminalViewClient = null;
     private boolean set_done = false;
@@ -45,7 +45,7 @@ public final class SuperTerminalView extends TerminalView {
         this(context, (AttributeSet) null);
 
         this.mTermActivity = context;
-        this.thiz = this;
+        this.terminal = this;
         mTerminalSessionClient = new TSC();
         mTerminalViewClient = new TVC();
        //触摸
@@ -114,6 +114,8 @@ public final class SuperTerminalView extends TerminalView {
 
         @Override
         public void onCopyTextToClipboard(TerminalSession session, String text) {
+            if (clipboardManager==null)
+                return;
             ClipData mClipData = ClipData.newPlainText("Label", text);
             clipboardManager.setPrimaryClip(mClipData);
         }
@@ -132,10 +134,6 @@ public final class SuperTerminalView extends TerminalView {
         }
 
         @Override
-        public void onBell(TerminalSession session) {
-        }
-
-        @Override
         public void onSessionFinished(TerminalSession finishedSession,int DelayTime) {
 
 
@@ -146,7 +144,7 @@ public final class SuperTerminalView extends TerminalView {
                     mTerminalSession = null;
                    // mTerminalSessionClient = null;
                   //  mTerminalViewClient = null;
-                    thiz = null;
+                //   SuperTerminalView.this=null;
                  /*  View parent=(View)getParent();
                    if (parent!=null)
                        parent.setVisibility(View.GONE);*/
@@ -179,6 +177,8 @@ public final class SuperTerminalView extends TerminalView {
 
         @Override
         public void onPasteTextFromClipboard(TerminalSession session) {
+           if (clipboardManager==null)
+               return;
             ClipData clipData = clipboardManager.getPrimaryClip();
             if (clipData != null) {
                 CharSequence paste = clipData.getItemAt(0).getText();
@@ -191,33 +191,11 @@ public final class SuperTerminalView extends TerminalView {
             return null;
         }
 
-        @Override
-        public void logStackTrace(String tag, Exception e) {
-        }
-
-        @Override
-        public void logError(String tag, String message) {
-        }
-
-        @Override
-        public void logVerbose(String tag, String message) {
-        }
-
-        @Override
-        public void logWarn(String tag, String message) {
-        }
 
         @Override
         public void logDebug(String tag, String message) {
         }
 
-        @Override
-        public void logStackTraceWithMessage(String tag, String message, Exception e) {
-        }
-
-        @Override
-        public void logInfo(String tag, String message) {
-        }
 
         @Override
         public void setTerminalShellPid(TerminalSession session, int pid) {

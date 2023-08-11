@@ -21,14 +21,16 @@ public class containerInfor {
     public String name;
     public String version;
     public String method;
+    public String path;
     public int iconId;
     public int size;
 
-    public containerInfor(String methon,String name, String version, int iconId) {
+    public containerInfor(String methon,String name, String version, int iconId,String path) {
         this.method=methon;
         this.name = name;
         this.version = version;
         this.iconId = iconId;
+        this.path=path;
     }
 
     public static List<String> getProfiles(Context c) {
@@ -70,7 +72,10 @@ public class containerInfor {
             return null;
         String ctPath = ctInfor.get("TARGET_PATH");
         String ctMethod=ctInfor.get("METHOD");
-        int ctIcon = iconMap.getOrDefault(ctInfor.get("DISTRIB"), R.drawable.ct_icon_linux);
+        int ctIcon = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            ctIcon = iconMap.getOrDefault(ctInfor.get("DISTRIB"), R.drawable.ct_icon_linux);
+        }
         File osInfor = new File(ctPath + "/etc/os-release");
         if (osInfor.exists()) {
             Map<String, String> osMap = ParamUtils.readConf(osInfor);
@@ -79,10 +84,10 @@ public class containerInfor {
             if (osVersion==null)
                 osVersion=osMap.get("BUILD_ID");
             version =  osName+" "+osVersion ;
-
         }
 
-        return new containerInfor(ctMethod,ctName, version, ctIcon);
+
+        return new containerInfor(ctMethod,ctName, version, ctIcon,ctPath);
     }
 
     public static boolean reMoveContainer(containerInfor infor){
@@ -109,7 +114,6 @@ public class containerInfor {
         }
         return null;
     }
-
 
 
 

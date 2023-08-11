@@ -36,6 +36,9 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
                 .commit();
         binding.ctExit.setOnClickListener(this);
         binding.ctActionRun.setOnClickListener(this);
+        if (mainService.isCmdRunning){
+            binding.ctActionRun.setBackgroundResource(R.drawable.stop);
+        }
         // Restore from conf file if open from main activity
         if (getIntent().getBooleanExtra("restore", false)) {
             PrefStore.restoreProperties(this);
@@ -75,10 +78,10 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
                 mIntent.putExtra("action", mainService.action_exeCmd);
                 mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh deploy");
                 startService(mIntent);
-                serviceConnection = new mainServiceConnection(result -> {
+                if (serviceConnection==null)
+                    serviceConnection = new mainServiceConnection(result -> {
                     if (binding != null)
-                        binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
-                });
+                        binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);});
                 bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
                 binding.ctActionRun.setBackgroundResource(R.drawable.stop);
             }else {

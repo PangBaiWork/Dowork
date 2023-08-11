@@ -1211,6 +1211,9 @@ import)
 export)
     rootfs_export "$@"
 ;;
+exec)
+    chroot_exec "$@" 2>&1
+;;
 shell)
     container_shell "$@"
 ;;
