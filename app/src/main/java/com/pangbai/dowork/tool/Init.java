@@ -33,6 +33,7 @@ public class Init {
         keyPath=filesDirPath+"/dowork/terminal/keys";
         busyboxPath=binDirPath+"/busybox";
 
+
         if(!files.exists())
             files.mkdir();
 
@@ -47,7 +48,7 @@ public class Init {
                     IO.copyAssetsDirToSDCard(ct,"files",files.getParentFile().getAbsolutePath());
                    File bin= new File(binDirPath);
                     if(bin.exists()){
-                        Boolean result;
+                        int result;
                         String chmod="chmod 777 -R ";
                         String busybox=busyboxPath+" --install -s " +binDirPath;
                         result=cmdExer.execute(chmod+binDirPath,false);
@@ -67,8 +68,10 @@ public class Init {
                     util.ensureStoragePermissionGranted(ct);
                     isRoot=util.isRooted();
 
+
                 }
             }.start();
+
      }
 
 

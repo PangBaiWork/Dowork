@@ -11,7 +11,10 @@ VERSION="2.5.1"
 ################################################################################
 # Common
 ################################################################################
-tar_prefix="proot  --link2symlink "
+
+
+
+#tar_prefix="proot  --link2symlink "
 msg()
 {
     echo "$@"
@@ -466,6 +469,12 @@ component_exec()
             TARGET='*:*:*'
             # read config
             . "${COMPONENT_DIR}/deploy.conf"
+
+            if [ "$METHOD" = "proot" ]; then
+               tar_prefix="proot  --link2symlink "
+            else
+               tar_prefix=" "
+            fi
             # default functions
             do_install() { return 0; }
             do_configure() { return 0; }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -81,7 +80,7 @@
                     android:layout_height="60dp"
                     android:layout_width="60dp"
                     android:id="@+id/ct_icon"
-                    android:background="@drawable/ct_icon_kali"
+                    android:background="@drawable/ct_icon_debian"
                     android:layout_margin="15dp"
                     android:layout_gravity="center_vertical|left"/>
 
@@ -175,7 +174,7 @@
 			android:layout_marginLeft="6dp"
 			android:layout_weight="1"
 			app:cardBackgroundColor="#F2F3F5"
-			app:cardCornerRadius="20dp"></androidx.cardview.widget.CardView>
+			app:cardCornerRadius="20dp"/>
 
 
 	</LinearLayout>

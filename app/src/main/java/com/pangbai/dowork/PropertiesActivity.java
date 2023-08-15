@@ -4,15 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.pangbai.dowork.Command.cmdExer;
 import com.pangbai.dowork.databinding.ActivityPropertiesBinding;
 import com.pangbai.dowork.fragment.PropertiesFragment;
 import com.pangbai.dowork.service.mainService;
 import com.pangbai.dowork.service.mainServiceConnection;
 import com.pangbai.dowork.tool.Init;
+import com.pangbai.dowork.tool.containerInfor;
 import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.view.dialogUtils;
 
@@ -20,6 +23,7 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
     ActivityPropertiesBinding binding;
     boolean isSaved = false;
     mainServiceConnection serviceConnection;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +40,7 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
                 .commit();
         binding.ctExit.setOnClickListener(this);
         binding.ctActionRun.setOnClickListener(this);
-        if (mainService.isCmdRunning){
+        if (mainService.isCmdRunning) {
             binding.ctActionRun.setBackgroundResource(R.drawable.stop);
         }
         // Restore from conf file if open from main activity
@@ -71,20 +75,27 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
 
         } else if (view == binding.ctActionRun) {
             Intent mIntent = new Intent(this, mainService.class);
+
             if (!mainService.isCmdRunning) {
                 ///////start
                 PrefStore.dumpProperties(this);
+
+
                 isSaved = true;
                 mIntent.putExtra("action", mainService.action_exeCmd);
-                mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh deploy");
+                mIntent.putExtra("value",  Init.linuxDeployDirPath + "/cli.sh deploy");
                 startService(mIntent);
-                if (serviceConnection==null)
+                if (serviceConnection == null)
                     serviceConnection = new mainServiceConnection(result -> {
-                    if (binding != null)
-                        binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);});
+                        if (binding != null)
+                            binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
+                        Toast.makeText(this,"j"+Init.isRoot,Toast.LENGTH_LONG).show();
+
+
+                    });
                 bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
                 binding.ctActionRun.setBackgroundResource(R.drawable.stop);
-            }else {
+            } else {
                 //////stop
                 mIntent.putExtra("action", mainService.action_stopCmd);
                 startService(mIntent);
@@ -100,8 +111,9 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onBackPressed() {
-      exitConfirm();
+        exitConfirm();
     }
+
 
     @Override
     protected void onDestroy() {
@@ -111,18 +123,20 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
         serviceConnection = null;
         super.onDestroy();
     }
-    private  void  exitConfirm(){
-        if (!isSaved){
+
+    private void exitConfirm() {
+        if (!isSaved) {
             dialogUtils.showConfirmationDialog(this,
-                "配置文件未保存",
-                "确定要放弃修改吗？你将会丢失已修改的数据。",
-                "保存并退出",
-                "退出",
-                () -> {
-                    PrefStore.dumpProperties(PropertiesActivity.this);
-                    finish();},
-                () -> finish());}
-        else
-           finish();
+                    "配置文件未保存",
+                    "确定要放弃修改吗？你将会丢失已修改的数据。",
+                    "保存并退出",
+                    "退出",
+                    () -> {
+                        PrefStore.dumpProperties(PropertiesActivity.this);
+                        finish();
+                    },
+                    () -> finish());
+        } else
+            finish();
     }
 }

@@ -9,7 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager.widget.ViewPager;
@@ -22,11 +26,12 @@ import com.pangbai.dowork.tool.util;
 import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.view.dialogUtils;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavController.OnDestinationChangedListener {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private static final int REQUEST_CODE_FLOATING_WINDOW = 1001;
     private ActivityMainBinding binding;
+    NavController ctr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,22 +40,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.navView.setOnItemSelectedListener(this);
-        NavHostFragment host = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_fragment);
-        NavigationUI.setupWithNavController(binding.navView, host.getNavController());
+
+
+
+        //binding.navView.set
+
         ensureWindowPermission();
+        NavHostFragment host = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_fragment);
+        ctr=  host.getNavController();
+        NavigationUI.setupWithNavController(binding.navView, ctr);
+        // host.getNavController().addOnDestinationChangedListener();
+       // ctr.popBackStack(ctr.getGraph().getStartDestination(),false);
     }
 
 
     @Override
     public void onClick(View view) {
     }
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem arg0) {
-        return true;
-    }
-
 
 
 
@@ -94,6 +100,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
+    }
+
+    @Override
+    public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+
     }
 }
 

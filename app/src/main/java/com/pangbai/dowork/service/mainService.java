@@ -17,8 +17,11 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.pangbai.dowork.Command.CommandBuilder;
+import com.pangbai.dowork.Command.cmdExer;
 import com.pangbai.dowork.databinding.FloatWindowBinding;
 import com.pangbai.dowork.tool.Init;
+import com.pangbai.dowork.tool.containerInfor;
+import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.terminal.TerminalSession;
 import com.pangbai.terminal.TerminalSessionClient;
 import com.pangbai.view.SuperTerminalView;
@@ -37,8 +40,9 @@ public class mainService extends Service {
     public static final int action_task = 4;
     private int initialX, initialY;
     private float initialTouchX, initialTouchY;
-   TerminalSession taskSessin;
+    TerminalSession taskSessin;
     serviceCallback mCallback;
+    Thread mThread;
 
 
     View.OnTouchListener touchListener = new View.OnTouchListener() {
@@ -67,7 +71,6 @@ public class mainService extends Service {
     };
 
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -92,6 +95,11 @@ public class mainService extends Service {
         if (intent != null) {
             // 提取附加数据中的信息
             int action = intent.getIntExtra("action", 0);
+            containerInfor ct = containerInfor.getContainerInfor(PrefStore.getProfileName(this));
+            boolean isProot = containerInfor.isProot(ct);
+            String shell = "su -c ";
+            if (isProot)
+                shell = "";
             switch (action) {
                 case action_exeCmd:
                     if (!isCmdRunning && cmdView.mTerminalSession == null) {
@@ -101,32 +109,46 @@ public class mainService extends Service {
                         String cmdStr = intent.getStringExtra("value");
                         if (cmdStr.isEmpty())
                             return START_STICKY;
-                        String args[] = CommandBuilder.getExeArgs(cmdStr);
+                        String args[] = CommandBuilder.getExeArgs(shell + cmdStr);
                         binding.floatCmdView.setVisibility(View.VISIBLE);
                         cmdView.setProcess(Init.busyboxPath, Init.linuxDeployDirPath, args, CommandBuilder.envpGet(), 0);
-                        cmdView.runProcess();}
+                        cmdView.runProcess();
+                    }
                     break;
                 case action_stopCmd:
-                        //暂停
-                        isCmdRunning = false;
-                        binding.floatCmdView.setVisibility(View.VISIBLE);
-                        if (cmdView.mTerminalSession != null) {
-                            //cmdView.mTerminalSession.mMainThreadHandler.removeCallbacks(null);
-                            cmdView.mTerminalSession.finishIfRunning();
-                            cmdView.mTerminalSessionClient.onSessionFinished(cmdView.mTerminalSession, 0);
-                        }
+                    //暂停
+                    if (!isProot && mThread ==null) {
+                        stopChroot();
+                    }
+                    isCmdRunning = false;
+                    binding.floatCmdView.setVisibility(View.VISIBLE);
+                    if (cmdView.mTerminalSession != null) {
+                        //cmdView.mTerminalSession.mMainThreadHandler.removeCallbacks(null);
+                        cmdView.mTerminalSession.finishIfRunning();
+                        cmdView.mTerminalSessionClient.onSessionFinished(cmdView.mTerminalSession, 0);
+                    }
+                    // cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount",Init.isRoot,false);
                     break;
 
                 case action_success:
-                   Toast.makeText(this, "Succeed", Toast.LENGTH_LONG).show();
-                    if (mCallback!=null)
-                        mCallback.callback(0);
+                    Toast.makeText(this, "Succeed", Toast.LENGTH_LONG).show();
+                    //暂停
+                    if (!isProot && mThread==null) {
+                        stopChroot();
+                    }
 
+                    if (mCallback != null)
+                        mCallback.callback(0);
+                    //   cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount",Init.isRoot,false);
                     break;
                 case action_failed:
+                    //暂停
+                    if (!isProot && mThread==null) {
+                        stopChroot();
+                    }
                     Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
-
                     mCallback.callback(1);
+                    //cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount",Init.isRoot,false);
 
                     break;
               /*  case action_task:
@@ -150,16 +172,22 @@ public class mainService extends Service {
                     break;*/
 
 
-
             }
 
 
         }
 
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
+    void stopChroot() {
+        mThread = new Thread(() -> {
+            cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount", Init.isRoot, true);
+            mThread = null;
+        });
+        mThread.start();
+    }
 
     public void setCmdView() {
         cmdViewParam = getCmdParams();
@@ -169,8 +197,9 @@ public class mainService extends Service {
         cmdView.setBackgroundColor(0x40000000);
         binding.floatCmdView.setOnTouchListener(touchListener);
     }
-    public void setCallback(serviceCallback callback){
-        this.mCallback=callback;
+
+    public void setCallback(serviceCallback callback) {
+        this.mCallback = callback;
     }
 
     private WindowManager.LayoutParams getCmdParams() {
@@ -207,6 +236,6 @@ public class mainService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mService=null;
+        mService = null;
     }
 }

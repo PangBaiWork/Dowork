@@ -31,7 +31,7 @@ public final class SuperTerminalView extends TerminalView {
     // Terminal
     private ExtraKeysView mkeys;
     private TermActivity mTermActivity = null;
-    public static SuperTerminalView terminal = null;
+    public  SuperTerminalView terminal = null;
     public TerminalSessionClient mTerminalSessionClient = null;
     private TerminalViewClient mTerminalViewClient = null;
     private boolean set_done = false;

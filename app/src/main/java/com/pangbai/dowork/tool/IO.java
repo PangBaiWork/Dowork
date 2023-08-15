@@ -6,10 +6,12 @@ import android.util.Log;
 
 import com.pangbai.dowork.Command.cmdExer;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 public class IO {
@@ -96,18 +98,49 @@ public class IO {
 
 
         public static boolean deleteFolder(File folder) {
-             boolean result=  cmdExer.execute("rm -rf "+folder.getAbsolutePath(),Init.isRoot);
-             return result;
+             int result=  cmdExer.execute("rm -rf "+folder.getAbsolutePath(),Init.isRoot);
+             return result==0;
         }
 
         public static String countDirSize(String path){
-        boolean result= cmdExer.execute("du -sh "+path,Init.isRoot);
-        if (result)
+            int result=-1;
+          result=cmdExer.execute("[ -d "+path+" ]",Init.isRoot);
+          if (result!=0)
+              return null;
+         result= cmdExer.execute("du -sh "+path,Init.isRoot);
+        if (result==0||result==1)
             return cmdExer.lastLine;
         else
             return null;
         }
 
+    public static InputStream getRootFileInputStream(String filePath) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("su", "-c", "cat " + filePath);
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+            InputStreamReader reader = new InputStreamReader(process.getInputStream());
+
+            StringBuilder content = new StringBuilder();
+            char[] buffer = new char[1024];
+            int bytesRead;
+            while ((bytesRead = reader.read(buffer)) != -1) {
+                content.append(buffer, 0, bytesRead);
+            }
+            // Wait for the process to finish
+            if (process.waitFor()==0)
+                return new ByteArrayInputStream(content.toString().getBytes());
+            else
+                return null;
+        } catch (IOException | InterruptedException e) {
+           return null;
+        }
 
 
+    }
 }
+
+
+
+

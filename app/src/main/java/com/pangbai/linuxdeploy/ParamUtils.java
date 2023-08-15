@@ -3,12 +3,18 @@ package com.pangbai.linuxdeploy;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.pangbai.dowork.tool.IO;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +30,29 @@ public class ParamUtils {
         this.params = Arrays.asList(params);
     }
 
-    public static Map<String, String> readConf(File confFile) {
-        TreeMap<String, String> map = new TreeMap<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(confFile))) {
+    public static Map<String, String> readConf(File confFile) {
+        return readConf(confFile.getAbsolutePath(),false);
+
+    }
+    public static Map<String, String> readConf(String confFile,boolean isChoot) {
+        TreeMap<String, String> map = new TreeMap<>();
+        InputStreamReader reader ;
+        if (isChoot) {
+               ByteArrayInputStream in= (ByteArrayInputStream) IO.getRootFileInputStream(confFile);
+               if (in==null)
+                   return null;
+            reader = new InputStreamReader(in);
+        }else {
+            try {
+                reader=new FileReader(new File(confFile));
+            } catch (FileNotFoundException e) {
+                return null;
+            }
+        }
+
+
+        try (BufferedReader br = new BufferedReader(reader)) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("#") && !line.isEmpty()) {
@@ -38,7 +63,7 @@ public class ParamUtils {
                 }
             }
         } catch (IOException e) {
-            // Error!
+            return null;
         }
 
         return map;

@@ -25,12 +25,12 @@ public class containerInfor {
     public int iconId;
     public int size;
 
-    public containerInfor(String methon,String name, String version, int iconId,String path) {
-        this.method=methon;
+    public containerInfor(String methon, String name, String version, int iconId, String path) {
+        this.method = methon;
         this.name = name;
         this.version = version;
         this.iconId = iconId;
-        this.path=path;
+        this.path = path;
     }
 
     public static List<String> getProfiles(Context c) {
@@ -49,15 +49,15 @@ public class containerInfor {
             }
         }
 
-        nameList=profiles;
+        nameList = profiles;
         return profiles;
     }
 
     public static List<containerInfor> setInforList(List<String> ctName) {
         ctList.clear();
-        for (String name:ctName){
-            containerInfor infor=getContainerInfor(name);
-            if (infor!=null)
+        for (String name : ctName) {
+            containerInfor infor = getContainerInfor(name);
+            if (infor != null)
                 ctList.add(infor);
         }
         return ctList;
@@ -71,50 +71,55 @@ public class containerInfor {
         if (ctInfor == null)
             return null;
         String ctPath = ctInfor.get("TARGET_PATH");
-        String ctMethod=ctInfor.get("METHOD");
+        String ctMethod = ctInfor.get("METHOD");
         int ctIcon = 0;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             ctIcon = iconMap.getOrDefault(ctInfor.get("DISTRIB"), R.drawable.ct_icon_linux);
         }
-        File osInfor = new File(ctPath + "/etc/os-release");
-        if (osInfor.exists()) {
-            Map<String, String> osMap = ParamUtils.readConf(osInfor);
+        String osPath = ctPath + "/etc/os-release";
+
+        Map<String, String> osMap = ParamUtils.readConf(osPath, !ctMethod.equals("proot"));
+        if (osMap!=null) {
             String osName = osMap.get("NAME");
             String osVersion = osMap.get("VERSION");
-            if (osVersion==null)
-                osVersion=osMap.get("BUILD_ID");
-            version =  osName+" "+osVersion ;
+            if (osVersion == null)
+                osVersion = osMap.get("BUILD_ID");
+            version = osName + " " + osVersion;
         }
 
 
-        return new containerInfor(ctMethod,ctName, version, ctIcon,ctPath);
+        return new containerInfor(ctMethod, ctName, version, ctIcon, ctPath);
     }
 
-    public static boolean reMoveContainer(containerInfor infor){
+    public static boolean reMoveContainer(containerInfor infor) {
         File conf = new File(Init.linuxDeployDirPath + "/config/" + infor.name + ".conf");
         if (conf.exists()) {
             Map<String, String> ctInfor = ParamUtils.readConf(conf);
-            File container= new File(ctInfor.get("TARGET_PATH"));
+            File container = new File(ctInfor.get("TARGET_PATH"));
             if (container.exists())
                 if (IO.deleteFolder(container))
                     return IO.deleteFolder(conf);
                 else
                     return false;
             else
-                 return IO.deleteFolder(conf);
-        }else {
+                return IO.deleteFolder(conf);
+        } else {
             return false;
         }
 
     }
-    public static  containerInfor getContainerByName(String name){
-        for (containerInfor ct:ctList){
+
+    public static containerInfor getContainerByName(String name) {
+        for (containerInfor ct : ctList) {
             if (ct.name.equals(name))
                 return ct;
         }
         return null;
     }
 
+    public static boolean isProot(containerInfor ct) {
+        return ct.method.equals("proot");
+    }
 
 
     static {

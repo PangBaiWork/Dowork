@@ -1,7 +1,7 @@
 package com.pangbai.dowork.fragment;
 
 import android.app.Dialog;
-import android.os.AsyncTask;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.pangbai.dowork.PropertiesActivity;
 import com.pangbai.dowork.R;
@@ -25,35 +25,42 @@ import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.view.dialogUtils;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class containerFragment extends Fragment implements View.OnClickListener,ctAdapter.OnItemChange{
+public class containerFragment extends Fragment implements View.OnClickListener{
+
+
+    ctAdapter.OnItemChange mOnItemChange=new ctAdapter.OnItemChange(){
+        @Override
+        public void OnItemChange(containerInfor infor) {
+            binding.ctMethod.setText(infor.method.toUpperCase());
+            currentContainer=infor;
+        }};
     FragmentContainerBinding binding;
     ctAdapter adapter;
     containerInfor currentContainer;
-    private ExecutorService executorService;
+    private ExecutorService  executorService = Executors.newFixedThreadPool(1);;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentContainerBinding.inflate(inflater);
+       // binding = FragmentContainerBinding.inflate(inflater);
+
         binding.ctAdd.setOnClickListener(this);
-        adapter = new ctAdapter(containerInfor.ctList,this);
-        binding.ctList.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.ctDelete.setOnClickListener(this);
         binding.ctRename.setOnClickListener(this);
+        executorService = Executors.newFixedThreadPool(1);
+        doInBackground();
 
-        new MyAsyncTask(binding.ctList).execute();
+
         return binding.getRoot();
     }
 
 
-    List<containerInfor> initList() {
-        List<String> ctName = containerInfor.getProfiles(getContext());
-        return containerInfor.setInforList(ctName);
-    }
 
     @Override
     public void onClick(View view) {
@@ -121,57 +128,53 @@ public class containerFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onResume() {
+        doInBackground();
         super.onResume();
-                new MyAsyncTask(binding.ctList).execute();
-       // adapter.notifyDataSetChanged();
+        //doInBackground();
     }
 
-    @Override
-    public void OnItemChange(containerInfor infor) {
-        binding.ctMethod.setText(infor.method.toUpperCase());
-        currentContainer=infor;
-    }
 
-    public class MyAsyncTask extends AsyncTask<Void, Void, List<containerInfor>> {
-        private RecyclerView recyclerView;
-        //   private ctAdapter adapter;
 
-        public MyAsyncTask(RecyclerView recyclerView) {
-            this.recyclerView = recyclerView;
-            //  this.adapter = adapter;
-        }
+    public void doInBackground( ){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                List<String> ctName = containerInfor.getProfiles(getContext());
+                List ctList= containerInfor.setInforList(ctName);
+                
+                uiThreadUtil.runOnUiThread(() -> {
+                    binding.ctList.setAdapter(adapter);
+                    adapter.setData(ctList);
+                   // adapter.notifyDataSetChanged();
+                    binding.ctBar.setVisibility(View.VISIBLE);
+                    binding.progressBar.setVisibility(View.GONE);
+                });
 
-        @Override
-        protected List<containerInfor> doInBackground(Void... voids) {
-            // 例如从网络获取数据、读取数据库等
-            return initList();
-        }
+            }});}
 
-        @Override
-        protected void onPostExecute(List<containerInfor> result) {
-            //  ctAdapter mAdapter=new ctAdapter(result);
-            //  recyclerView.setAdapter(mAdapter);
-            binding.ctList.setAdapter(adapter);
-            adapter.setData(result);
-            adapter.notifyDataSetChanged();
-            // LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-            // recyclerView.setLayoutManager(layoutManager);
-            binding.ctBar.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
 
-         /*   adapter.setData(result);
-            recyclerView.setAdapter(adapter);*/
-            // 在主线程更新 UI，使用 doInBackground 返回的结果
-            // 例如更新 RecyclerView 的数据集
-            // recyclerView.setAdapter(new MyAdapter(result));
-        }
-    }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        if (!executorService.isShutdown())
+            executorService.shutdownNow();
+        adapter.setData(null);
+        binding.ctDelete.setOnClickListener(null);
+        binding.ctRename.setOnClickListener(null);
+        binding.ctAdd.setOnClickListener(null);
+        adapter.binding=null;
         adapter.ItemChange=null;
+        super.onDestroyView();
+    }
 
-        binding = null;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+      binding = FragmentContainerBinding.inflate(getLayoutInflater());
+        adapter = new ctAdapter(containerInfor.ctList,mOnItemChange);
+
+        binding.ctList.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 }

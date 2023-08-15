@@ -7,7 +7,10 @@ import java.io.InputStreamReader;
 public class cmdExer {
   private static Process process = null;
   public static String lastLine=null;
-    public static boolean execute(String command,boolean su) {
+    public static int execute(String command,boolean su){
+       return execute(command,su,true);
+    }
+    public static int execute(String command,boolean su,boolean wait) {
         BufferedReader reader = null;
         String shell;
         if (su)
@@ -27,13 +30,14 @@ public class cmdExer {
                 System.out.println(line);
                 lastLine=line;
             }
-
+            if (!wait)
+                return 0;
             int exitCode = process.waitFor();
-            return exitCode == 0;
+            return exitCode;
         } catch (IOException | InterruptedException e) {
             
             e.printStackTrace();
-            return false;
+            return -1;
         } finally {
             if (reader != null) {
                 try {

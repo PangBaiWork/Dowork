@@ -31,36 +31,46 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+//import leakcanary.LeakCanary;
+
 public class dashboardFragment extends Fragment implements View.OnClickListener{
   FragmentDashboardBinding binding;
   containerInfor currentContainer;
     mainServiceConnection serviceConnection;
 
-    private ExecutorService executorService;
+   private ExecutorService  executorService = Executors.newFixedThreadPool(1);
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        binding = FragmentDashboardBinding.inflate(getLayoutInflater());
+    }
 
-
-  @Nullable
+    @Nullable
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    binding = FragmentDashboardBinding.inflate(inflater);
+
+
     binding.ctTerminal.setOnClickListener(this);
     binding.ctStartStop.setOnClickListener(this);
-    executorService = Executors.newFixedThreadPool(1);
+    
+      executorService = Executors.newFixedThreadPool(1);
     if (mainService.isCmdRunning){
         binding.ctStartStop.setBackgroundResource(R.drawable.stop);
     }
-    if (mainService.mService!=null){
+   if (mainService.mService!=null){
         Intent mIntent = new Intent(getContext(), mainService.class);
         serviceConnection = new mainServiceConnection(result -> {
             if (binding != null)
                 binding.ctStartStop.setBackgroundResource(R.drawable.ct_start);
-            getContext().unbindService(serviceConnection);
+            if (serviceConnection!=null)
+                 getActivity().unbindService(serviceConnection);
+            serviceConnection=null;
         });
-        getContext().bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        getActivity().bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     return binding.getRoot();
@@ -71,7 +81,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
 
     long memory=0;
    String size=null;
-    public void doInBackground(String path){
+   public void doInBackground(String path){
       executorService.submit(new Runnable() {
           @Override
           public void run() {
@@ -82,12 +92,17 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
               //memory=Runtime.getRuntime().totalMemory()>>20;
               if (memory>999)
                   memory=-(memory>>10);
-              if (binding.ctRam==null||binding.ctSize==null)
-                  return;
+
               uiThreadUtil.runOnUiThread(() -> {
-                  if (size!=null){
-                      size=size.substring(0,size.indexOf("/")).trim();
-                     binding.ctSize.setText("空间占用:"+size);}
+                  if (binding==null)
+                      return;
+                  int last;
+                  if (size!=null&&(last=size.indexOf("/"))!=-1)
+                      size=size.substring(0,last).trim();
+                  else
+                      size="...";
+                  binding.ctSize.setText("空间占用:"+size);
+
                   String tmp="RAM占用:";
                   if (memory < 0)
                       binding.ctRam.setText(tmp+memory+"G");
@@ -108,12 +123,16 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
         if (!executorService.isShutdown())
             executorService.shutdownNow();
         if (serviceConnection != null)
-            getContext().unbindService(serviceConnection);
+            getActivity().unbindService(serviceConnection);
+        serviceConnection=null;
+        binding.ctTerminal.setOnClickListener(null);
+        binding.ctStartStop.setOnClickListener(null);
+
         super.onDestroyView();
-
-
-        binding=null;
+       // binding=null;
     }
+
+
 
     @SuppressLint("SuspiciousIndentation")
     @Override
@@ -126,9 +145,9 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
           Intent mIntent = new Intent(getContext(), mainService.class);
           if (mainService.isCmdRunning){
               mIntent.putExtra("action", mainService.action_stopCmd);
-              getContext().startService(mIntent);
+              getActivity().startService(mIntent);
               if (serviceConnection != null)
-                 getContext().unbindService(serviceConnection);
+                 getActivity().unbindService(serviceConnection);
               serviceConnection = null;
               binding.ctStartStop.setBackgroundResource(R.drawable.ct_start);
           } else{
@@ -148,10 +167,13 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
                           if (binding != null)
                               binding.ctStartStop.setBackgroundResource(R.drawable.ct_start);
                       });
-                     getContext().bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+                     getActivity().bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
                   });}
       }
     }
+
+
+
 
     @Override
     public void onResume() {
@@ -160,11 +182,12 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
        currentContainer=containerInfor.getContainerInfor(name);
        if (currentContainer==null){
            Toast.makeText(getContext(),"no container found",Toast.LENGTH_LONG).show();
-           getActivity().finish();
+            return;
        }
        binding.ctInfor.setText(currentContainer.name+"\n"+currentContainer.version);
        binding.ctIcon.setBackgroundResource(currentContainer.iconId);
-       doInBackground(currentContainer.path);
+
+      doInBackground(currentContainer.path);
 
     }
 }

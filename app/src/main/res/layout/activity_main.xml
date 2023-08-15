@@ -8,7 +8,7 @@
      android:background="@color/colorPrimary"
      android:orientation="vertical">
 
-    <androidx.fragment.app.FragmentContainerView
+    <fragment
          android:layout_height="wrap_content"
          android:layout_width="match_parent"
          app:navGraph="@navigation/mobile_navigation"

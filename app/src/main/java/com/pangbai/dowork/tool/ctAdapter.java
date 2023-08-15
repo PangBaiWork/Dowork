@@ -19,7 +19,8 @@ import java.util.List;
 
 public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
     List<containerInfor> mList;
-   public OnItemChange ItemChange;
+    public OnItemChange ItemChange;
+    public   ListContainerBinding binding;
     public static int selectedPosition = RecyclerView.NO_POSITION;
     //临时记录上次选择的位置
     int tmp = -1;
@@ -39,23 +40,27 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
     @NonNull
     @Override
     public MyViewHoder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ListContainerBinding binding = ListContainerBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+        binding = ListContainerBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
         MyViewHoder myViewHoder = new MyViewHoder(binding);
         background = binding.getRoot().getBackground();
 
         /////////从配置文件获取当前的容器
         String Name = PrefStore.getProfileName(parent.getContext());
-        containerInfor CurrentContainer=containerInfor.getContainerByName(Name);
+        containerInfor CurrentContainer = containerInfor.getContainerByName(Name);
 
-        if (CurrentContainer!= null) {
+        if (CurrentContainer != null) {
             selectedPosition = containerInfor.ctList.indexOf(CurrentContainer);
             ItemChange.OnItemChange(CurrentContainer);
 
-        }else {
-                containerInfor current= containerInfor.ctList.get(0);
-                PrefStore.changeProfile(parent.getContext(), current.name);
-                selectedPosition=0;
-               ItemChange.OnItemChange(current);
+        } else {
+            if (containerInfor.ctList.isEmpty())
+                return myViewHoder;
+            containerInfor current = containerInfor.ctList.get(0);
+            PrefStore.changeProfile(parent.getContext(), current.name);
+            selectedPosition = 0;
+            ItemChange.OnItemChange(current);
 
         }
         ////////列表项目点击
@@ -67,9 +72,10 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
                 containerInfor infor = mList.get(selectedPosition);
                 PrefStore.changeProfile(v.getContext(), infor.name);
                 ItemChange.OnItemChange(infor);
-                notifyDataSetChanged();}
+                notifyDataSetChanged();
+            }
             // 通知RecyclerView刷新列表项，以显示选中效果
-            });
+        });
         ////////按钮点击
         binding.ctRunConfigure.setOnClickListener(view -> {
             PrefStore.changeProfile(view.getContext(), mList.get(myViewHoder.getAdapterPosition()).name);
@@ -81,6 +87,8 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHoder holder, int position) {
+        if (mList.isEmpty())
+            return;
         containerInfor infor = (containerInfor) mList.get(position);
         holder.ctIcon.setBackgroundResource(infor.iconId);
         holder.ctName.setText(infor.name);
@@ -109,6 +117,7 @@ class MyViewHoder extends RecyclerView.ViewHolder {
     TextView ctVersion;
     TextView ctName;
     LinearLayout ctIcon;
+
     // CardView card;
     public MyViewHoder(@NonNull ListContainerBinding binding) {
         super(binding.getRoot());
