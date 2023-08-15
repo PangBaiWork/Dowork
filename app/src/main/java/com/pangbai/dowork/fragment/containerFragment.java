@@ -50,11 +50,13 @@ public class containerFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        // binding = FragmentContainerBinding.inflate(inflater);
 
+
+
         binding.ctAdd.setOnClickListener(this);
         binding.ctDelete.setOnClickListener(this);
         binding.ctRename.setOnClickListener(this);
         executorService = Executors.newFixedThreadPool(1);
-        doInBackground();
+       // doInBackground();
 
 
         return binding.getRoot();
@@ -128,9 +130,9 @@ public class containerFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onResume() {
-        doInBackground();
+       // doInBackground();
         super.onResume();
-        //doInBackground();
+        doInBackground();
     }
 
 
@@ -143,8 +145,8 @@ public class containerFragment extends Fragment implements View.OnClickListener{
                 List ctList= containerInfor.setInforList(ctName);
                 
                 uiThreadUtil.runOnUiThread(() -> {
-                    binding.ctList.setAdapter(adapter);
                     adapter.setData(ctList);
+                  //  adapter.notifyLastItem();
                    // adapter.notifyDataSetChanged();
                     binding.ctBar.setVisibility(View.VISIBLE);
                     binding.progressBar.setVisibility(View.GONE);
@@ -158,13 +160,14 @@ public class containerFragment extends Fragment implements View.OnClickListener{
     public void onDestroyView() {
         if (!executorService.isShutdown())
             executorService.shutdownNow();
-        adapter.setData(null);
+        //adapter.setData(null);
         binding.ctDelete.setOnClickListener(null);
         binding.ctRename.setOnClickListener(null);
         binding.ctAdd.setOnClickListener(null);
-        adapter.binding=null;
-        adapter.ItemChange=null;
+        //adapter.ItemChange=null;
+       // adapter=null;
         super.onDestroyView();
+       // binding=null;
     }
 
 
@@ -172,9 +175,9 @@ public class containerFragment extends Fragment implements View.OnClickListener{
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-      binding = FragmentContainerBinding.inflate(getLayoutInflater());
+    binding = FragmentContainerBinding.inflate(getLayoutInflater());
         adapter = new ctAdapter(containerInfor.ctList,mOnItemChange);
-
-        binding.ctList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.ctList.setAdapter(adapter);
+        binding.ctList.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }

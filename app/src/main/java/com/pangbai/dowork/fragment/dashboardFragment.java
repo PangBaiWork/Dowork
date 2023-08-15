@@ -53,7 +53,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
 
-
+      //  binding = FragmentDashboardBinding.inflate(getLayoutInflater());
     binding.ctTerminal.setOnClickListener(this);
     binding.ctStartStop.setOnClickListener(this);
     

@@ -3,6 +3,7 @@ package com.pangbai.dowork.tool;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,7 +21,7 @@ import java.util.List;
 public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
     List<containerInfor> mList;
     public OnItemChange ItemChange;
-    public   ListContainerBinding binding;
+   // public   ListContainerBinding binding;
     public static int selectedPosition = RecyclerView.NO_POSITION;
     //临时记录上次选择的位置
     int tmp = -1;
@@ -41,19 +42,19 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
     @Override
     public MyViewHoder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        binding = ListContainerBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-
-        MyViewHoder myViewHoder = new MyViewHoder(binding);
-        background = binding.getRoot().getBackground();
-
-        /////////从配置文件获取当前的容器
+        View mview = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_container, parent, false);
+        MyViewHoder myViewHoder = new MyViewHoder(mview);
+        background = mview.getBackground();
         String Name = PrefStore.getProfileName(parent.getContext());
         containerInfor CurrentContainer = containerInfor.getContainerByName(Name);
+
+
+        /////////从配置文件获取当前的容器
+        tmp =selectedPosition;
 
         if (CurrentContainer != null) {
             selectedPosition = containerInfor.ctList.indexOf(CurrentContainer);
             ItemChange.OnItemChange(CurrentContainer);
-
         } else {
             if (containerInfor.ctList.isEmpty())
                 return myViewHoder;
@@ -63,11 +64,14 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
             ItemChange.OnItemChange(current);
 
         }
+
+            //PrefStore.changeProfile(parent.getContext(), current.name);
+
         ////////列表项目点击
         myViewHoder.itemView.setOnClickListener(v -> {
             if (selectedPosition != myViewHoder.getAdapterPosition()) {
                 // 点击了未选中的项，更新选中的位置
-                tmp = selectedPosition;
+                // selectedPosition;
                 selectedPosition = myViewHoder.getAdapterPosition();
                 containerInfor infor = mList.get(selectedPosition);
                 PrefStore.changeProfile(v.getContext(), infor.name);
@@ -77,14 +81,17 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
             // 通知RecyclerView刷新列表项，以显示选中效果
         });
         ////////按钮点击
-        binding.ctRunConfigure.setOnClickListener(view -> {
+        mview.findViewById(R.id.ct_run_configure).setOnClickListener(view -> {
             PrefStore.changeProfile(view.getContext(), mList.get(myViewHoder.getAdapterPosition()).name);
             util.startActivity(view.getContext(), PropertiesActivity.class, false);
         });
         return myViewHoder;
     }
 
-
+    public void  notifyLastItem(){
+        if (tmp!=-1)
+             notifyItemChanged(tmp);
+    }
     @Override
     public void onBindViewHolder(@NonNull MyViewHoder holder, int position) {
         if (mList.isEmpty())
@@ -100,6 +107,8 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
             holder.itemView.setBackgroundResource(R.drawable.card_border);
         else
             holder.itemView.setBackground(background);
+
+
     }
 
     @Override
@@ -119,11 +128,11 @@ class MyViewHoder extends RecyclerView.ViewHolder {
     LinearLayout ctIcon;
 
     // CardView card;
-    public MyViewHoder(@NonNull ListContainerBinding binding) {
-        super(binding.getRoot());
-        ctVersion = binding.ctVersion;
-        ctName = binding.ctName;
-        ctIcon = binding.ctIcon;
+    public MyViewHoder(@NonNull View view) {
+        super(view);
+        ctVersion = view.findViewById(R.id.ct_version);
+        ctName = view.findViewById(R.id.ct_name);
+        ctIcon =view.findViewById(R.id.ct_icon);
         // card=binding.getRoot();
     }
 }
