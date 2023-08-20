@@ -1,9 +1,14 @@
 package com.pangbai.dowork.fragment;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,12 +17,14 @@ import androidx.fragment.app.Fragment;
 import com.pangbai.dowork.TermActivity;
 import com.pangbai.dowork.databinding.FragmentDashboardBinding;
 import com.pangbai.dowork.databinding.FragmentDisplayBinding;
+import com.pangbai.dowork.service.display;
+import com.pangbai.dowork.tool.jni;
 import com.pangbai.dowork.tool.util;
 
 
-
-public class diaplayFragment extends Fragment {
+public class diaplayFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     FragmentDisplayBinding binding;
+    public static boolean isInternal = true;
 
 
     @Nullable
@@ -27,6 +34,9 @@ public class diaplayFragment extends Fragment {
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
         binding = FragmentDisplayBinding.inflate(inflater);
+        binding.diaplayExternal.setOnClickListener(this);
+        binding.diaplayInternal.setOnClickListener(this);
+        binding.switchXserver.setOnCheckedChangeListener(this);
         return binding.getRoot();
     }
 
@@ -34,7 +44,55 @@ public class diaplayFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding=null;
+        binding = null;
+    }
+
+    public void switchXServer(boolean isInternal) {
+        TextView on;
+        TextView off;
+        on = isInternal ? binding.diaplayInternal : binding.diaplayExternal;
+        off = !isInternal ? binding.diaplayInternal : binding.diaplayExternal;
+        on.setBackgroundResource(0);
+        on.setTextColor(Color.BLACK);
+        off.setBackgroundColor(Color.BLACK);
+        off.setTextColor(Color.WHITE);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view == binding.diaplayInternal)
+            isInternal = true;
+        else if (view == binding.diaplayExternal)
+            isInternal = false;
+        switchXServer(isInternal);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        if (isChecked) {
+            Intent mIntent = new Intent(getContext(), display.class);
+            mIntent.putExtra("action", display.action_startX);
+            if (isInternal){
+                new Thread() {
+                    @Override
+                    public void run() {
+                        //Log.e("Xvfb", "开启");
+                        final int a = jni.initxvfb();
+                    }
+                }.start();
+                mIntent.putExtra("value", display.value_internal);}
+            else
+                mIntent.putExtra("value", display.value_external);
+
+          getContext().startService(mIntent);
+            Toast.makeText(getContext(), "start", Toast.LENGTH_LONG).show();
+        } else {
+            if (display.mService != null)
+                display.mService.stopSelf();
+            Toast.makeText(getContext(), "stop", Toast.LENGTH_LONG).show();
+        }
+
+
     }
 }
 

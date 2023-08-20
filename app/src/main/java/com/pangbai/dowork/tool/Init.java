@@ -16,7 +16,9 @@ public class Init {
    public static String linuxDeployDirPath;
    public static  String fontPath;
    public  static  String keyPath;
+    public  static  String tmpPath;
    public static String binDirPath;
+
  //  public static String shellPath;
    public static String busyboxPath;
     public  Init(Activity ct){

@@ -37,11 +37,11 @@ public class containerFragment extends Fragment implements View.OnClickListener{
         @Override
         public void OnItemChange(containerInfor infor) {
             binding.ctMethod.setText(infor.method.toUpperCase());
-            currentContainer=infor;
+            containerInfor.ct=infor;
         }};
     FragmentContainerBinding binding;
     ctAdapter adapter;
-    containerInfor currentContainer;
+   // containerInfor currentContainer;
     private ExecutorService  executorService = Executors.newFixedThreadPool(1);;
 
 
@@ -50,13 +50,10 @@ public class containerFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        // binding = FragmentContainerBinding.inflate(inflater);
 
-
-
         binding.ctAdd.setOnClickListener(this);
         binding.ctDelete.setOnClickListener(this);
         binding.ctRename.setOnClickListener(this);
-        executorService = Executors.newFixedThreadPool(1);
-       // doInBackground();
+        executorService = Executors.newSingleThreadExecutor();
 
 
         return binding.getRoot();
@@ -84,26 +81,26 @@ public class containerFragment extends Fragment implements View.OnClickListener{
             if (containerSize==1){
                 Toast.makeText(getContext(),"请确保至少一个容器",Toast.LENGTH_SHORT).show();
                 return;}
-            if (currentContainer!=null)
+            if (containerInfor.ct!=null)
                     dialogUtils.showConfirmationDialog(getContext(),
                             "删除容器",
-                            "确定要删除"+currentContainer.name+"吗？你将会丢失容器的数据。",
+                            "确定要删除"+containerInfor.ct.name+"吗？你将会丢失容器的数据。",
                             "确认删除",
                             "取消",
                             () -> {
-                                Dialog mdialog= dialogUtils.showCustomLayoutDialog(getContext(),"删除容器"+currentContainer.name, R.layout.dialog_loading);
+                                Dialog mdialog= dialogUtils.showCustomLayoutDialog(getContext(),"删除容器"+containerInfor.ct.name, R.layout.dialog_loading);
                                 new Thread(){
                                     @Override
                                     public void run() {
-                                    boolean result= containerInfor.reMoveContainer(currentContainer);
+                                    boolean result= containerInfor.reMoveContainer(containerInfor.ct);
                                      mdialog.dismiss();
                                      if(!result)
                                          return;
                                      if (--ctAdapter.selectedPosition<0)
                                         ctAdapter.selectedPosition=0;
-                                    containerInfor.ctList.remove(currentContainer);
-                                    currentContainer= containerInfor.ctList.get(ctAdapter.selectedPosition);
-                                    PrefStore.changeProfile(getContext(),currentContainer.name);
+                                    containerInfor.ctList.remove(containerInfor.ct);
+                                    containerInfor.ct= containerInfor.ctList.get(ctAdapter.selectedPosition);
+                                    PrefStore.changeProfile(getContext(),containerInfor.ct.name);
                                         uiThreadUtil.runOnUiThread(() ->{ adapter.notifyDataSetChanged();});
                                     }}.start();},
                             null);
@@ -118,7 +115,7 @@ public class containerFragment extends Fragment implements View.OnClickListener{
                         File oldFile = PrefStore.getPropertiesConfFile(getContext());
                         File newFile = new File(PrefStore.getEnvDir(getContext()) + "/config/" + userInput + ".conf");
                         oldFile.renameTo(newFile);
-                        currentContainer.name=userInput;
+                        containerInfor.ct.name=userInput;
                         adapter.notifyDataSetChanged();
                         PrefStore.changeProfile(getContext(),userInput);
             });
@@ -130,8 +127,8 @@ public class containerFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onResume() {
-       // doInBackground();
         super.onResume();
+        Toast.makeText(getActivity(),"resume",Toast.LENGTH_LONG).show();
         doInBackground();
     }
 
@@ -145,10 +142,9 @@ public class containerFragment extends Fragment implements View.OnClickListener{
                 List ctList= containerInfor.setInforList(ctName);
                 
                 uiThreadUtil.runOnUiThread(() -> {
+                  //  adapter.setData(null);
                     adapter.setData(ctList);
-                  //  adapter.notifyLastItem();
-                   // adapter.notifyDataSetChanged();
-                    binding.ctBar.setVisibility(View.VISIBLE);
+
                     binding.progressBar.setVisibility(View.GONE);
                 });
 
@@ -160,24 +156,19 @@ public class containerFragment extends Fragment implements View.OnClickListener{
     public void onDestroyView() {
         if (!executorService.isShutdown())
             executorService.shutdownNow();
-        //adapter.setData(null);
-        binding.ctDelete.setOnClickListener(null);
-        binding.ctRename.setOnClickListener(null);
-        binding.ctAdd.setOnClickListener(null);
-        //adapter.ItemChange=null;
-       // adapter=null;
-        super.onDestroyView();
-       // binding=null;
+        Toast.makeText(getActivity(),"destory",Toast.LENGTH_LONG).show();
+        adapter.ItemChange=null;
+     super.onDestroyView();
     }
-
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
-    binding = FragmentContainerBinding.inflate(getLayoutInflater());
+        binding = FragmentContainerBinding.inflate(getLayoutInflater());
         adapter = new ctAdapter(containerInfor.ctList,mOnItemChange);
         binding.ctList.setAdapter(adapter);
         binding.ctList.setLayoutManager(new LinearLayoutManager(getContext()));
     }
+
+
 }

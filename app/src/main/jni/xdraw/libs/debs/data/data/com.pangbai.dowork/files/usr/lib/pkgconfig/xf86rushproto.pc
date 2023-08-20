@@ -1,0 +1,7 @@
+prefix=/data/data/com.pangbai.dowork/files/usr
+includedir=${prefix}/include
+ 
+Name: XF86RushProto
+Description: XF86Rush extension headers
+Version: 1.1.2
+Cflags: -I${includedir}

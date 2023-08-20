@@ -50,10 +50,11 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
 
 
         /////////从配置文件获取当前的容器
-        tmp =selectedPosition;
+
 
         if (CurrentContainer != null) {
             selectedPosition = containerInfor.ctList.indexOf(CurrentContainer);
+
             ItemChange.OnItemChange(CurrentContainer);
         } else {
             if (containerInfor.ctList.isEmpty())
@@ -73,6 +74,7 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
                 // 点击了未选中的项，更新选中的位置
                 // selectedPosition;
                 selectedPosition = myViewHoder.getAdapterPosition();
+                tmp=selectedPosition;
                 containerInfor infor = mList.get(selectedPosition);
                 PrefStore.changeProfile(v.getContext(), infor.name);
                 ItemChange.OnItemChange(infor);
@@ -88,10 +90,6 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
         return myViewHoder;
     }
 
-    public void  notifyLastItem(){
-        if (tmp!=-1)
-             notifyItemChanged(tmp);
-    }
     @Override
     public void onBindViewHolder(@NonNull MyViewHoder holder, int position) {
         if (mList.isEmpty())

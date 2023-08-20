@@ -1,0 +1,9 @@
+prefix=/data/data/com.pangbai.dowork/files/usr
+exec_prefix=${prefix}
+libdir=/data/data/com.pangbai.dowork/files/usr/lib
+includedir=${prefix}/include
+
+Name: XTrans
+Description: Abstract network code for X
+Version: 1.5.0
+Cflags: -I${includedir} -D_DEFAULT_SOURCE -D_BSD_SOURCE -DHAS_FCHOWN -DHAS_STICKY_DIR_BIT

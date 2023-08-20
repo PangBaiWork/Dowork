@@ -24,6 +24,7 @@ public class containerInfor {
     public String path;
     public int iconId;
     public int size;
+   public static containerInfor ct;
 
     public containerInfor(String methon, String name, String version, int iconId, String path) {
         this.method = methon;

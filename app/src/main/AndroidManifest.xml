@@ -25,7 +25,7 @@
             android:name=".service.mainService"
             android:enabled="true"
             android:exported="true" />
-
+        <service android:name="com.pangbai.dowork.service.display"/>
         <activity
             android:name=".PropertiesActivity"
             android:exported="false"
@@ -39,6 +39,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:configChanges="orientation|keyboard|keyboardHidden|navigation"
+            android:windowSoftInputMode="adjustPan|stateVisible"
             android:theme="@style/ATheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

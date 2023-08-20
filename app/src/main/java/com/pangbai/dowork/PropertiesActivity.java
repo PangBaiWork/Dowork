@@ -126,6 +126,7 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
 
     private void exitConfirm() {
         if (!isSaved) {
+
             dialogUtils.showConfirmationDialog(this,
                     "配置文件未保存",
                     "确定要放弃修改吗？你将会丢失已修改的数据。",
@@ -133,9 +134,12 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
                     "退出",
                     () -> {
                         PrefStore.dumpProperties(PropertiesActivity.this);
+                        PrefStore.changeProfile(this,containerInfor.ct.name);
                         finish();
+
                     },
-                    () -> finish());
+                    () ->{ PrefStore.changeProfile(this,containerInfor.ct.name);
+                            finish();});
         } else
             finish();
     }
