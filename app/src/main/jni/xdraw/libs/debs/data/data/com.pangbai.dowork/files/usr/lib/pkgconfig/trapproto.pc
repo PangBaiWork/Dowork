@@ -1,8 +1,0 @@
-prefix=/data/data/com.pangbai.dowork/files/usr
-includedir=${prefix}/include
- 
-Name: TrapProto
-Description: Trap extension headers
-Version: 3.4.3
-Requires: xt
-Cflags: -I${includedir}

@@ -1,7 +1,0 @@
-prefix=/data/data/com.pangbai.dowork/files/usr
-includedir=${prefix}/include
- 
-Name: DMXProto
-Description: DMX extension headers
-Version: 2.3.1
-Cflags: -I${includedir}

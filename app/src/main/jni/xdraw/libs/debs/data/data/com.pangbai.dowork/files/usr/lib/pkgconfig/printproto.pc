@@ -1,8 +1,0 @@
-prefix=/data/data/com.pangbai.dowork/files/usr
-includedir=${prefix}/include
-
-Name: PrintProto
-Description: Print extension headers
-Version: 1.0.5
-Requires.private: xau
-Cflags: -I${includedir}

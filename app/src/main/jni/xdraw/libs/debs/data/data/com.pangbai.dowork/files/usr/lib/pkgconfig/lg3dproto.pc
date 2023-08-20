@@ -1,7 +1,0 @@
-prefix=/data/data/com.pangbai.dowork/files/usr
-includedir=${prefix}/include
- 
-Name: Lg3dProto
-Description: LGE extension headers
-Version: 5.0
-Cflags: -I${includedir}
