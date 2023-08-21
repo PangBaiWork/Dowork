@@ -73,13 +73,6 @@ public class diaplayFragment extends Fragment implements View.OnClickListener, C
             Intent mIntent = new Intent(getContext(), display.class);
             mIntent.putExtra("action", display.action_startX);
             if (isInternal){
-                new Thread() {
-                    @Override
-                    public void run() {
-                        //Log.e("Xvfb", "开启");
-                        final int a = jni.initxvfb();
-                    }
-                }.start();
                 mIntent.putExtra("value", display.value_internal);}
             else
                 mIntent.putExtra("value", display.value_external);

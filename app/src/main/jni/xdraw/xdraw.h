@@ -8,5 +8,6 @@ static bool showImage(ANativeWindow  *mANativeWindow, XImage *image);
 
 static void draw2(ANativeWindow_Buffer *buffer, XImage* image);
 static void draw(ANativeWindow_Buffer *buffer, XImage *image);
-
+int checkClientOnline();
+void destroySrc();
 

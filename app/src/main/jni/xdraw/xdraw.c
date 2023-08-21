@@ -4,15 +4,14 @@
 #include <string.h>
 #include <jni.h>
 #include <unistd.h>
-#include "xdraw.h"
-#include <android/log.h>
-// Android
 #include <sys/socket.h>
 #include <sys/un.h>
+#include "xdraw.h"
 
+// Android
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
-
+#include <android/log.h>
 // X11
 #include <X11/Xutil.h>
 #include<X11/extensions/XTest.h>
@@ -20,25 +19,25 @@
 
 
 bool unix_socket();
+
 Display *mdisplay = NULL;
 
-char displayEnv[512];
+void alog(const char *tag, const char *message) {
+    __android_log_print(ANDROID_LOG_INFO, tag, "%s", message);
+}
 
+//char displayEnv[512];
 static bool X11_init(const char *display_ip, int display_id) {
     char displayEnv[512];
     memset(displayEnv, '\0', sizeof(displayEnv));
 
     if (display_ip == NULL) {
-        __android_log_print(ANDROID_LOG_INFO, "tag1", "null");
-
         sprintf(displayEnv, "DISPLAY=unix/:0.0");
     } else {
         sprintf(displayEnv, "DISPLAY=%s:%d", display_ip, display_id);
     }
     putenv(displayEnv);
     mdisplay = XOpenDisplay(NULL);
-
-
 
     if (mdisplay == NULL)
         return false;
@@ -65,21 +64,10 @@ Java_com_pangbai_dowork_tool_jni_init(JNIEnv *env, jobject thiz, jboolean state,
         x11_init_state = X11_init(display_ip, (int) display_id);
     }
     if (mdisplay != NULL) {
-        unsigned int nchildren_return = 0;
-        Window tn;
-        Window root_return;
-        Window *children_return;
-        XQueryTree(mdisplay, DefaultRootWindow(mdisplay), &root_return, &tn, &children_return,
-                   &nchildren_return);
-        if (nchildren_return > 0) {
-
-            return XGetImage(mdisplay, RootWindow(mdisplay, 0), 0, 0, DisplayWidth(mdisplay, 0),
-                             DisplayHeight(mdisplay, 0), ~0, ZPixmap)->bytes_per_line;
-        }
-        return -1;
+        return checkClientOnline();
     } else {
+        //xserver and xclient doesn't launch
         return -2;
-//ret = (*env)->NewStringUTF(env, getenv("DISPLAY"));
     }
 }
 
@@ -99,9 +87,6 @@ Java_com_pangbai_dowork_tool_jni_startx(JNIEnv *env, jobject thiz, jobject jsurf
     bool isRunning = true;
 
 //获取Xserver的根窗口复制给它
-
-
-
 //Xserver图像结构体用于存窗口中的图像数据
     XImage *image;
 
@@ -111,9 +96,9 @@ Java_com_pangbai_dowork_tool_jni_startx(JNIEnv *env, jobject thiz, jobject jsurf
 
 //判断上个函数的返回结果是否为空
 
-    XDefineCursor(mdisplay, desktop, XCreateFontCursor(mdisplay, XC_circle));
+  //  XDefineCursor(mdisplay, desktop, XCreateFontCursor(mdisplay, XC_circle));
 
-    XFlush(mdisplay);
+   // XFlush(mdisplay);
 
     if (desktop == false)
         return (*env)->NewStringUTF(env, "F3");
@@ -136,14 +121,13 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
 
     while (isRunning) {
 
-//原生窗口用于等会显示从Xserver获取的图像
         ANativeWindow *mANativeWindow = NULL;
 
 //获取窗口从Java Surfave
 
         mANativeWindow = ANativeWindow_fromSurface(env, jsurface);
-        if (mANativeWindow == NULL)
-            continue;
+        if (mANativeWindow == NULL){
+            continue;}
 
 
 //设置窗口图像格式RGBA 8888
@@ -160,8 +144,17 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
 //图像格式RGB888
 
         image = XGetImage(mdisplay, desktop, 0, 0, width, height, ~0, ZPixmap);
-        if (image == NULL)
-            continue;
+        if (image == NULL) {
+            alog("destroy","no window");
+            if (checkClientOnline() != -1)
+                continue;
+            else {
+                alog("destroy","no window");
+                destroySrc();
+                break;
+            }
+        }
+
         showImage(mANativeWindow, image);
 //释放X图像结构体
 
@@ -218,6 +211,28 @@ static void draw2(ANativeWindow_Buffer *buffer, XImage *image) {
 }
 
 
+int checkClientOnline() {
+    unsigned int nchildren_return = 0;
+    Window tn;
+    Window root_return;
+    Window *children_return;
+    XQueryTree(mdisplay, DefaultRootWindow(mdisplay), &root_return, &tn, &children_return,
+               &nchildren_return);
+    if (nchildren_return > 0) {
+
+        return XGetImage(mdisplay, RootWindow(mdisplay, 0), 0, 0, DisplayWidth(mdisplay, 0),
+                         DisplayHeight(mdisplay, 0), ~0, ZPixmap)->bytes_per_line;
+    }
+    return -1;
+
+}
+
+void destroySrc() {
+    XDestroyWindow(mdisplay, desktop);
+    XCloseDisplay(mdisplay);
+
+}
+
 bool unix_socket() {
     int sockfd;
     struct sockaddr_un server_addr;
@@ -236,7 +251,7 @@ bool unix_socket() {
     strncpy(server_addr.sun_path, socket_path, sizeof(server_addr.sun_path) - 1);
 
     // 连接到服务器
-    if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
+    if (connect(sockfd, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1) {
         perror("connect");
         close(sockfd);
         __android_log_print(ANDROID_LOG_INFO, "tag2", "errro");
@@ -250,7 +265,7 @@ bool unix_socket() {
     if (!mdisplay) {
         __android_log_print(ANDROID_LOG_INFO, "tag3", "display");
         fprintf(stderr, "Unable to open display\n");
-      //  close(sockfd);
+        //  close(sockfd);
         return false;
     }
 
@@ -263,6 +278,8 @@ bool unix_socket() {
 
     return true;
 }
+
+
 
 
 

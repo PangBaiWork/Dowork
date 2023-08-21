@@ -40,30 +40,20 @@ extern  char* xbuffer;
 int height;
 int width;
 
-static void draw(ANativeWindow_Buffer *buffer, char *image,int perline){
-uint16_t *rect= (uint16_t *)buffer->bits;
-for(int y=0 ; y< height ; ++y){
-for(int x=0 ; x< width ; ++x)
-  rect[x] =(((uint16_t)(*(image+y*perline+x*4+2) & (int)248))<<8) |
-         (((uint16_t)(*(image+y*perline+x*4+1)&(int)252))<<3) |
-         (((uint16_t)(*(image+y*perline+x*4+0)&(int)252))>>3);
-    rect+=buffer->stride;
-	}
-	}
 
-JNIEXPORT jint JNICALL Java_com_pangbai_dowork_tool_jni_initxvfb(JNIEnv *env, jobject thiz){
-
-    char buf[] = "Xvfb :0 -ac -listen tcp -screen 0 800x600x24";
-	char *args[8] = { 0 }; 
-	char *envs[1]={"LD_LIBRARY_PATH=/data/data/com.pangbai.dowork/files/lib"};
-	int num=0;
-	split(buf, " ", args, &num); //调用函数进行分割 
-    isRunning=0;
-	//	return  (*env)->NewStringUTF(env,"3");
-	 height=600;
-	 width=800;
-	return main(num,args);
+JNIEXPORT jint JNICALL Java_com_pangbai_dowork_tool_jni_initxvfb(JNIEnv *env, jobject thiz, jstring j_screen) {
+    char *resolution = (*env)->GetStringUTFChars(env, j_screen, NULL);
+    char buf[100];
+    snprintf(buf, sizeof(buf), "Xvfb :0 -ac -listen tcp -screen 0 %s", resolution);
+    char *args[8] = { 0 };
+    char *envs[1] = {"LD_LIBRARY_PATH=/data/data/com.pangbai.dowork/files/lib"};
+    int num = 0;
+    split(buf, " ", args, &num); // 调用函数进行分割
+	(*env)->ReleaseStringUTFChars(env, j_screen, resolution);
+    return main(num, args);
 }
+
+
 
 
 JNIEXPORT jint JNICALL Java_com_pangbai_dowork_tool_jni_startdraw(JNIEnv *env, jobject thiz,jobject jsurface,jint perline){

@@ -15,14 +15,12 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 
 
 import com.pangbai.dowork.R;
 
-import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.jni;
 
 import java.util.Timer;
@@ -84,7 +82,7 @@ public class display extends Service implements OnTouchListener, OnClickListener
         super.onCreate();
         mService = this;
         wm = (WindowManager) getApplicationContext().getSystemService(WINDOW_SERVICE);
-        contentView = LayoutInflater.from(getApplication()).inflate(R.layout.display, null);
+        contentView = LayoutInflater.from(getApplication()).inflate(R.layout.float_display, null);
         if (param == null) param = new WindowManager.LayoutParams();
         /** 设置参数 */
         param.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -175,8 +173,7 @@ public class display extends Service implements OnTouchListener, OnClickListener
      new Thread() {
             @Override
             public void run() {
-                //Log.e("Xvfb", "开启");
-                final int a = jni.initxvfb();
+                final int a = jni.initxvfb("800x600x24");
             }
         }.start();
     }
@@ -184,11 +181,11 @@ public class display extends Service implements OnTouchListener, OnClickListener
     boolean internet;
     public void listenDisplay(int type) {
 
-        if (type==value_internal)
+        if (type==value_internal){
             internet=false;
+            startXvfb();}
         if (type==value_external)
             internet=true;
-
         listen = "127.0.0.1";
         new Thread() {
             @Override
@@ -199,13 +196,13 @@ public class display extends Service implements OnTouchListener, OnClickListener
                     } catch (InterruptedException e) {
                     }
                     int perline = jni.init(internet,listen , 0);
-                    Log.e("大小",  "是"+perline);
+                    Log.e("X11",  "return "+perline);
                     if (!isStarting && perline != -1&&perline != -2) {
-                        Log.e("大小cz",  "是");
+                        Log.e("X11",  "sucess");
                         isStarting = true;
                         updateDisplay(800, 600);
                         String c = jni.startx(screen.getHolder().getSurface());
-
+                        updateDisplay(0, 0);
                     }
                 }
             }
@@ -230,7 +227,7 @@ public class display extends Service implements OnTouchListener, OnClickListener
         if (screen == null)
             return;
         if (width == 0) {
-            Log.e("dowork", "为零");
+            Log.e("dowork", "width=0");
         }
         final ViewGroup.LayoutParams displayLayout = screen.getLayoutParams();
         displayLayout.width = width;
