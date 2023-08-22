@@ -7,15 +7,31 @@
 	android:layout_height="match_parent"
 	android:id="@+id/displaymove">
 
-	<androidx.cardview.widget.CardView
+	<LinearLayout
+		android:orientation="horizontal"
 		android:layout_width="match_parent"
 		android:layout_height="10dp"
-		android:id="@+id/displaybar"/>
+		android:gravity="right"
+		android:id="@+id/displaybar">
+		<RelativeLayout
+			android:layout_width="8dp"
+			android:layout_height="8dp"
+			android:rotation="90"
+			android:layout_marginLeft="3dp"
+			android:background="@drawable/add"/>
+		<RelativeLayout
+			android:layout_width="8dp"
+			android:layout_height="8dp"
+			android:rotation="90"
+			android:layout_marginLeft="3dp"
+			android:background="@drawable/add"/>
+	</LinearLayout>
 
 	<SurfaceView
 		android:layout_height="0dp"
+		android:layout_weight="1"
 		android:id="@+id/surface"
-		android:layout_width="0dp"/>
+		android:layout_width="match_parent"/>
 
 </LinearLayout>
 

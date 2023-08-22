@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,10 +20,15 @@ import android.view.WindowManager;
 import androidx.cardview.widget.CardView;
 
 
+import com.pangbai.dowork.Command.cmdExer;
 import com.pangbai.dowork.R;
 
+import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.jni;
+import com.pangbai.dowork.tool.uiThreadUtil;
+import com.pangbai.dowork.tool.util;
 
+import java.io.IOException;
 import java.util.Timer;
 
 public class display extends Service implements OnTouchListener, OnClickListener {
@@ -30,6 +36,7 @@ public class display extends Service implements OnTouchListener, OnClickListener
 
     public static final int action_startX = 1;
     public static final int action_startXvfb = 2;
+    public static final int action_stopXvfb = 3;
     public static final int value_internal = 1;
     public static final int value_external = 2;
 
@@ -69,7 +76,8 @@ public class display extends Service implements OnTouchListener, OnClickListener
     boolean isStarting = false;
     static SurfaceView screen;
     OnTouchListener touch;
-    Thread Xvfb;
+    Thread Xvfb,Xdraw;
+    Process process_Xvfb;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -99,8 +107,8 @@ public class display extends Service implements OnTouchListener, OnClickListener
         // param.x = 0;
         // param.y = 0;
         // 设置窗口的宽高,这里为自动
-        param.width = -2;
-        param.height = -2;
+        param.width = 0;
+        param.height = 0;
         wm.addView(contentView, param);
 
         touch = new OnTouchListener() {
@@ -148,9 +156,22 @@ public class display extends Service implements OnTouchListener, OnClickListener
                 case action_startX:
                     int type = intent.getIntExtra("value", 0);
                     listenDisplay(type);
+
                     break;
                 case action_startXvfb:
                     startXvfb();
+                    break;
+                case action_stopXvfb:
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        jni.stopDraw();
+                        hideDisplay();
+                        if (process_Xvfb != null ) {
+                            Log.e("xvfb", "destroy");
+                            process_Xvfb.destroy();
+                        }
+
+                    }
+                    break;
 
             }
 
@@ -169,25 +190,46 @@ public class display extends Service implements OnTouchListener, OnClickListener
         mService = null;
         super.onDestroy();
     }
-    public  void startXvfb(){
-     new Thread() {
+
+    public void startXvfb() {
+        /*
+        can't stop xvfb,
+         */
+ /*    new Thread() {
             @Override
             public void run() {
                 final int a = jni.initxvfb("800x600x24");
             }
-        }.start();
+        }.start();*/
+
+        Xvfb = new Thread() {
+            @Override
+            public void run() {
+                cmdExer.execute(Init.binDirPath + "/Xvfb :0 -ac -listen tcp -screen 0 " + "800x600x24", Init.isRoot, false);
+                process_Xvfb= cmdExer.process;
+            }
+        };
+        Xvfb.setName("Xvfb");
+        Xvfb.start();
+
+
     }
+
     String listen;
     boolean internet;
+
     public void listenDisplay(int type) {
 
-        if (type==value_internal){
-            internet=false;
-            startXvfb();}
-        if (type==value_external)
-            internet=true;
+        if (type == value_internal) {
+            internet = false;
+            startXvfb();
+        }
+        if (type == value_external)
+            internet = true;
+        if (Xdraw!=null&&Xdraw.isAlive())
+            return;
         listen = "127.0.0.1";
-        new Thread() {
+        Xdraw = new Thread() {
             @Override
             public void run() {
                 while (true) {
@@ -195,18 +237,24 @@ public class display extends Service implements OnTouchListener, OnClickListener
                         sleep(500);
                     } catch (InterruptedException e) {
                     }
-                    int perline = jni.init(internet,listen , 0);
-                    Log.e("X11",  "return "+perline);
-                    if (!isStarting && perline != -1&&perline != -2) {
-                        Log.e("X11",  "sucess");
+                    int result = jni.init(internet, listen, 0);
+                    //don't start ,-1 for xclient ,-2 for xvfb and xclient
+                    Log.e("X11", "return " + result);
+                    if (!isStarting && result != -1 && result != -2) {
+                        Log.e("X11", "start");
                         isStarting = true;
                         updateDisplay(800, 600);
+
                         String c = jni.startx(screen.getHolder().getSurface());
-                        updateDisplay(0, 0);
+                        Log.e("xdraw",c);
+
+
+                        isStarting = false;
                     }
                 }
             }
-        }.start();
+        };
+        Xdraw.start();
 
 
     /*
@@ -223,22 +271,17 @@ public class display extends Service implements OnTouchListener, OnClickListener
     }.start();*/
     }
 
-    public static void updateDisplay(int width, int height) {
-        if (screen == null)
-            return;
-        if (width == 0) {
-            Log.e("dowork", "width=0");
-        }
-        final ViewGroup.LayoutParams displayLayout = screen.getLayoutParams();
-        displayLayout.width = width;
-        displayLayout.height = height;
+    public  void updateDisplay(int width, int height) {
 
-        screen.post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        screen.setLayoutParams(displayLayout);
-                    }
-                });
+        param.height=height+  util.Dp2Px(this,10);;
+        param.width=width;
+        uiThreadUtil.runOnUiThread(() -> {
+            wm.updateViewLayout(contentView,param);
+            contentView.setVisibility(View.VISIBLE);
+
+        });
+    }
+    public void hideDisplay(){
+        uiThreadUtil.runOnUiThread(() -> contentView.setVisibility(View.GONE));
     }
 }

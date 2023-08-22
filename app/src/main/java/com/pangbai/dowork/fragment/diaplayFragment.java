@@ -56,6 +56,10 @@ public class diaplayFragment extends Fragment implements View.OnClickListener, C
         on.setTextColor(Color.BLACK);
         off.setBackgroundColor(Color.BLACK);
         off.setTextColor(Color.WHITE);
+        if (isInternal)
+            binding.switchXserver.setVisibility(View.VISIBLE);
+        else
+            binding.switchXserver.setVisibility(View.GONE);
     }
 
     @Override
@@ -69,19 +73,21 @@ public class diaplayFragment extends Fragment implements View.OnClickListener, C
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        Intent mIntent = new Intent(getContext(), display.class);
         if (isChecked) {
-            Intent mIntent = new Intent(getContext(), display.class);
+
             mIntent.putExtra("action", display.action_startX);
-            if (isInternal){
-                mIntent.putExtra("value", display.value_internal);}
-            else
+            if (isInternal) {
+                mIntent.putExtra("value", display.value_internal);
+            } else
                 mIntent.putExtra("value", display.value_external);
 
-          getContext().startService(mIntent);
+            getContext().startService(mIntent);
             Toast.makeText(getContext(), "start", Toast.LENGTH_LONG).show();
         } else {
-            if (display.mService != null)
-                display.mService.stopSelf();
+            mIntent.putExtra("action", display.action_stopXvfb);
+            getContext().startService(mIntent);
+
             Toast.makeText(getContext(), "stop", Toast.LENGTH_LONG).show();
         }
 

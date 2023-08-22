@@ -6,7 +6,7 @@
 #include "startxvfb.h"
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
-
+#include <signal.h>
 
 
 void split(char *src, const char *separator, char **dest, int *num) {
@@ -103,5 +103,8 @@ return 2000;
 }
 
 
-
-
+JNIEXPORT jstring JNICALL
+Java_com_pangbai_dowork_tool_jni_stopXvfb(JNIEnv *env, jclass clazz) {
+    raise(SIGTERM);
+    // TODO: implement stopXvfb()
+}

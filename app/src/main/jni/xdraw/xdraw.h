@@ -10,4 +10,4 @@ static void draw2(ANativeWindow_Buffer *buffer, XImage* image);
 static void draw(ANativeWindow_Buffer *buffer, XImage *image);
 int checkClientOnline();
 void destroySrc();
-
+bool isRunning;

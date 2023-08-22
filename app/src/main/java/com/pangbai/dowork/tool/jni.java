@@ -10,6 +10,8 @@ public class jni {
     public  static native String inputKey(int x,String s);
 
     public  static native int initxvfb(String screen);
+    public static native String stopXvfb();
+    public static native void stopDraw();
     public  static native int startdraw(Surface face,int a);
 
 

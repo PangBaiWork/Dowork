@@ -26,6 +26,7 @@ void alog(const char *tag, const char *message) {
     __android_log_print(ANDROID_LOG_INFO, tag, "%s", message);
 }
 
+
 //char displayEnv[512];
 static bool X11_init(const char *display_ip, int display_id) {
     char displayEnv[512];
@@ -52,7 +53,7 @@ Java_com_pangbai_dowork_tool_jni_init(JNIEnv *env, jobject thiz, jboolean state,
     bool x11_init_state = false;
     const char *display_ip;
 
-    jstring ret;
+   // jstring ret;
 
     if ((bool) state == true) {
         display_ip = (*env)->GetStringUTFChars(env, display_addr, 0);
@@ -60,7 +61,7 @@ Java_com_pangbai_dowork_tool_jni_init(JNIEnv *env, jobject thiz, jboolean state,
         display_ip = (const char *) NULL;
     }
     if (mdisplay == NULL) {
-        XInitThreads();
+
         x11_init_state = X11_init(display_ip, (int) display_id);
     }
     if (mdisplay != NULL) {
@@ -73,18 +74,19 @@ Java_com_pangbai_dowork_tool_jni_init(JNIEnv *env, jobject thiz, jboolean state,
 
 Window desktop;
 
-
+bool isRunning = true;
 JNIEXPORT jstring JNICALL
 Java_com_pangbai_dowork_tool_jni_startx(JNIEnv *env, jobject thiz, jobject jsurface) {
 //获取Surface
 
 //判断Surface是否为空
+    XInitThreads();
 
     if (jsurface == NULL)
         return (*env)->NewStringUTF(env, "F2");
 //bool类型线程是否运行
 
-    bool isRunning = true;
+
 
 //获取Xserver的根窗口复制给它
 //Xserver图像结构体用于存窗口中的图像数据
@@ -119,12 +121,10 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
 	 */
 //isRunning布尔值控制线程停此
 
-    while (isRunning) {
-
+    while (mdisplay!=NULL) {
         ANativeWindow *mANativeWindow = NULL;
 
 //获取窗口从Java Surfave
-
         mANativeWindow = ANativeWindow_fromSurface(env, jsurface);
         if (mANativeWindow == NULL){
             continue;}
@@ -143,7 +143,9 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
 
 //图像格式RGB888
 
+
         image = XGetImage(mdisplay, desktop, 0, 0, width, height, ~0, ZPixmap);
+      //  XSync(mdisplay, False);
         if (image == NULL) {
             alog("destroy","no window");
             if (checkClientOnline() != -1)
@@ -223,13 +225,18 @@ int checkClientOnline() {
         return XGetImage(mdisplay, RootWindow(mdisplay, 0), 0, 0, DisplayWidth(mdisplay, 0),
                          DisplayHeight(mdisplay, 0), ~0, ZPixmap)->bytes_per_line;
     }
+    XCloseDisplay(mdisplay);
+    mdisplay=NULL;
     return -1;
 
 }
 
 void destroySrc() {
+    if (mdisplay==NULL)
+        return;
     XDestroyWindow(mdisplay, desktop);
     XCloseDisplay(mdisplay);
+    mdisplay=NULL;
 
 }
 
@@ -280,10 +287,8 @@ bool unix_socket() {
 }
 
 
-
-
-
-
-    
-    
-  
+JNIEXPORT void JNICALL
+Java_com_pangbai_dowork_tool_jni_stopDraw(JNIEnv *env, jclass clazz) {
+    destroySrc();
+    // TODO: implement stopDraw()
+}
