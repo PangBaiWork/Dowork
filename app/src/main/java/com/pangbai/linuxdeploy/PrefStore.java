@@ -33,7 +33,7 @@ import com.pangbai.linuxdeploy.PropertiesStore;
 
 public class PrefStore {
 
-    private final static SettingsStore SETTINGS = new SettingsStore();
+    public final static SettingsStore SETTINGS = new SettingsStore();
     private final static PropertiesStore PROPERTIES = new PropertiesStore();
     private final static int NOTIFY_ID = 1;
 

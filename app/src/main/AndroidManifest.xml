@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- ACCESS_SUPERUSER -->
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" /> <!-- 修改或删除 SD 卡中的内容 -->
@@ -25,7 +26,8 @@
             android:name=".service.mainService"
             android:enabled="true"
             android:exported="true" />
-        <service android:name="com.pangbai.dowork.service.display"/>
+        <service android:name="com.pangbai.dowork.service.display"
+         />
         <activity
             android:name=".PropertiesActivity"
             android:exported="false"

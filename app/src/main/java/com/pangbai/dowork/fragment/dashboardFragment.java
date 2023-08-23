@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.pangbai.dowork.R;
 import com.pangbai.dowork.databinding.FragmentDashboardBinding;
+import com.pangbai.dowork.service.display;
 import com.pangbai.dowork.service.mainService;
 import com.pangbai.dowork.service.mainServiceConnection;
 import com.pangbai.dowork.tool.IO;
@@ -85,6 +86,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
       executorService.submit(new Runnable() {
           @Override
           public void run() {
+              startXservice();
               size=IO.countDirSize(path);
               Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
               Debug.getMemoryInfo(memoryInfo);
@@ -116,7 +118,14 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    void startXservice(){
+        Intent intent = new Intent(getContext(), display.class);
+        intent.putExtra("action", display.action_startX);
+        int value = diaplayFragment.isXserverInternal(getContext()) ? display.value_internal : display.value_external;
+        intent.putExtra("value", value);
+       getContext().startService(intent);
 
+    }
 
     @Override
     public void onDestroyView() {

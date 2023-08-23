@@ -21,6 +21,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.pangbai.dowork.databinding.ActivityMainBinding;
+import com.pangbai.dowork.fragment.diaplayFragment;
+import com.pangbai.dowork.service.display;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.util;
 import com.pangbai.linuxdeploy.PrefStore;
@@ -39,27 +41,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         util.fullScreen(getWindow(), false);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-
-
-
-        //binding.navView.set
-
         ensureWindowPermission();
         NavHostFragment host = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_fragment);
-        ctr=  host.getNavController();
+        ctr = host.getNavController();
         NavigationUI.setupWithNavController(binding.navView, ctr);
+
+// 在需要的地方检查是否已经启动
+
+
         // host.getNavController().addOnDestinationChangedListener();
-       // ctr.popBackStack(ctr.getGraph().getStartDestination(),false);
+        // ctr.popBackStack(ctr.getGraph().getStartDestination(),false);
     }
 
 
     @Override
     public void onClick(View view) {
     }
-
-
-
 
 
     public void ensureWindowPermission() {
@@ -70,10 +67,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         "为运行必要服务,请授予本软件权限,开发者承诺权限将只用于服务范围以内的用途",
                         "授权",
                         "退出",
-                        () -> {Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                Uri.parse("package:" + getPackageName()));
-                                Toast.makeText(this, "请授予悬浮窗权限", Toast.LENGTH_LONG).show();
-                                startActivityForResult(intent, REQUEST_CODE_FLOATING_WINDOW);},
+                        () -> {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + getPackageName()));
+                            Toast.makeText(this, "请授予悬浮窗权限", Toast.LENGTH_LONG).show();
+                            startActivityForResult(intent, REQUEST_CODE_FLOATING_WINDOW);
+                        },
                         () -> finish());
             } else {
                 // 已经有悬浮窗权限，可以在此处理相关逻辑
@@ -102,8 +101,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
     @Override
-    public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+    public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
 
     }
 }

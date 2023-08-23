@@ -61,7 +61,7 @@ Java_com_pangbai_dowork_tool_jni_init(JNIEnv *env, jobject thiz, jboolean state,
         display_ip = (const char *) NULL;
     }
     if (mdisplay == NULL) {
-
+        XInitThreads();
         x11_init_state = X11_init(display_ip, (int) display_id);
     }
     if (mdisplay != NULL) {
@@ -122,6 +122,12 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
 //isRunning布尔值控制线程停此
 
     while (mdisplay!=NULL) {
+
+        if (checkClientOnline() == -1){
+            alog("destroy","no window");
+            // destroySrc();
+            break;
+        }
         ANativeWindow *mANativeWindow = NULL;
 
 //获取窗口从Java Surfave
@@ -146,15 +152,11 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
 
         image = XGetImage(mdisplay, desktop, 0, 0, width, height, ~0, ZPixmap);
       //  XSync(mdisplay, False);
+        //checkClientOnline();
+
+
         if (image == NULL) {
-            alog("destroy","no window");
-            if (checkClientOnline() != -1)
-                continue;
-            else {
-                alog("destroy","no window");
-                destroySrc();
-                break;
-            }
+            continue;
         }
 
         showImage(mANativeWindow, image);
@@ -222,8 +224,8 @@ int checkClientOnline() {
                &nchildren_return);
     if (nchildren_return > 0) {
 
-        return XGetImage(mdisplay, RootWindow(mdisplay, 0), 0, 0, DisplayWidth(mdisplay, 0),
-                         DisplayHeight(mdisplay, 0), ~0, ZPixmap)->bytes_per_line;
+        return 0;
+        //XGetImage(mdisplay, RootWindow(mdisplay, 0), 0, 0, DisplayWidth(mdisplay, 0),DisplayHeight(mdisplay, 0), ~0, ZPixmap)->bytes_per_line;
     }
     XCloseDisplay(mdisplay);
     mdisplay=NULL;

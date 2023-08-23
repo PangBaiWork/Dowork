@@ -2,7 +2,7 @@ package com.pangbai.linuxdeploy;
 
 import android.content.Context;
 
-class SettingsStore extends ParamUtils {
+public final class SettingsStore extends ParamUtils {
 
     public static final String name = "settings_conf";
     private static final String[] params = {"chroot_dir", "profile"};

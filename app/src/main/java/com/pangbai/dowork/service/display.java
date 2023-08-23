@@ -1,5 +1,9 @@
 package com.pangbai.dowork.service;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,13 +20,18 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.app.NotificationCompat;
 
 
 import com.pangbai.dowork.Command.cmdExer;
 import com.pangbai.dowork.R;
 
+import com.pangbai.dowork.databinding.FloatDisplayBinding;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.jni;
 import com.pangbai.dowork.tool.uiThreadUtil;
@@ -30,6 +39,7 @@ import com.pangbai.dowork.tool.util;
 
 import java.io.IOException;
 import java.util.Timer;
+import java.util.zip.Inflater;
 
 public class display extends Service implements OnTouchListener, OnClickListener {
 
@@ -40,26 +50,38 @@ public class display extends Service implements OnTouchListener, OnClickListener
     public static final int value_internal = 1;
     public static final int value_external = 2;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public void onClick(View p1) {
-        CardView view = contentView.findViewById(R.id.displaybar);
-        if (!canclick) {
-            contentView.findViewById(R.id.displaymove).setOnTouchListener(null);
-            view.setBackgroundColor(Color.parseColor("#FFC0CB"));
-            screen.setOnTouchListener(this);
-            canclick = true;
-        } else {
-            contentView.findViewById(R.id.displaymove).setOnTouchListener(touch);
-            view.setBackgroundColor(Color.WHITE);
-            screen.setOnTouchListener(null);
-            canclick = false;
+    public void onClick(View view) {
+        //RelativeLayout view = contentView.findViewById(R.id.displaybar);
+        if (view == binding.displayFullscreen) {
+            Toast.makeText(this, "full", Toast.LENGTH_LONG).show();
+        } else if (view == binding.displayClosescreen) {
+            jni.stopDraw();
+            hideDisplay();
+            Toast.makeText(this, "close", Toast.LENGTH_LONG).show();
+        } else if (view == binding.displayPin) {
+            if (!canclick) {
+                binding.displaymove.setOnTouchListener(null);
+                binding.displayPin.setRotation(-45);
+                //  binding.displayforebar.setBackgroundColor(Color.parseColor("#FFC0CB"));
+                binding.surface.setOnTouchListener(this);
+                canclick = true;
+            } else {
+                binding.surface.setOnTouchListener(touch);
+                //    binding.displayforebar.setBackgroundColor(Color.WHITE);
+                binding.displayPin.setRotation(0);
+
+                // binding.surface.setOnTouchListener(null);
+                canclick = false;
+            }
         }
+
     }
 
     @Override
     public boolean onTouch(View p1, MotionEvent p2) {
         // Toast.makeText(getApplication(), "b", Toast.LENGTH_SHORT).show();
-
         if (isStarting) {
             // Toast.makeText(getApplication(), "b", Toast.LENGTH_SHORT).show();
             jni.movePoint((int) p2.getX(), (int) p2.getY());
@@ -70,14 +92,15 @@ public class display extends Service implements OnTouchListener, OnClickListener
     public static display mService = null;
     WindowManager wm;
     boolean canclick = false;
-    static View contentView;
+    // static View contentView;
     WindowManager.LayoutParams param;
     Timer listenDisplay;
     boolean isStarting = false;
-    static SurfaceView screen;
+    //  static SurfaceView screen;
     OnTouchListener touch;
-    Thread Xvfb,Xdraw;
+    Thread Xvfb, Xdraw;
     Process process_Xvfb;
+    FloatDisplayBinding binding;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -90,7 +113,9 @@ public class display extends Service implements OnTouchListener, OnClickListener
         super.onCreate();
         mService = this;
         wm = (WindowManager) getApplicationContext().getSystemService(WINDOW_SERVICE);
-        contentView = LayoutInflater.from(getApplication()).inflate(R.layout.float_display, null);
+        //contentView = LayoutInflater.from(getApplication()).inflate(R.layout.float_display, null);
+        binding = FloatDisplayBinding.inflate(LayoutInflater.from(this));
+
         if (param == null) param = new WindowManager.LayoutParams();
         /** 设置参数 */
         param.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -109,7 +134,7 @@ public class display extends Service implements OnTouchListener, OnClickListener
         // 设置窗口的宽高,这里为自动
         param.width = 0;
         param.height = 0;
-        wm.addView(contentView, param);
+        wm.addView(binding.getRoot(), param);
 
         touch = new OnTouchListener() {
             int startx, starty, movex, movey, endx, endy;
@@ -134,15 +159,17 @@ public class display extends Service implements OnTouchListener, OnClickListener
                         starty = endy;
                         param.y += movey;
                         param.x += movex;
-                        wm.updateViewLayout(contentView, param);
+                        wm.updateViewLayout(binding.getRoot(), param);
                 }
                 return true;
             }
         };
-        contentView.findViewById(R.id.displaymove).setOnTouchListener(touch);
-        screen = contentView.findViewById(R.id.surface);
+        binding.surface.setOnTouchListener(touch);
+        binding.displayFullscreen.setOnClickListener(this);
+        binding.displayClosescreen.setOnClickListener(this);
         // screen.getHolder().getSurface();
-        contentView.findViewById(R.id.displaybar).setOnClickListener(this);
+        binding.displayPin.setOnClickListener(this);
+
     }
 
 
@@ -154,6 +181,8 @@ public class display extends Service implements OnTouchListener, OnClickListener
             int action = intent.getIntExtra("action", 0);
             switch (action) {
                 case action_startX:
+                    Notification notification = createNotification();
+                    startForeground(1, notification);
                     int type = intent.getIntExtra("value", 0);
                     listenDisplay(type);
 
@@ -162,15 +191,13 @@ public class display extends Service implements OnTouchListener, OnClickListener
                     startXvfb();
                     break;
                 case action_stopXvfb:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        jni.stopDraw();
-                        hideDisplay();
-                        if (process_Xvfb != null ) {
-                            Log.e("xvfb", "destroy");
-                            process_Xvfb.destroy();
-                        }
-
+                    jni.stopDraw();
+                    // hideDisplay();
+                    if (process_Xvfb != null) {
+                        Log.e("xvfb", "destroy");
+                        process_Xvfb.destroy();
                     }
+
                     break;
 
             }
@@ -180,13 +207,13 @@ public class display extends Service implements OnTouchListener, OnClickListener
         // screen.setOnTouchListener(this);
 
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
 
     @Override
     public void onDestroy() {
-        wm.removeView(contentView);
+        wm.removeView(binding.getRoot());
         mService = null;
         super.onDestroy();
     }
@@ -202,15 +229,9 @@ public class display extends Service implements OnTouchListener, OnClickListener
             }
         }.start();*/
 
-        Xvfb = new Thread() {
-            @Override
-            public void run() {
-                cmdExer.execute(Init.binDirPath + "/Xvfb :0 -ac -listen tcp -screen 0 " + "800x600x24", Init.isRoot, false);
-                process_Xvfb= cmdExer.process;
-            }
-        };
-        Xvfb.setName("Xvfb");
-        Xvfb.start();
+
+        cmdExer.execute(Init.binDirPath + "/Xvfb :0 -ac -listen tcp -screen 0 " + "800x600x24", false, false);
+        process_Xvfb = cmdExer.process;
 
 
     }
@@ -226,7 +247,7 @@ public class display extends Service implements OnTouchListener, OnClickListener
         }
         if (type == value_external)
             internet = true;
-        if (Xdraw!=null&&Xdraw.isAlive())
+        if (Xdraw != null && Xdraw.isAlive())
             return;
         listen = "127.0.0.1";
         Xdraw = new Thread() {
@@ -245,8 +266,9 @@ public class display extends Service implements OnTouchListener, OnClickListener
                         isStarting = true;
                         updateDisplay(800, 600);
 
-                        String c = jni.startx(screen.getHolder().getSurface());
-                        Log.e("xdraw",c);
+                        String c = jni.startx(binding.surface.getHolder().getSurface());
+                        Log.e("xdraw", c);
+                        hideDisplay();
 
 
                         isStarting = false;
@@ -271,17 +293,40 @@ public class display extends Service implements OnTouchListener, OnClickListener
     }.start();*/
     }
 
-    public  void updateDisplay(int width, int height) {
+    public void updateDisplay(int width, int height) {
 
-        param.height=height+  util.Dp2Px(this,10);;
-        param.width=width;
+        param.height = height + util.Dp2Px(this, 15);
+        ;
+        param.width = width;
         uiThreadUtil.runOnUiThread(() -> {
-            wm.updateViewLayout(contentView,param);
-            contentView.setVisibility(View.VISIBLE);
+            wm.updateViewLayout(binding.getRoot(), param);
+            binding.getRoot().setVisibility(View.VISIBLE);
 
         });
     }
-    public void hideDisplay(){
-        uiThreadUtil.runOnUiThread(() -> contentView.setVisibility(View.GONE));
+
+    public void hideDisplay() {
+        uiThreadUtil.runOnUiThread(() -> binding.getRoot().setVisibility(View.GONE));
     }
+
+    private Notification createNotification() {
+        String CHANNEL_ID = "ForegroundServiceChannel";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Foreground Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        // 创建通知
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Foreground Service")
+                .setContentText("Running...")
+                .setSmallIcon(R.drawable.ct_icon_archlinux);
+
+
+        return builder.build();
+    }
+
+
 }

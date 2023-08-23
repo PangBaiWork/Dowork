@@ -7,25 +7,35 @@
 	android:layout_height="match_parent"
 	android:id="@+id/displaymove">
 
-	<LinearLayout
-		android:orientation="horizontal"
+	<RelativeLayout
 		android:layout_width="match_parent"
-		android:layout_height="10dp"
-		android:gravity="right"
-		android:id="@+id/displaybar">
+		android:layout_height="15dp"
+		android:id="@+id/displayforebar"
+		android:background="@color/white">
+
 		<RelativeLayout
-			android:layout_width="8dp"
-			android:layout_height="8dp"
-			android:rotation="90"
+			android:layout_width="15dp"
+			android:layout_height="15dp"
 			android:layout_marginLeft="3dp"
-			android:background="@drawable/add"/>
+			android:layout_alignParentLeft="true"
+			android:id="@+id/display_fullscreen"
+			android:background="@drawable/display_fullscreen"/>
 		<RelativeLayout
-			android:layout_width="8dp"
-			android:layout_height="8dp"
-			android:rotation="90"
+			android:layout_width="15dp"
+			android:layout_height="15dp"
 			android:layout_marginLeft="3dp"
-			android:background="@drawable/add"/>
-	</LinearLayout>
+			android:id="@+id/display_pin"
+			android:layout_toLeftOf="@id/display_closescreen"
+			android:layout_marginRight="3dp"
+			android:background="@drawable/display_pin"/>
+		<RelativeLayout
+			android:layout_width="15dp"
+			android:layout_height="15dp"
+			android:layout_marginRight="3dp"
+			android:layout_alignParentRight="true"
+			android:id="@+id/display_closescreen"
+			android:background="@drawable/display_fullscreen_exit"/>
+	</RelativeLayout>
 
 	<SurfaceView
 		android:layout_height="0dp"

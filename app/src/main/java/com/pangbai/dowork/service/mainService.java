@@ -147,7 +147,8 @@ public class mainService extends Service {
                         stopChroot();
                     }
                     Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
-                    mCallback.callback(1);
+                    if (mCallback!=null)
+                         mCallback.callback(1);
                     //cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount",Init.isRoot,false);
 
                     break;

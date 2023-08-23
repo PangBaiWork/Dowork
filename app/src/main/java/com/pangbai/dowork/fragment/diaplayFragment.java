@@ -1,5 +1,6 @@
 package com.pangbai.dowork.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.pangbai.dowork.databinding.FragmentDisplayBinding;
 import com.pangbai.dowork.service.display;
 import com.pangbai.dowork.tool.jni;
 import com.pangbai.dowork.tool.util;
+import com.pangbai.linuxdeploy.PrefStore;
 
 
 public class diaplayFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -37,6 +39,8 @@ public class diaplayFragment extends Fragment implements View.OnClickListener, C
         binding.diaplayExternal.setOnClickListener(this);
         binding.diaplayInternal.setOnClickListener(this);
         binding.switchXserver.setOnCheckedChangeListener(this);
+
+
         return binding.getRoot();
     }
 
@@ -69,6 +73,14 @@ public class diaplayFragment extends Fragment implements View.OnClickListener, C
         else if (view == binding.diaplayExternal)
             isInternal = false;
         switchXServer(isInternal);
+        PrefStore.SETTINGS.set(getContext(), "Xserver_internal",Boolean.toString(isInternal));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+           binding.switchXserver.setChecked( isXvfbOn(getContext()));
+           switchXServer(isXserverInternal(getContext()));
     }
 
     @Override
@@ -83,15 +95,26 @@ public class diaplayFragment extends Fragment implements View.OnClickListener, C
                 mIntent.putExtra("value", display.value_external);
 
             getContext().startService(mIntent);
-            Toast.makeText(getContext(), "start", Toast.LENGTH_LONG).show();
+         //   Toast.makeText(getContext(), "start", Toast.LENGTH_LONG).show();
         } else {
             mIntent.putExtra("action", display.action_stopXvfb);
             getContext().startService(mIntent);
 
-            Toast.makeText(getContext(), "stop", Toast.LENGTH_LONG).show();
+          //  Toast.makeText(getContext(), "stop", Toast.LENGTH_LONG).show();
         }
 
+        PrefStore.SETTINGS.set(getContext(), "Xserver_xvfb",Boolean.toString(isChecked));
 
+
+    }
+
+
+
+    public static boolean isXserverInternal(Context c){
+        return PrefStore.SETTINGS.get(c, "Xserver_internal").equals("true");
+    }
+    public static boolean isXvfbOn(Context c){
+        return PrefStore.SETTINGS.get(c, "Xserver_xvfb").equals("true");
     }
 }
 
