@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
@@ -32,10 +33,12 @@ import com.pangbai.dowork.Command.cmdExer;
 import com.pangbai.dowork.R;
 
 import com.pangbai.dowork.databinding.FloatDisplayBinding;
+import com.pangbai.dowork.fragment.displayFragment;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.jni;
 import com.pangbai.dowork.tool.uiThreadUtil;
 import com.pangbai.dowork.tool.util;
+import com.pangbai.linuxdeploy.PrefStore;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -99,8 +102,9 @@ public class display extends Service implements OnTouchListener, OnClickListener
     //  static SurfaceView screen;
     OnTouchListener touch;
     Thread Xvfb, Xdraw;
-    Process process_Xvfb;
+    Process process_Xvfb=null;
     FloatDisplayBinding binding;
+    int screen[];
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -121,7 +125,7 @@ public class display extends Service implements OnTouchListener, OnClickListener
         param.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 
         // 设置窗口的行为准则
-        param.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        param.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
         param.format = PixelFormat.TRANSLUCENT;
 
         // 设置透明度
@@ -181,22 +185,17 @@ public class display extends Service implements OnTouchListener, OnClickListener
             int action = intent.getIntExtra("action", 0);
             switch (action) {
                 case action_startX:
+                    screen= getScreenFromPref(this);
                     Notification notification = createNotification();
                     startForeground(1, notification);
                     int type = intent.getIntExtra("value", 0);
                     listenDisplay(type);
-
                     break;
                 case action_startXvfb:
-                    startXvfb();
+                         startXvfb();
                     break;
                 case action_stopXvfb:
-                    jni.stopDraw();
-                    // hideDisplay();
-                    if (process_Xvfb != null) {
-                        Log.e("xvfb", "destroy");
-                        process_Xvfb.destroy();
-                    }
+                  stopXvfb();
 
                     break;
 
@@ -219,23 +218,22 @@ public class display extends Service implements OnTouchListener, OnClickListener
     }
 
     public void startXvfb() {
-        /*
-        can't stop xvfb,
-         */
- /*    new Thread() {
-            @Override
-            public void run() {
-                final int a = jni.initxvfb("800x600x24");
-            }
-        }.start();*/
-
-
-        cmdExer.execute(Init.binDirPath + "/Xvfb :0 -ac -listen tcp -screen 0 " + "800x600x24", false, false);
+        if (process_Xvfb!=null)
+            return;
+        Log.e("xvfb", "start");
+        cmdExer.execute(Init.binDirPath + "/Xvfb :0 -ac -listen tcp -screen 0 " +
+                screen[0]+"x"+screen[1]+"x"+screen[2], false, false);
         process_Xvfb = cmdExer.process;
-
-
     }
-
+    public void stopXvfb(){
+        jni.stopDraw();
+        // hideDisplay();
+        if (process_Xvfb != null) {
+            Log.e("xvfb", "destroy");
+            process_Xvfb.destroy();
+            process_Xvfb=null;
+        }
+    }
     String listen;
     boolean internet;
 
@@ -245,8 +243,10 @@ public class display extends Service implements OnTouchListener, OnClickListener
             internet = false;
             startXvfb();
         }
-        if (type == value_external)
+        if (type == value_external) {
             internet = true;
+            stopXvfb();
+        }
         if (Xdraw != null && Xdraw.isAlive())
             return;
         listen = "127.0.0.1";
@@ -264,7 +264,7 @@ public class display extends Service implements OnTouchListener, OnClickListener
                     if (!isStarting && result != -1 && result != -2) {
                         Log.e("X11", "start");
                         isStarting = true;
-                        updateDisplay(800, 600);
+                        updateDisplay(screen[0], screen[1]);
 
                         String c = jni.startx(binding.surface.getHolder().getSurface());
                         Log.e("xdraw", c);
@@ -291,6 +291,19 @@ public class display extends Service implements OnTouchListener, OnClickListener
         super.run();
       }
     }.start();*/
+    }
+  public static int[]    getScreenFromPref(Context c){
+      int width,height,depth;
+      try {
+            width = Integer.parseInt(PrefStore.SETTINGS.get(c, displayFragment.width));
+            height = Integer.parseInt(PrefStore.SETTINGS.get(c, displayFragment.height));
+            depth = Integer.parseInt(PrefStore.SETTINGS.get(c, displayFragment.depth));
+        }catch (Exception e){
+            return new int[]{800,600,24};
+        }
+      return new int[]{width, height, depth};
+
+
     }
 
     public void updateDisplay(int width, int height) {

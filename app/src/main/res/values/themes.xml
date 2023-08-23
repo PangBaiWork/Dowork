@@ -32,6 +32,7 @@
         <item name="android:statusBarColor">#1D2846</item>
         <item name="android:colorAccent">#162039</item>
         <item name="colorAccent">#000000</item>
+        <item name="colorControlNormal">#ffffff</item>
         <!-- 项目中button不规范使用会造成样式变形，这里把button样式覆盖为最普通的样式，以避免老代码样式走样-->
     </style>
 
@@ -48,6 +49,14 @@
         <item name="android:colorControlHighlight">#ffffff</item>
         <item name="android:colorForeground">#fafafa</item>
     </style>
+    <style name="WhiteEditTextTheme" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">#FFFFFF</item>
+        <item name="colorControlActivated">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColorHint">#70fafafa</item>
+        <item name="colorAccent">#FFFFFF</item>
+    </style>
+
 
 
 </resources>

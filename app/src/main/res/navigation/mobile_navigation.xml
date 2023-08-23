@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/navigation_item3"
-        android:name="com.pangbai.dowork.fragment.diaplayFragment"
+        android:name="com.pangbai.dowork.fragment.displayFragment"
         android:label="显示"
         tools:layout="@layout/fragment_display" />
      <fragment

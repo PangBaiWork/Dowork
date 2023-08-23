@@ -27,8 +27,6 @@ import com.pangbai.dowork.*;
 import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.view.dialogUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,6 +43,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         binding = FragmentDashboardBinding.inflate(getLayoutInflater());
+        startXservice();
     }
 
     @Nullable
@@ -86,7 +85,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
       executorService.submit(new Runnable() {
           @Override
           public void run() {
-              startXservice();
+
               size=IO.countDirSize(path);
               Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
               Debug.getMemoryInfo(memoryInfo);
@@ -121,7 +120,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener{
     void startXservice(){
         Intent intent = new Intent(getContext(), display.class);
         intent.putExtra("action", display.action_startX);
-        int value = diaplayFragment.isXserverInternal(getContext()) ? display.value_internal : display.value_external;
+        int value = displayFragment.isXserverInternal(getContext()) ? display.value_internal : display.value_external;
         intent.putExtra("value", value);
        getContext().startService(intent);
 

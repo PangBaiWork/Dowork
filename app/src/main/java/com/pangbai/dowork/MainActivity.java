@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -18,14 +17,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.pangbai.dowork.databinding.ActivityMainBinding;
-import com.pangbai.dowork.fragment.diaplayFragment;
-import com.pangbai.dowork.service.display;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.util;
-import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.view.dialogUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavController.OnDestinationChangedListener {

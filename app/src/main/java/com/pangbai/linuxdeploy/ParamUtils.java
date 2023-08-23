@@ -91,7 +91,7 @@ public class ParamUtils {
         SharedPreferences pref = c.getSharedPreferences(this.name, Context.MODE_PRIVATE);
         int resourceId = PrefStore.getResourceId(c, key, "string");
         Map<String, ?> source = pref.getAll();
-        String defaultValue = "";
+        String defaultValue = "true";
         if (resourceId > 0) defaultValue = c.getString(resourceId);
         Object value = source.get(key);
         if (value == null) value = defaultValue;
