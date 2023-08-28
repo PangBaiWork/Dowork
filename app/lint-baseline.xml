@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.0.2" type="baseline" client="gradle" dependencies="false" name="AGP (8.0.2)" variant="fatal" version="8.0.2">
+
+    <issue
+        id="ExpiredTargetSdkVersion"
+        message="Google Play requires that apps target API level 31 or higher.&#xA;"
+        errorLine1="    defaultConfig {"
+        errorLine2="        ~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="14"
+            column="9"/>
+    </issue>
+
+</issues>

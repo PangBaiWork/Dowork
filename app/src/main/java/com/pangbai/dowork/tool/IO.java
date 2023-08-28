@@ -15,11 +15,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 public class IO {
-    public static boolean isExistFile(String File){
-        return new File(File).exists();
-    }
-    public  static  long dealtByte =0;
-    public static long finalByte=0;
+
+
+    public static long dealtByte = 0;
+    public static long finalByte = 0;
 
     public static void copyAssetsDirToSDCard(Context context, String assetsDirName, String sdCardPath) {
         //   Log.d(TAG, "copyAssetsDirToSDCard() called with: context = [" + context + "], assetsDirName = [" + assetsDirName + "], sdCardPath = [" + sdCardPath + "]");
@@ -27,7 +26,7 @@ public class IO {
             String list[] = context.getAssets().list(assetsDirName);
             if (list.length == 0) {
                 InputStream inputStream = context.getAssets().open(assetsDirName);
-               // finalByte= inputStream.available();
+                // finalByte= inputStream.available();
                 byte[] mByte = new byte[1024];
                 int bt = 0;
                 File file = new File(sdCardPath + File.separator
@@ -40,7 +39,7 @@ public class IO {
                 FileOutputStream fos = new FileOutputStream(file);
                 while ((bt = inputStream.read(mByte)) != -1) {
                     fos.write(mByte, 0, bt);
-                   // dealtByte+=bt;
+                    // dealtByte+=bt;
                 }
                 fos.flush();
                 inputStream.close();
@@ -64,8 +63,8 @@ public class IO {
         }
     }
 
-//废弃方法
-    public static void copyASFile(Context ct,String filename,String newFileName) {
+    //废弃方法
+    public static void copyASFile(Context ct, String filename, String newFileName) {
         AssetManager assetManager = ct.getAssets();
         //Log.e(getApplication().toString(),filename);
         InputStream in = null;
@@ -96,23 +95,30 @@ public class IO {
     }
 
 
+    public static boolean deleteFolder(File folder) {
+        int result = cmdExer.execute("rm -rf " + folder.getAbsolutePath(), Init.isRoot);
+        return result == 0;
+    }
 
-        public static boolean deleteFolder(File folder) {
-             int result=  cmdExer.execute("rm -rf "+folder.getAbsolutePath(),Init.isRoot);
-             return result==0;
-        }
-
-        public static String countDirSize(String path){
-            int result=-1;
-          result=cmdExer.execute("[ -d "+path+" ]",Init.isRoot);
-          if (result!=0)
-              return null;
-         result= cmdExer.execute("du -sh "+path,Init.isRoot);
-        if (result==0||result==1)
+    public static String countDirSize(String path) {
+        int result = -1;
+        if (!isFileExsit(path))
+            return null;
+        result = cmdExer.execute(Init.binDirPath + "/du -shx " + path, Init.isRoot);
+        if (result == 0 || result == 1)
             return cmdExer.lastLine;
         else
             return null;
-        }
+    }
+
+    public static boolean isFileExsit(String file) {
+        int result = cmdExer.execute("[ -e " + file + " ]", Init.isRoot);
+        if (result != 0)
+            return false;
+        else
+            return true;
+    }
+
 
     public static InputStream getRootFileInputStream(String filePath) {
         try {
@@ -129,12 +135,12 @@ public class IO {
                 content.append(buffer, 0, bytesRead);
             }
             // Wait for the process to finish
-            if (process.waitFor()==0)
+            if (process.waitFor() == 0)
                 return new ByteArrayInputStream(content.toString().getBytes());
             else
                 return null;
         } catch (IOException | InterruptedException e) {
-           return null;
+            return null;
         }
 
 

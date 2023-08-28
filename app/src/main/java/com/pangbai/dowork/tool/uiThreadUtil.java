@@ -7,6 +7,6 @@ public class uiThreadUtil {
     private static Handler handler = new Handler(Looper.getMainLooper());
 
     public static void runOnUiThread(Runnable runnable) {
-        handler.post(runnable);
+        handler.postDelayed(runnable,2);
     }
 }

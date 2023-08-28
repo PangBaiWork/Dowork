@@ -51,6 +51,18 @@
 			android:switchPadding="10dp"
 			android:text="XServer状态"
 			android:textColor="@android:color/white" />
+		<Switch
+			android:theme="@style/SwitchTheme"
+			android:id="@+id/switch_pulseaudio"
+			style="@style/defaultTextStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:checked="true"
+			android:layout_gravity="center_horizontal"
+			android:switchPadding="10dp"
+			android:text="Pulseaudio状态"
+			android:textColor="@android:color/white" />
 
 		<EditText
 			android:layout_width="match_parent"
@@ -59,7 +71,7 @@
 			android:textSize="18dp"
 			android:id="@+id/display_width"
 			android:textColor="@color/white"
-			android:theme="@style/WhiteEditTextTheme"/>
+			android:theme="@style/WhiteContextTheme"/>
 		<EditText
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -67,7 +79,7 @@
 			android:textSize="18dp"
 			android:id="@+id/display_height"
 			android:textColor="@color/white"
-			android:theme="@style/WhiteEditTextTheme"/>
+			android:theme="@style/WhiteContextTheme"/>
 		<EditText
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -75,7 +87,7 @@
 			android:textSize="18dp"
 			android:id="@+id/diaplay_depth"
 			android:textColor="@color/white"
-			android:theme="@style/WhiteEditTextTheme"/>
+			android:theme="@style/WhiteContextTheme"/>
 		<TextView
 			android:layout_marginTop="10dp"
 			android:layout_marginRight="10dp"
@@ -92,6 +104,7 @@
 
 
 	</LinearLayout>
+
 
 
 

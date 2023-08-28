@@ -37,6 +37,11 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:id="@+id/ct_ram"
+                    android:maxLines="1"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:autoSizeMaxTextSize="15sp"
+                    android:autoSizeTextType="uniform"
                     android:text="RAM占用: ..."
                     style="@style/defaultTextStyle"/>
 
@@ -56,6 +61,11 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:id="@+id/ct_size"
+                    android:maxLines="1"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMaxTextSize="15sp"
                     android:text="空间占用: ..."
                     style="@style/defaultTextStyle"/>
 
@@ -85,17 +95,18 @@
                     android:layout_gravity="center_vertical|left"/>
 
 
-                <TextView
-                    android:layout_height="wrap_content"
+                <com.pangbai.view.CustomTextView
                     android:layout_width="wrap_content"
-                    android:gravity="left"
-                    android:paddingRight="6dp"
+                    android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:ellipsize="end"
-                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:paddingRight="5dp"
                     android:layout_gravity="center_vertical"
-                    android:text="Debian\nDebian GNU/Linux 11 (bullseye)"
+                    android:maxLines="3"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
                     android:id="@+id/ct_infor"
+                    android:text="NAME: Debian\nDebian GNU/Linux 11 (bullseye)"
                     style="@style/defaultTextStyle"/>
             </LinearLayout>
 
@@ -124,14 +135,6 @@
                 android:layout_marginLeft="20dp"
                 android:background="@drawable/ct_start" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="30dp"
-                android:layout_toLeftOf="@id/ct_terminal"
-                android:text="Running"
-                style="@style/defaultTextStyle" />
 
             <RelativeLayout
                 android:id="@+id/ct_terminal"
@@ -157,28 +160,61 @@
         android:layout_height="100dp"
         android:layout_marginTop="15dp"
         android:orientation="horizontal">
-		<androidx.cardview.widget.CardView
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:layout_marginRight="6dp"
-			android:layout_weight="1"
-			app:cardBackgroundColor="#F2F3F5"
-			app:cardCornerRadius="20dp">
-
-
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="#F2F3F5"
+            app:cardCornerRadius="20dp">
+            <com.pangbai.view.CustomTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginLeft="8dp"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:id="@+id/permisson_status"
+                android:text="Root: Denied\nWindow: Denied"
+                style="@style/defaultTextStyle"/>
 
         </androidx.cardview.widget.CardView>
+
 		<androidx.cardview.widget.CardView
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:layout_marginLeft="6dp"
 			android:layout_weight="1"
 			app:cardBackgroundColor="#F2F3F5"
-			app:cardCornerRadius="20dp"/>
-
+			app:cardCornerRadius="20dp">
+    <com.pangbai.view.CustomTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_gravity="center_vertical|left"
+        android:layout_marginLeft="8dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:id="@+id/display_status"
+        android:text="X11: Destory\nXserver: Destroy\nPulseaudio: Destroy"
+        style="@style/defaultTextStyle"/>
+        </androidx.cardview.widget.CardView>
 
 	</LinearLayout>
-
+    <com.pangbai.view.CustomTextView
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_gravity="center_vertical|left"
+        android:layout_marginLeft="8dp"
+        android:ellipsize="end"
+        android:text="Author: PangBaiWork\nDependent: Linuxdeploy-Pro Xvfb libX11...\nDepository: https://github.com/PangBaiWork/Dowork\n\n本软件具有一定威胁系数，请谨慎使用\n若照成不良后果,开发者将不会承担任何责任."
+        style="@style/defaultTextStyle"
+        android:textIsSelectable="true"
+        android:textColorHighlight="@color/white"
+        android:textColor="@color/white"/>
 
 </LinearLayout>
 

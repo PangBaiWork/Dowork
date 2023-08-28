@@ -1,12 +1,14 @@
 package com.pangbai.dowork.tool;
 
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pangbai.dowork.PropertiesActivity;
 import com.pangbai.dowork.R;
 import com.pangbai.dowork.databinding.ListContainerBinding;
+import com.pangbai.dowork.service.mainService;
 import com.pangbai.linuxdeploy.PrefStore;
 
 import java.util.List;
@@ -46,23 +49,24 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
         MyViewHoder myViewHoder = new MyViewHoder(mview);
         background = mview.getBackground();
         String Name = PrefStore.getProfileName(parent.getContext());
-        containerInfor CurrentContainer = containerInfor.getContainerByName(Name);
+        containerInfor container = containerInfor.getContainerByName(Name);
 
 
         /////////从配置文件获取当前的容器
 
 
-        if (CurrentContainer != null) {
-            selectedPosition = containerInfor.ctList.indexOf(CurrentContainer);
+        if (container != null) {
+            selectedPosition = containerInfor.ctList.indexOf(container);
+            containerInfor.ct=container;
 
-            ItemChange.OnItemChange(CurrentContainer);
+            ItemChange.OnItemChange(container);
         } else {
             if (containerInfor.ctList.isEmpty())
                 return myViewHoder;
-            containerInfor current = containerInfor.ctList.get(0);
-            PrefStore.changeProfile(parent.getContext(), current.name);
+            containerInfor.ct = containerInfor.ctList.get(0);
+            PrefStore.changeProfile(parent.getContext(), containerInfor.ct.name);
             selectedPosition = 0;
-            ItemChange.OnItemChange(current);
+            ItemChange.OnItemChange(containerInfor.ct);
 
         }
 
@@ -76,6 +80,7 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
                 selectedPosition = myViewHoder.getAdapterPosition();
                 tmp=selectedPosition;
                 containerInfor infor = mList.get(selectedPosition);
+                containerInfor.ct=infor;
                 PrefStore.changeProfile(v.getContext(), infor.name);
                 ItemChange.OnItemChange(infor);
                 notifyDataSetChanged();
@@ -86,6 +91,21 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
         mview.findViewById(R.id.ct_run_configure).setOnClickListener(view -> {
             PrefStore.changeProfile(view.getContext(), mList.get(myViewHoder.getAdapterPosition()).name);
             util.startActivity(view.getContext(), PropertiesActivity.class, false);
+        });
+        mview.findViewById(R.id.ct_run_update).setOnClickListener(view -> {
+            if (mainService.isCmdRunning)
+                return;
+          //  PrefStore.changeProfile(view.getContext(), mList.get(myViewHoder.getAdapterPosition()).name);
+           if (mList.get(myViewHoder.getAdapterPosition()).method.equals("proot")){
+               Toast.makeText(view.getContext(), "目前不支持proot进行配置",Toast.LENGTH_LONG).show();
+               return;
+           }
+
+            Intent mIntent = new Intent(view.getContext(), mainService.class);
+            mIntent.putExtra("action", mainService.action_exeCmd);
+            mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh -p "+mList.get(myViewHoder.getAdapterPosition()).name+ " deploy -m -n bootstrap " );
+            view.getContext().startService(mIntent);
+
         });
         return myViewHoder;
     }

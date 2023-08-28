@@ -8,13 +8,7 @@
             android:key="pulse_host"
             android:summary="@string/pulse_host"
             android:title="@string/title_pulse_host_preference" />
-        <EditTextPreference
-            android:defaultValue="@string/pulse_port"
-            android:dialogTitle="@string/dialog_title_pulse_port_preference"
-            android:inputType="numberDecimal"
-            android:key="pulse_port"
-            android:summary="@string/pulse_port"
-            android:title="@string/title_pulse_port_preference" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

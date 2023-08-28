@@ -50,6 +50,8 @@ public class display extends Service implements OnTouchListener, OnClickListener
     public static final int action_startX = 1;
     public static final int action_startXvfb = 2;
     public static final int action_stopXvfb = 3;
+    public static final int action_startAudio = 4;
+    public static final int action_stopAudio = 5;
     public static final int value_internal = 1;
     public static final int value_external = 2;
 
@@ -101,8 +103,8 @@ public class display extends Service implements OnTouchListener, OnClickListener
     boolean isStarting = false;
     //  static SurfaceView screen;
     OnTouchListener touch;
-    Thread Xvfb, Xdraw;
-    Process process_Xvfb=null;
+  public static   Thread  Xdraw;
+  public static Process process_Xvfb=null,process_PulseAudio=null;
     FloatDisplayBinding binding;
     int screen[];
 
@@ -196,7 +198,12 @@ public class display extends Service implements OnTouchListener, OnClickListener
                     break;
                 case action_stopXvfb:
                   stopXvfb();
-
+                    break;
+                case action_startAudio:
+                    startAudio();
+                    break;
+                case action_stopAudio:
+                    stopAudio();
                     break;
 
             }
@@ -232,6 +239,21 @@ public class display extends Service implements OnTouchListener, OnClickListener
             Log.e("xvfb", "destroy");
             process_Xvfb.destroy();
             process_Xvfb=null;
+        }
+    }
+    public void startAudio(){
+        if (process_PulseAudio!=null)
+            return;
+        Log.e("pulseaudio", "start");
+        cmdExer.execute(Init.binDirPath + "/pulseaudio", false, false);
+        process_PulseAudio = cmdExer.process;
+    }
+
+    public void stopAudio(){
+        if (process_PulseAudio != null) {
+            Log.e("pulseaudio", "destroy");
+            process_PulseAudio.destroy();
+            process_PulseAudio=null;
         }
     }
     String listen;
@@ -295,9 +317,9 @@ public class display extends Service implements OnTouchListener, OnClickListener
   public static int[]    getScreenFromPref(Context c){
       int width,height,depth;
       try {
-            width = Integer.parseInt(PrefStore.SETTINGS.get(c, displayFragment.width));
-            height = Integer.parseInt(PrefStore.SETTINGS.get(c, displayFragment.height));
-            depth = Integer.parseInt(PrefStore.SETTINGS.get(c, displayFragment.depth));
+            width = Integer.parseInt(PrefStore.SETTINGS.get(c, displayFragment.str_width));
+            height = Integer.parseInt(PrefStore.SETTINGS.get(c, displayFragment.str_height));
+            depth = Integer.parseInt(PrefStore.SETTINGS.get(c, displayFragment.str_depth));
         }catch (Exception e){
             return new int[]{800,600,24};
         }
@@ -333,7 +355,7 @@ public class display extends Service implements OnTouchListener, OnClickListener
 
         // 创建通知
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Foreground Service")
+                .setContentTitle("Dowork Foreground Service for X11")
                 .setContentText("Running...")
                 .setSmallIcon(R.drawable.ct_icon_archlinux);
 

@@ -1,16 +1,27 @@
 # Dowork
 Integrated Android container manager 
-An container manager which include roofts-building/import,xserver,terminal ......  
+An container manager which include Rootfs-building/import/export 
+xserver,terminal ......  
 It is my first Open Source project
 The Project is planing
-### Progress
+### Todo
 * [x] fix Linuxdeploy-cli and support proot
 * [x] Container Manager
 * [x] Terminal support
-* [ ] Basic container information
-* [ ] Container import
-* [ ] Xserver support
+* [x] Basic container information
+* [x] Container import/export
+* [x] Xserver support
+* [x] Pulseaudio support
+* [ ] Xserver input support
 * [ ] Main Setting
 * [ ] Adb support
 * [ ] Prevent the process of being killed
 * [ ] Progress manager
+### Dependent project
+[Xvfb](https://gitlab.freedesktop.org/xorg/xserver)
+[PulseAudio](https://github.com/pelya/pulseaudio-android)
+[libX11](https://gitlab.freedesktop.org/xorg/lib/libx11)
+[Linuxdeploy-Pro](https://github.com/lateautumn233/Linuxdeploy-Pro)
+[Busybox](https://busybox.net/)
+[Termux](https://github.com/termux/termux-app)
+[Rootfstool](https://github.com/Moe-hacker/rootfstool)

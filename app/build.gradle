@@ -7,6 +7,9 @@ android {
     compileSdk 32
     buildToolsVersion "33.0.0"
     ndkVersion "19.2.5345600"
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
 
     defaultConfig {
         applicationId "com.pangbai.dowork"

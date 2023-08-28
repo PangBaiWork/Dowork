@@ -12,7 +12,7 @@ import java.io.File;
 
 public class Init {
     public static String filesDirPath;
-    public static boolean isRoot;
+    public static boolean  isRoot;
    public static String linuxDeployDirPath;
    public static  String fontPath;
    public  static  String keyPath;
@@ -55,6 +55,7 @@ public class Init {
                         String busybox=busyboxPath+" --install -s " +binDirPath;
                         result=cmdExer.execute(chmod+binDirPath,false);
                         result=cmdExer.execute(chmod+linuxDeployDirPath,false);
+                        result=cmdExer.execute(chmod+filesDirPath+"/dowork/pulseaudio",false);
                         Log.e("初始化",""+result);
                         result=cmdExer.execute(busybox,false);
                         Log.e("初始化",""+result);
@@ -68,11 +69,12 @@ public class Init {
                     }
                     mdialog.dismiss();
                     util.ensureStoragePermissionGranted(ct);
-                    isRoot=util.isRooted();
+
 
 
                 }
             }.start();
+
 
      }
 

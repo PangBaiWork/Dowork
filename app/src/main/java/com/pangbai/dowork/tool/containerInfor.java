@@ -2,6 +2,7 @@ package com.pangbai.dowork.tool;
 
 import android.content.Context;
 
+import com.pangbai.dowork.Command.cmdExer;
 import com.pangbai.dowork.R;
 import com.pangbai.linuxdeploy.ParamUtils;
 import com.pangbai.linuxdeploy.PrefStore;
@@ -77,15 +78,21 @@ public class containerInfor {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             ctIcon = iconMap.getOrDefault(ctInfor.get("DISTRIB"), R.drawable.ct_icon_linux);
         }
-        String osPath = ctPath + "/etc/os-release";
+        String osPath = ctPath + "/usr/lib/os-release";
 
         Map<String, String> osMap = ParamUtils.readConf(osPath, !ctMethod.equals("proot"));
         if (osMap!=null) {
-            String osName = osMap.get("NAME");
-            String osVersion = osMap.get("VERSION");
-            if (osVersion == null)
-                osVersion = osMap.get("BUILD_ID");
-            version = osName + " " + osVersion;
+            String name=osMap.get("PRETTY_NAME");
+            if (name==null) {
+                String osName = osMap.get("NAME");
+                String osVersion = osMap.get("VERSION");
+                if (osVersion == null)
+                    osVersion = osMap.get("BUILD_ID");
+                version = osName + " " + osVersion;
+            }else{
+                version=name;
+            }
+
         }
 
 
@@ -109,6 +116,23 @@ public class containerInfor {
         }
 
     }
+
+    public static boolean checkInstall(Context c){
+        File conf = new File(Init.linuxDeployDirPath + "/config/" +  PrefStore.getProfileName(c) + ".conf");
+        Map<String, String> ctInfor = ParamUtils.readConf(conf);
+        if (ctInfor == null)
+            return false;
+        String ctPath = ctInfor.get("TARGET_PATH");
+        if (!IO.isFileExsit(ctPath)) {
+            cmdExer.execute("mkdir " + ctPath,false, true);
+            return false;
+        }
+        if (IO.isFileExsit( ctPath + "/usr/lib/os-release"))
+            return true;
+        return false;
+
+    }
+
 
     public static containerInfor getContainerByName(String name) {
         for (containerInfor ct : ctList) {

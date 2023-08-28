@@ -24,7 +24,7 @@ public class displayFragment extends Fragment implements View.OnClickListener, C
     FragmentDisplayBinding binding;
     public static boolean isInternal = true;
     int screen[];
-    public static final String width="display_width",height="display_height",depth="display_depth";
+    public static final String str_width = "display_width", str_height = "display_height", str_depth = "display_depth", str_internal = "Xserver_xvfb", str_audio = "Xserver_auido";
 
 
     @Nullable
@@ -37,12 +37,14 @@ public class displayFragment extends Fragment implements View.OnClickListener, C
         binding.diaplayExternal.setOnClickListener(this);
         binding.diaplayInternal.setOnClickListener(this);
         binding.switchXserver.setOnCheckedChangeListener(this);
+        binding.switchPulseaudio.setOnCheckedChangeListener(this);
         binding.displaySave.setOnClickListener(this);
-       screen= display.getScreenFromPref(getContext());
-       binding.displayWidth.setText(String.valueOf(screen[0]));
+        screen = display.getScreenFromPref(getContext());
+        binding.displayWidth.setText(String.valueOf(screen[0]));
         binding.displayHeight.setText(String.valueOf(screen[1]));
         binding.diaplayDepth.setText(String.valueOf(screen[2]));
-
+        switchXServerUI(isXserverInternal(getContext()));
+        binding.switchPulseaudio.setChecked(isAudioOn(getContext()));
 
         return binding.getRoot();
     }
@@ -69,12 +71,11 @@ public class displayFragment extends Fragment implements View.OnClickListener, C
             binding.switchXserver.setVisibility(View.GONE);
 
 
-
     }
 
     @Override
     public void onClick(View view) {
-        if (view == binding.diaplayInternal||view == binding.diaplayExternal) {
+        if (view == binding.diaplayInternal || view == binding.diaplayExternal) {
             isInternal = view == binding.diaplayInternal;
             switchXServerUI(isInternal);
             Intent mIntent = new Intent(getContext(), display.class);
@@ -86,12 +87,12 @@ public class displayFragment extends Fragment implements View.OnClickListener, C
                 mIntent.putExtra("value", display.value_external);
             }
             getContext().startService(mIntent);
-            PrefStore.SETTINGS.set(getContext(), "Xserver_internal", Boolean.toString(isInternal));
-        }else if (view==binding.displaySave){
+            PrefStore.SETTINGS.set(getContext(), str_internal, Boolean.toString(isInternal));
+        } else if (view == binding.displaySave) {
             screen = getFromEditText();
-            PrefStore.SETTINGS.set(getContext(),width,String.valueOf(screen[0]));
-            PrefStore.SETTINGS.set(getContext(),height,String.valueOf(screen[1]));
-            PrefStore.SETTINGS.set(getContext(),depth,String.valueOf(screen[2]));
+            PrefStore.SETTINGS.set(getContext(), str_width, String.valueOf(screen[0]));
+            PrefStore.SETTINGS.set(getContext(), str_height, String.valueOf(screen[1]));
+            PrefStore.SETTINGS.set(getContext(), str_depth, String.valueOf(screen[2]));
 
         }
     }
@@ -99,37 +100,46 @@ public class displayFragment extends Fragment implements View.OnClickListener, C
     @Override
     public void onResume() {
         super.onResume();
-           switchXServerUI(isXserverInternal(getContext()));
+
     }
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+
         Intent mIntent = new Intent(getContext(), display.class);
-        if (isChecked) {
-            mIntent.putExtra("action", display.action_startXvfb);
+        int action;
+        if (compoundButton == binding.switchXserver) {
+            action = isChecked ? display.action_startXvfb : display.action_stopXvfb;
         } else {
-            mIntent.putExtra("action", display.action_stopXvfb);
+            PrefStore.SETTINGS.set(getContext(), str_audio, Boolean.toString(isChecked));
+            action = isChecked ? display.action_startAudio : display.action_stopAudio;
         }
+        mIntent.putExtra("action", action);
         getContext().startService(mIntent);
-        PrefStore.SETTINGS.set(getContext(), "Xserver_xvfb",Boolean.toString(isChecked));
+
+
     }
 
 
-
-    public static boolean isXserverInternal(Context c){
-        return PrefStore.SETTINGS.get(c, "Xserver_internal").equals("true");
+    public static boolean isXserverInternal(Context c) {
+        return PrefStore.SETTINGS.get(c, str_internal).equals("true");
     }
+
+    public static boolean isAudioOn(Context c) {
+        return PrefStore.SETTINGS.get(c, str_audio).equals("true");
+    }
+
     public int[] getFromEditText() {
-        int width,height,depth;
+        int width, height, depth;
         try {
             width = Integer.parseInt(binding.displayWidth.getText().toString());
             height = Integer.parseInt(binding.displayHeight.getText().toString());
             depth = Integer.parseInt(binding.diaplayDepth.getText().toString());
         } catch (NumberFormatException e) {
-            Toast.makeText(getContext(),"error input,num only",Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "error input,num only", Toast.LENGTH_LONG).show();
             return new int[]{800, 600, 24};
         }
-        Toast.makeText(getContext(),"Saved ,please restart for application",Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Saved ,please restart for application", Toast.LENGTH_LONG).show();
         return new int[]{width, height, depth};
     }
 

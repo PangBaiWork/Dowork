@@ -180,11 +180,18 @@
             android:summary="@string/summary_is_mounts_preference"
             android:title="@string/title_is_mounts_preference" />
 
-        <PreferenceScreen
+    <!--    <PreferenceScreen
             android:dependency="is_mounts"
             android:key="mounts_editor"
             android:summary="@string/summary_mounts_editor_preference"
             android:title="@string/title_mounts_editor_preference" />
+            -->
+        <EditTextPreference
+            android:defaultValue="@string/mounts"
+            android:dialogTitle="挂载点编辑"
+            android:key="MOUNTS"
+            android:summary="以空格分割挂载点,冒号可设置挂载目标"
+            android:title="挂载点" />
 
     </PreferenceCategory>
 
@@ -196,11 +203,12 @@
             android:summary="@string/summary_is_ssh_preference"
             android:title="@string/title_is_ssh_preference" />
 
-        <PreferenceScreen
+    <!--    <PreferenceScreen
             android:dependency="is_ssh"
             android:key="ssh_properties"
             android:summary="@string/summary_ssh_properties_preference"
             android:title="@string/title_ssh_properties_preference" />
+            -->
 
     </PreferenceCategory>
 
@@ -211,13 +219,26 @@
             android:key="is_pulse"
             android:summary="@string/summary_is_pulse_preference"
             android:title="@string/title_is_pulse_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/pulse_host"
+            android:dialogTitle="@string/dialog_title_pulse_host_preference"
+            android:key="pulse_host"
+            android:summary="@string/pulse_host"
+            android:title="@string/title_pulse_host_preference" />
+        <EditTextPreference
+            android:defaultValue="@string/pulse_port"
+            android:dialogTitle="@string/dialog_title_pulse_port_preference"
+            android:inputType="numberDecimal"
+            android:key="pulse_port"
+            android:summary="@string/pulse_port"
+            android:title="@string/title_pulse_port_preference" />
 
-        <PreferenceScreen
+      <!--  <PreferenceScreen
             android:dependency="is_pulse"
             android:key="pulse_properties"
             android:summary="@string/summary_pulse_properties_preference"
             android:title="@string/title_pulse_properties_preference" />
-
+-->
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/gui_preferences">
@@ -238,11 +259,12 @@
             android:summary="@string/graphics"
             android:title="@string/title_graphics_preference" />
 
-        <PreferenceScreen
+    <!--    <PreferenceScreen
             android:dependency="is_gui"
             android:key="gui_properties"
             android:summary="@string/summary_gui_properties_preference"
             android:title="@string/title_gui_properties_preference" />
+            -->
 
         <ListPreference
             android:defaultValue="@string/desktop"

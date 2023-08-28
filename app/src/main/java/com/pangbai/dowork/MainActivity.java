@@ -34,9 +34,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         util.fullScreen(getWindow(), false);
+        ensureWindowPermission();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        ensureWindowPermission();
+
         NavHostFragment host = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_fragment);
         ctr = host.getNavController();
         NavigationUI.setupWithNavController(binding.navView, ctr);

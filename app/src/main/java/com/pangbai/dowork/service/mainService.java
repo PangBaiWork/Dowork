@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -183,8 +184,9 @@ public class mainService extends Service {
     }
 
     void stopChroot() {
+        Log.e("chroot","umount");
         mThread = new Thread(() -> {
-            cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount", Init.isRoot, true);
+            cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount", true, true);
             mThread = null;
         });
         mThread.start();

@@ -29,13 +29,30 @@
                 android:textSize="20sp"
                 style="@style/defaultTextStyle"/>
         </LinearLayout>
+       <LinearLayout
+           android:layout_width="wrap_content"
+           android:layout_gravity="center_vertical|right"
+           android:layout_height="wrap_content">
+           <RelativeLayout
+               android:layout_width="30dp"
+               android:layout_height="30dp"
+               android:layout_marginRight="10dp"
+               android:id="@+id/ct_export"
+               android:background="@drawable/ct_export"/>
+           <RelativeLayout
+               android:layout_width="30dp"
+               android:layout_height="30dp"
+               android:layout_marginRight="10dp"
+               android:id="@+id/ct_import"
+               android:background="@drawable/ct_import"/>
         <RelativeLayout
-            android:layout_gravity="center_vertical|right"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginRight="10dp"
             android:id="@+id/ct_action_run"
             android:background="@drawable/ct_run_task"/>
+
+       </LinearLayout>
     
 </androidx.cardview.widget.CardView>
 

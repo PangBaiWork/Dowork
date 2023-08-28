@@ -1,5 +1,6 @@
 package com.pangbai.dowork;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import com.pangbai.dowork.databinding.ActivityPropertiesBinding;
 import com.pangbai.dowork.fragment.PropertiesFragment;
 import com.pangbai.dowork.service.mainService;
 import com.pangbai.dowork.service.mainServiceConnection;
+import com.pangbai.dowork.tool.IO;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.containerInfor;
 import com.pangbai.linuxdeploy.PrefStore;
@@ -40,6 +42,8 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
                 .commit();
         binding.ctExit.setOnClickListener(this);
         binding.ctActionRun.setOnClickListener(this);
+        binding.ctExport.setOnClickListener(this);
+        binding.ctImport.setOnClickListener(this);
         if (mainService.isCmdRunning) {
             binding.ctActionRun.setBackgroundResource(R.drawable.stop);
         }
@@ -74,37 +78,26 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
             exitConfirm();
 
         } else if (view == binding.ctActionRun) {
-            Intent mIntent = new Intent(this, mainService.class);
+            PrefStore.dumpProperties(this);
+            if (containerInfor.checkInstall(this))
+                dialogUtils.showConfirmationDialog(this,"rootfs已安装","此容器Rootfs已安装,确定要重装吗",
+                        "重装","取消",
+                        ()->installAndStop(),null);
+            else
+                installAndStop();
 
-            if (!mainService.isCmdRunning) {
-                ///////start
-                PrefStore.dumpProperties(this);
+        }else if (view==binding.ctImport){
+            PrefStore.dumpProperties(this);
+            if (containerInfor.checkInstall(this))
+                dialogUtils.showConfirmationDialog(this,"Rootfs已安装","此容器Rootfs已安装,确定要重装吗",
+                        "重装","取消",
+                        ()->importAndExportContainer(false),null);
+            else
+                importAndExportContainer(false);
 
-
-                isSaved = true;
-                mIntent.putExtra("action", mainService.action_exeCmd);
-                mIntent.putExtra("value",  Init.linuxDeployDirPath + "/cli.sh deploy");
-                startService(mIntent);
-                if (serviceConnection == null)
-                    serviceConnection = new mainServiceConnection(result -> {
-                        if (binding != null)
-                            binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
-                        Toast.makeText(this,"j"+Init.isRoot,Toast.LENGTH_LONG).show();
-
-
-                    });
-                bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-                binding.ctActionRun.setBackgroundResource(R.drawable.stop);
-            } else {
-                //////stop
-                mIntent.putExtra("action", mainService.action_stopCmd);
-                startService(mIntent);
-                if (serviceConnection != null)
-                    unbindService(serviceConnection);
-                serviceConnection = null;
-                binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
-            }
-
+        }else  if (view==binding.ctExport){
+            PrefStore.dumpProperties(this);
+            importAndExportContainer(true);
         }
     }
 
@@ -143,4 +136,65 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
         } else
             finish();
     }
+
+
+
+    public void  importAndExportContainer(boolean export){
+        String str_action=export?"导出":"导入",
+        str_arg=export?"export":"import",
+                str_http=export?"":"&url地址";
+
+        dialogUtils.showInputDialog(this,
+                "请输入"+str_action+"Rootfs绝对路径"+str_http+"\ntar.gz/tar.bz2/tar.xz/tar.zst",
+                Rootfs -> {
+                    if (!export&&!Rootfs.contains("http")&&!IO.isFileExsit(Rootfs)){
+                        Toast.makeText(this,"Rootfs路径错误",Toast.LENGTH_LONG).show();
+                        return;}
+                 //   Dialog mdialog = dialogUtils.showCustomLayoutDialog(this, "正在"+str_action+"Rootfs" + containerInfor.ct.name, R.layout.dialog_loading);
+
+                    String cmd = Init.linuxDeployDirPath + "/cli.sh "+str_arg +" "+ Rootfs;
+                    Intent mIntent = new Intent(this, mainService.class);
+                    mIntent.putExtra("action", mainService.action_exeCmd);
+                    mIntent.putExtra("value", cmd);
+                    startService(mIntent);
+
+                });
+
+    }
+
+    public void installAndStop(){
+        Intent mIntent = new Intent(this, mainService.class);
+
+        if (!mainService.isCmdRunning) {
+            ///////start
+
+            isSaved = true;
+            mIntent.putExtra("action", mainService.action_exeCmd);
+            mIntent.putExtra("value",  Init.linuxDeployDirPath + "/cli.sh deploy");
+            startService(mIntent);
+            if (serviceConnection == null)
+                serviceConnection = new mainServiceConnection(result -> {
+                    if (binding != null)
+                        binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
+                    Toast.makeText(this,"j"+Init.isRoot,Toast.LENGTH_LONG).show();
+                });
+            bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            binding.ctActionRun.setBackgroundResource(R.drawable.stop);
+        } else {
+            //////stop
+            mIntent.putExtra("action", mainService.action_stopCmd);
+            startService(mIntent);
+            if (serviceConnection != null)
+                unbindService(serviceConnection);
+            serviceConnection = null;
+            binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
+        }
+
+    }
+
+    public void dialogForExistCt(){
+
+    }
+
+
 }

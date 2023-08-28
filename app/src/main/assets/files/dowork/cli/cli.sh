@@ -1,4 +1,4 @@
-#!/data/data/com.pangbai.dowork/files/usr/bin/sh -x
+#!/data/data/com.pangbai.dowork/files/usr/bin/sh
 ################################################################################
 #
 # Linux Deploy CLI
@@ -199,7 +199,8 @@ make_dirs()
 
 chroot_exec()
 {
-    unset TMP TEMP TMPDIR LD_PRELOAD LD_DEBUG
+    unset TMP TEMP LD_PRELOAD LD_DEBUG
+    export DISPLAY=:0
     local path="${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     if [ "$1" = "-u" ]; then
         local username="$2"
@@ -232,6 +233,7 @@ chroot_exec()
         if [ -z "${PROOT_TMP_DIR}" ]; then
             export PROOT_TMP_DIR="${TEMP_DIR}"
         fi
+
         local mounts="-b /proc -b /dev -b /sys"
         if [ -n "${MOUNTS}" ]; then
             mounts="${mounts} -b ${MOUNTS// / -b }"
@@ -470,11 +472,7 @@ component_exec()
             # read config
             . "${COMPONENT_DIR}/deploy.conf"
 
-            if [ "$METHOD" = "proot" ]; then
-               tar_prefix="proot  --link2symlink "
-            else
-               tar_prefix=" "
-            fi
+
             # default functions
             do_install() { return 0; }
             do_configure() { return 0; }
@@ -866,6 +864,18 @@ rootfs_import()
         return 1
     ;;
     esac
+    if [ -L ${CHROOT_DIR}/etc/resolv.conf ];  then
+        target_path=$(readlink ${CHROOT_DIR}/etc/resolv.conf)
+        target_path="${target_path//..}"
+        echo ${target_path}
+        if [ -e ${CHROOT_DIR}${target_path} ]; then
+        echo "软链接的目标存在。"
+        else
+        echo "软链接的目标不存在。"
+        mkdir -p $(dirname "${CHROOT_DIR}${target_path}")
+        echo "nameserver 8.8.8.8" > ${CHROOT_DIR}${target_path}
+        fi
+    fi
     return 0
 }
 
@@ -1092,6 +1102,12 @@ PROFILE=$(basename "${CONF_FILE}" ".conf")
 # read config
 OPTLST=" " # space is required
 params_read "${CONF_FILE}"
+#fix tar
+ if [ "$METHOD" = "proot" ]; then
+               tar_prefix="proot  --link2symlink "
+            else
+               tar_prefix=" "
+            fi
 
 # fix params
 WITHOUT_CHECK="false"

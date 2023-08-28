@@ -6,8 +6,11 @@ import android.util.Log;
 import com.pangbai.dowork.Command.CommandBuilder;
 import com.pangbai.dowork.databinding.ActivityTermBinding;
 import com.pangbai.dowork.preference.TermPreference;
+import com.pangbai.dowork.tool.Init;
+import com.pangbai.dowork.tool.containerInfor;
 import com.pangbai.dowork.tool.util;
 import com.pangbai.view.ExtraKeysView;
+
 import android.widget.RelativeLayout;
 import android.view.ViewGroup;
 
@@ -25,39 +28,47 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
     }
 
 
-   public TermPreference mTermSetting;
+    public TermPreference mTermSetting;
     public ActivityTermBinding binding;
     RelativeLayout termBgView;
     CommandBuilder mBuilder;
+    boolean isChroot;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityTermBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         /*设置窗口布局
-        **/
+         **/
         getWindow().setBackgroundDrawableResource(R.drawable.bg_term);
-        util.fullScreen(getWindow(),true);
-        mTermSetting=new TermPreference(this);
-        termBgView=binding.termbgview;
-        mBuilder=new CommandBuilder(this,termBgView);
-
+        util.fullScreen(getWindow(), true);
+        mTermSetting = new TermPreference(this);
+        termBgView = binding.termbgview;
+        if (containerInfor.ct.version.equals("Unknown"))
+            mBuilder = new CommandBuilder(this, CommandBuilder.type_sh, termBgView);
+        else {
+            isChroot = !containerInfor.isProot(containerInfor.ct);
+            if (isChroot)
+                mBuilder = new CommandBuilder(this, CommandBuilder.type_chroot, termBgView);
+            else
+                mBuilder = new CommandBuilder(this, CommandBuilder.type_proot, termBgView);
+        }
         binding.ExtraKey.addView(mBuilder.keysView);
 
         //mcommand.commandview.setBackground(
         //setTheme(android.R.style.Theme_Black_NoTitleBar);
         /*
-        *键盘生成
+         *键盘生成
          */
 
 
         mTermSetting.readkeys();
-        ViewGroup.LayoutParams   lp= mBuilder.keysView.getLayoutParams();
-        lp.height= (int)((37.5*mTermSetting.mExtraKeys.length)*getResources().getDisplayMetrics().density + 0.5);
-        lp.width=-1;
-        Log.e("term",""+lp.height);
+        ViewGroup.LayoutParams lp = mBuilder.keysView.getLayoutParams();
+        lp.height = (int) ((37.5 * mTermSetting.mExtraKeys.length) * getResources().getDisplayMetrics().density + 0.5);
+        lp.width = -1;
+        Log.e("term", "" + lp.height);
         mBuilder.keysView.setLayoutParams(lp);
         mBuilder.keysView.reload(mTermSetting.mExtraKeys, ExtraKeysView.defaultCharDisplay);
 
@@ -66,8 +77,11 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
 
     @Override
     protected void onDestroy() {
-        TerminalSession session=	 mBuilder.cmdView.mTerminalSession;
-        if(session!=null&&session.isRunning())
+        if (isChroot){
+            CommandBuilder.stopChroot();
+        }
+        TerminalSession session = mBuilder.cmdView.mTerminalSession;
+        if (session != null && session.isRunning())
             session.finishIfRunning();
         super.onDestroy();
     }
