@@ -16,7 +16,7 @@ android {
         minSdk 21
         targetSdk 28
         versionCode 1
-        versionName "1.0"
+        versionName "1.0 beta"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {//让gradle知道ndk的配置
             abiFilter "arm64-v8a"//so文件的平
