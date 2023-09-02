@@ -12,7 +12,9 @@ The Project is planing
 * [x] Container import/export
 * [x] Xserver support
 * [x] Pulseaudio support
-* [ ] Xserver input support
+* [x] Xserver input support(contain Chinese)
+* [x] roofts download online support(by rooftstool)
+* [ ] Xserver cursor support
 * [ ] Main Setting
 * [ ] Adb support
 * [ ] Prevent the process of being killed
