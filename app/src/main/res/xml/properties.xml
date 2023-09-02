@@ -189,7 +189,7 @@
         <EditTextPreference
             android:defaultValue="@string/mounts"
             android:dialogTitle="挂载点编辑"
-            android:key="MOUNTS"
+            android:key="mounts"
             android:summary="以空格分割挂载点,冒号可设置挂载目标"
             android:title="挂载点" />
 

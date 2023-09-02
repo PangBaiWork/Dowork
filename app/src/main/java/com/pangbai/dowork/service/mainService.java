@@ -14,14 +14,18 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.pangbai.dowork.Command.CommandBuilder;
 import com.pangbai.dowork.Command.cmdExer;
 import com.pangbai.dowork.databinding.FloatWindowBinding;
+import com.pangbai.dowork.preference.DoworkPreference;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.containerInfor;
+import com.pangbai.dowork.tool.uiThreadUtil;
+import com.pangbai.dowork.tool.util;
 import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.terminal.TerminalSession;
 import com.pangbai.terminal.TerminalSessionClient;
@@ -44,6 +48,7 @@ public class mainService extends Service {
     TerminalSession taskSessin;
     serviceCallback mCallback;
     Thread mThread;
+    WindowManager.LayoutParams mParam;
 
 
     View.OnTouchListener touchListener = new View.OnTouchListener() {
@@ -132,6 +137,7 @@ public class mainService extends Service {
                     break;
 
                 case action_success:
+
                     Toast.makeText(this, "Succeed", Toast.LENGTH_LONG).show();
                     //暂停
                     if (!isProot && mThread==null) {
@@ -206,7 +212,7 @@ public class mainService extends Service {
     }
 
     private WindowManager.LayoutParams getCmdParams() {
-        WindowManager.LayoutParams mParam = new WindowManager.LayoutParams();
+       mParam = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //test
             //  params2.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY | WindowManager.LayoutParams.TYPE_STATUS_BAR;
@@ -224,8 +230,15 @@ public class mainService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             wm.getDefaultDisplay().getRealSize(screen);
         }
-        mParam.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        mParam.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        DoworkPreference pref=new DoworkPreference(this);
+       int width= pref.getIntStoredAsString("floatcmd_width",300);
+        int height= pref.getIntStoredAsString("floatcmd_height",100);
+        ViewGroup.LayoutParams cmdParams=cmdView.getLayoutParams();
+        cmdParams.height=util.Dp2Px(this,height);
+        cmdParams.width=util.Dp2Px(this,width);
+        cmdView.setLayoutParams(cmdParams);
+        mParam.width = -2;
+        mParam.height=-2;
         mParam.alpha = 1.0f;
         return mParam;
     }
@@ -235,6 +248,8 @@ public class mainService extends Service {
             return mainService.this;
         }
     }
+
+
 
     @Override
     public void onDestroy() {

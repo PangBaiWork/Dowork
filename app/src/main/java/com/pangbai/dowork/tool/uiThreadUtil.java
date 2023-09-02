@@ -4,7 +4,7 @@ import android.os.Looper;
 
 public class uiThreadUtil {
 
-    private static Handler handler = new Handler(Looper.getMainLooper());
+    public static Handler handler = new Handler(Looper.getMainLooper());
 
     public static void runOnUiThread(Runnable runnable) {
         handler.postDelayed(runnable,2);

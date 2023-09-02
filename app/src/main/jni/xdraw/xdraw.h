@@ -10,4 +10,7 @@ static void draw2(ANativeWindow_Buffer *buffer, XImage* image);
 static void draw(ANativeWindow_Buffer *buffer, XImage *image);
 int checkClientOnline();
 void destroySrc();
+int presskey(Display *dsp,int s);
+int releasekey(Display *dsp,int s);
+int xclick(int x,int y,bool isleft);
 bool isRunning;

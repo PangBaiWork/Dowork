@@ -1,5 +1,5 @@
-export AUDIO_NATIVE_SAMPLE_RATE=48000
+export AUDIO_NATIVE_SAMPLE_RATE=44100
 export LD_LIBRARY_PATH=/data/user/0/com.pangbai.dowork/files/dowork/pulseaudio
-export HOME=/data/user/0/com.pangbai.dowork/files/dowork/pulseaudio
+export HOME=/data/user/0/com.pangbai.dowork/files/usr/tmp
 export TMPDIR=/data/user/0/com.pangbai.dowork/files/usr/tmp
 /data/user/0/com.pangbai.dowork/files/dowork/pulseaudio/libpulse-android.so  --disable-shm -n -F /data/user/0/com.pangbai.dowork/files/dowork/pulseaudio/pulseaudio.conf --dl-search-path=/data/user/0/com.pangbai.dowork/files/dowork/pulseaudio --daemonize=false --use-pid-file=false --log-target=stderr --log-level=debug

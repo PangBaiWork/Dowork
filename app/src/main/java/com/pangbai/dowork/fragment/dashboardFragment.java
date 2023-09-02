@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.pangbai.dowork.R;
 import com.pangbai.dowork.databinding.FragmentDashboardBinding;
+import com.pangbai.dowork.preference.DoworkPreference;
 import com.pangbai.dowork.service.display;
 import com.pangbai.dowork.service.mainService;
 import com.pangbai.dowork.service.mainServiceConnection;
@@ -38,7 +39,9 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
     FragmentDashboardBinding binding;
     //containerInfor currentContainer;
     mainServiceConnection serviceConnection;
-    static  boolean firstStart=false;
+    static boolean firstStart = false;
+    DoworkPreference pref;
+
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -77,7 +80,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
         }
 
 
-
+        pref = new DoworkPreference(getContext());
         return binding.getRoot();
     }
 
@@ -89,8 +92,13 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-               String Permission=checkPermission();
-                size = IO.countDirSize(path);
+                String Permission = checkPermission();
+
+                if (pref.getBoolStoredAsString("container_size", true))
+                    size = IO.countDirSize(path);
+                else
+                    size = null;
+
                 Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
                 Debug.getMemoryInfo(memoryInfo);
                 memory = memoryInfo.getTotalPss() >> 10;
@@ -119,14 +127,15 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                 });
 
 
-                if (!firstStart){
-                    startXservice();
+                if (!firstStart) {
+                    display.startXservice(getContext());
                     if (displayFragment.isAudioOn(getContext())) {
                         Intent intent = new Intent(getContext(), display.class);
                         intent.putExtra("action", display.action_startAudio);
                         getContext().startService(intent);
                     }
-                    firstStart=true;}
+                    firstStart = true;
+                }
                 try {
                     //wait For service Start;
                     if (display.mService == null)
@@ -134,7 +143,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                String  status= checkXStatus();
+                String status = checkXStatus();
                 uiThreadUtil.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -142,7 +151,6 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                             binding.displayStatus.setText(status);
                     }
                 });
-
 
 
             }
@@ -164,22 +172,15 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                 + "\nPulseaudio:" + (pulseaudio ? run : destory);
         return status;
     }
-    public String checkPermission(){
-       boolean root= util.isRooted();
-       Init.isRoot=root;
-       boolean window=util.windowPermissionCheck(getContext());
-       String allow="Allowed",denied="Denied";
-         return  "Root:" + (root ? allow : denied) + "\nWindow:" + (window ? allow : denied);
+
+    public String checkPermission() {
+        boolean root = util.isRooted();
+        Init.isRoot = root;
+        boolean window = util.windowPermissionCheck(getContext());
+        String allow = "Allowed", denied = "Denied";
+        return "Root:" + (root ? allow : denied) + "\nWindow:" + (window ? allow : denied);
     }
 
-    void startXservice() {
-        Intent intent = new Intent(getContext(), display.class);
-        intent.putExtra("action", display.action_startX);
-        int value = displayFragment.isXserverInternal(getContext()) ? display.value_internal : display.value_external;
-        intent.putExtra("value", value);
-        getContext().startService(intent);
-
-    }
 
 
 
@@ -242,13 +243,13 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
     public void onResume() {
         super.onResume();
 
-            String name = PrefStore.getProfileName(getContext());
-            containerInfor.ct = containerInfor.getContainerInfor(name);
-            if (containerInfor.ct == null) {
-                Toast.makeText(getContext(), "no container found", Toast.LENGTH_LONG).show();
-                return;
+        String name = PrefStore.getProfileName(getContext());
+        containerInfor.ct = containerInfor.getContainerInfor(name);
+        if (containerInfor.ct == null) {
+            Toast.makeText(getContext(), "no container found", Toast.LENGTH_LONG).show();
+            return;
 
-            }
+        }
 
         binding.ctInfor.setText("NAME: " + containerInfor.ct.name + "\n" + containerInfor.ct.version);
         binding.ctIcon.setBackgroundResource(containerInfor.ct.iconId);

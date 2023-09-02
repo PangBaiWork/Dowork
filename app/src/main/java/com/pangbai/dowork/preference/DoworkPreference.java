@@ -17,18 +17,17 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-public class TermPreference {
+public class DoworkPreference {
     Context ct;
     public String[][] mExtraKeys;
     public SharedPreferences sharedPreferences;
-	public 	String fontSize="fontSize";
+	public 	String fontSize="cmd_fontSize";
 
 
 
-
-    public TermPreference(Context ct) {
+    public DoworkPreference(Context ct) {
         this.ct = ct;
-        sharedPreferences = ct.getSharedPreferences("termConfig", Context.MODE_PRIVATE);
+        sharedPreferences = ct.getSharedPreferences("dowork_preference", Context.MODE_PRIVATE);
 
     }
 
@@ -103,6 +102,17 @@ public class TermPreference {
         }
 
         return intValue;
+    }
+
+
+    public boolean getBoolStoredAsString(String key, boolean def) {
+        if (sharedPreferences == null) {
+            //	Logger.logError(LOG_TAG, "Error getting int value for the \"" + key + "\" key from null shared preferences. Returning default value \"" + def + "\".");
+            Log.e("preference", "sp error");
+            return def;
+        }
+
+        return  sharedPreferences.getBoolean(key, def);
     }
 
 

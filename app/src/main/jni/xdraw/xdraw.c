@@ -16,6 +16,8 @@
 #include <X11/Xutil.h>
 #include<X11/extensions/XTest.h>
 #include <X11/cursorfont.h>
+#include <X11/Xlib.h>      // Xlib 头文件
+
 
 
 bool unix_socket();
@@ -120,7 +122,7 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
  (*env)->DeleteLocalRef(env,jcl);
 	 */
 //isRunning布尔值控制线程停此
-
+    ANativeWindow *mANativeWindow = NULL;
     while (mdisplay!=NULL) {
 
         if (checkClientOnline() == -1){
@@ -128,12 +130,10 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
             // destroySrc();
             break;
         }
-        ANativeWindow *mANativeWindow = NULL;
+
 
 //获取窗口从Java Surfave
-        mANativeWindow = ANativeWindow_fromSurface(env, jsurface);
-        if (mANativeWindow == NULL){
-            continue;}
+
 
 
 //设置窗口图像格式RGBA 8888
@@ -153,7 +153,9 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
         image = XGetImage(mdisplay, desktop, 0, 0, width, height, ~0, ZPixmap);
       //  XSync(mdisplay, False);
         //checkClientOnline();
-
+        mANativeWindow = ANativeWindow_fromSurface(env, jsurface);
+        if (mANativeWindow == NULL){
+            continue;}
 
         if (image == NULL) {
             continue;
@@ -293,4 +295,28 @@ JNIEXPORT void JNICALL
 Java_com_pangbai_dowork_tool_jni_stopDraw(JNIEnv *env, jclass clazz) {
     destroySrc();
     // TODO: implement stopDraw()
+}
+
+JNIEXPORT jint JNICALL
+Java_com_pangbai_dowork_tool_jni_fullScreen(JNIEnv *env, jclass clazz, jint height, jint width) {
+    // TODO: implement fullScreen()
+    //libXrandr required
+    /*
+    XRRScreenSize *screenSizeList;
+    int nSizes;
+    screenSizeList = XRRSizes(display, screenNumber, &nSizes);
+
+// 在 screenSizeList 中选择一个合适的分辨率
+    int width = desiredWidth;   // 替换为你的期望宽度
+    int height = desiredHeight; // 替换为你的期望高度
+    int refreshRate = desiredRefreshRate; // 替换为你的期望刷新率
+
+    for (int i = 0; i < nSizes; i++) {
+        if (screenSizeList[i].width == width && screenSizeList[i].height == height) {
+            XRRSetScreenSize(display, RootWindow(display, screenNumber),
+                             width, height, screenSizeList[i].mwidth, refreshRate);
+            break;
+        }
+    }*/
+
 }

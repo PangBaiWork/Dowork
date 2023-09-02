@@ -201,6 +201,7 @@ chroot_exec()
 {
     unset TMP TEMP LD_PRELOAD LD_DEBUG
     export DISPLAY=:0
+    export PULSE_SERVER=/tmp/pulse
     local path="${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     if [ "$1" = "-u" ]; then
         local username="$2"
@@ -244,12 +245,12 @@ chroot_exec()
         fi
         if [ -n "${username}" ]; then
             if [ $# -gt 0 ]; then
-                proot   -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  /bin/su - ${username} -c "$*"
+                proot  --sysvipc -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  /bin/su - ${username} -c "$*"
             else
-                proot  -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  /bin/su - ${username}
+                proot  --sysvipc -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  /bin/su - ${username}
             fi
         else
-            PATH="${path}" proot  -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  $*
+            PATH="${path}" proot --sysvipc -r "${CHROOT_DIR}" -w / ${mounts} ${emulator} -0 -l  $*
         fi
     ;;
     esac

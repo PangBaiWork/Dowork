@@ -11,13 +11,10 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 
 import com.pangbai.dowork.TermActivity;
-import com.pangbai.dowork.preference.TermPreference;
+import com.pangbai.dowork.preference.DoworkPreference;
 import com.pangbai.dowork.service.mainService;
 import com.pangbai.terminal.TerminalSession;
 import com.pangbai.terminal.TerminalSessionClient;
@@ -38,7 +35,7 @@ public final class SuperTerminalView extends TerminalView {
     private boolean run_done = false;
     static int  currentsize=30;
     public int[] textSizes;
-    TermPreference termPreference;
+    DoworkPreference doworkPreference;
 
 
     public SuperTerminalView(TermActivity context) {
@@ -56,9 +53,9 @@ public final class SuperTerminalView extends TerminalView {
        // }
         clipboardManager = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
         //配置文件准备
-        termPreference=mTermActivity.mTermSetting;
+        doworkPreference =mTermActivity.mTermSetting;
         textSizes=  getDefaultFontSizes(context);
-        currentsize= termPreference.getIntStoredAsString(termPreference.fontSize,textSizes[0]);
+        currentsize= doworkPreference.getIntStoredAsString(doworkPreference.fontSize,textSizes[0]);
         setTextSize(currentsize);
 
     }
@@ -241,10 +238,10 @@ public final class SuperTerminalView extends TerminalView {
    public float onScale(float scale) {
        if (scale < 0.9f || scale > 1.1f) {
            boolean increase = scale > 1.f;
-           int fontSize =termPreference.getIntStoredAsString(termPreference.fontSize,textSizes[0]);
+           int fontSize = doworkPreference.getIntStoredAsString(doworkPreference.fontSize,textSizes[0]);
            fontSize += (increase ? 1 : -1) * 2;
            fontSize = Math.max(textSizes[1], Math.min(fontSize, textSizes[2]));
-           termPreference.setIntStoredAsString(termPreference.fontSize,fontSize,false);
+           doworkPreference.setIntStoredAsString(doworkPreference.fontSize,fontSize,false);
            setTextSize(fontSize);
            //setFontSize(fontSize);
           // changeFontSize(increase);

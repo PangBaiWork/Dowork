@@ -17,12 +17,20 @@
             <!-- Customize your theme here. -->
             <item name="colorControlNormal">#000000</item>
             <item name="colorControlActivated">#000000</item>
+            <item name="windowNoTitle">true</item>
 
-            <item name="android:windowNoTitle">true</item>
             <item name="colorPrimary">#ffffff</item>
             <item name="colorPrimaryDark">#ffffff</item>
             <item name="colorAccent">#000000</item>
         </style>
+    <style name="fullscreenTheme" parent="mThemeAppCompat">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+
+
+
     
     <style name="ATheme" parent="Theme.AppCompat.DayNight.NoActionBar">
 

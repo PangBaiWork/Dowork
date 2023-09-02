@@ -5,10 +5,11 @@ import android.util.Log;
 
 import com.pangbai.dowork.Command.CommandBuilder;
 import com.pangbai.dowork.databinding.ActivityTermBinding;
-import com.pangbai.dowork.preference.TermPreference;
+import com.pangbai.dowork.preference.DoworkPreference;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.containerInfor;
 import com.pangbai.dowork.tool.util;
+import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.view.ExtraKeysView;
 
 import android.widget.RelativeLayout;
@@ -28,7 +29,7 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
     }
 
 
-    public TermPreference mTermSetting;
+    public DoworkPreference mTermSetting;
     public ActivityTermBinding binding;
     RelativeLayout termBgView;
     CommandBuilder mBuilder;
@@ -44,9 +45,15 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
          **/
         getWindow().setBackgroundDrawableResource(R.drawable.bg_term);
         util.fullScreen(getWindow(), true);
-        mTermSetting = new TermPreference(this);
+        mTermSetting = new DoworkPreference(this);
         termBgView = binding.termbgview;
-        if (containerInfor.ct.version.equals("Unknown"))
+
+        if (containerInfor.ct==null){
+            new Init(this);
+            String name = PrefStore.getProfileName(this);
+            containerInfor.ct = containerInfor.getContainerInfor(name);
+        }
+        if (containerInfor.ct==null||containerInfor.ct.version.equals("Unknown"))
             mBuilder = new CommandBuilder(this, CommandBuilder.type_sh, termBgView);
         else {
             isChroot = !containerInfor.isProot(containerInfor.ct);
@@ -55,7 +62,10 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
             else
                 mBuilder = new CommandBuilder(this, CommandBuilder.type_proot, termBgView);
         }
+
         binding.ExtraKey.addView(mBuilder.keysView);
+
+
 
         //mcommand.commandview.setBackground(
         //setTheme(android.R.style.Theme_Black_NoTitleBar);

@@ -14,8 +14,6 @@
 #
 
 
-
-
 LOCAL_PATH := $(call my-dir)
 LIB_DIR := $(LOCAL_PATH)/libs
 
@@ -24,7 +22,7 @@ include $(CLEAR_VARS)
 LOCAL_CPP_EXTENSION := .cpp .cc
 LOCAL_MODULE    :=xdraw
 LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
-LOCAL_SRC_FILES := xdraw.c input.c 
+LOCAL_SRC_FILES := clipboard.c xdraw.c input.c
 LOCAL_LDLIBS += -landroid -llog
 LOCAL_CFLAGS += -fPIC
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
