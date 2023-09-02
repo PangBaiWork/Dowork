@@ -1,6 +1,0 @@
-extra-keys = [ \
-    ['ESC','<','>','BACKSLASH','=','^','$','()','{}','[]','ENTER'], \
-    ['TAB','&',';','/','~','%','*','HOME','UP','END','PGUP'], \
-    ['CTRL','FN','ALT','|','-','+','QUOTE','LEFT','DOWN','RIGHT','PGDN'] \
-    ]
-#----------------
