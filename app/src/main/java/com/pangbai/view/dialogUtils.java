@@ -71,8 +71,10 @@ public class dialogUtils {
         alertDialog.show();
         return alertDialog;
     }
-
-    public static void showInputDialog(Context context, String title, final DialogInputListener listener) {
+    public static void showInputDialog(Context context, String title,final DialogInputListener pos){
+        showInputDialog(context,title,new String[]{"确定","取消"},pos,null);
+    }
+    public static void showInputDialog(Context context, String title,String[] button,final DialogInputListener pos,final DialogInputListener neg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.dialog_input, null);
@@ -81,19 +83,23 @@ public class dialogUtils {
 
         builder.setView(dialogView)
                 .setTitle(title)
-                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                .setPositiveButton(button[0], new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        if (pos==null)
+                            return;
                         String userInput = inputEditText.getText().toString();
-                        if (listener != null) {
-                            listener.onConfirm(userInput);
-                        }
+                            pos.onConfirm(userInput);
                     }
                 })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                .setNegativeButton(button[1], new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
+                        if (neg == null)
+                            return;
+                        String userInput = inputEditText.getText().toString();
+                            neg.onConfirm(userInput);
+
                     }
                 });
 

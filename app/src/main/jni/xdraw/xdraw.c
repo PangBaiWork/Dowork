@@ -114,45 +114,28 @@ Java_com_pangbai_dowork_tool_jni_startx(JNIEnv *env, jobject thiz, jobject jsurf
     height = DisplayHeight(mdisplay, 0);
 
 //设置矩形宽高
-/*
-jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
-	//jclass jcl =  (*env)->GetObjectClass(env,thiz);
- jmethodID mid =  (*env)->GetStaticMethodID(env,jcl, "updateDisplay", "(II)V");
-   (*env)->CallStaticVoidMethod(env,thiz, mid,width,height );
- (*env)->DeleteLocalRef(env,jcl);
-	 */
+
 //isRunning布尔值控制线程停此
     ANativeWindow *mANativeWindow = NULL;
-    while (mdisplay!=NULL) {
-
+    isRunning=true;
+    while (isRunning) {
         if (checkClientOnline() == -1){
             alog("destroy","no window");
-            // destroySrc();
+
             break;
         }
-
-
 //获取窗口从Java Surfave
-
-
-
 //设置窗口图像格式RGBA 8888
 //native_window_set_scaling_mode(mANativeWindow,0);
 //不设置默认为RGB565
-
 //下面的代码删了就是565
 //ANativeWindow_setBuffersGeometry(mANativeWindow, 1080, 1920,WINDOW_FORMAT_RGB_565);
-
 // X图像结构体指针为NULL调用此函数给它复制，
-
 //获取Xserver根窗口中的图像
-
 //图像格式RGB888
 
-
         image = XGetImage(mdisplay, desktop, 0, 0, width, height, ~0, ZPixmap);
-      //  XSync(mdisplay, False);
-        //checkClientOnline();
+
         mANativeWindow = ANativeWindow_fromSurface(env, jsurface);
         if (mANativeWindow == NULL){
             continue;}
@@ -162,11 +145,14 @@ jclass jcl = (*env)->FindClass(env, "com/pangbai/dowork/display/display");
         }
 
         showImage(mANativeWindow, image);
-//释放X图像结构体
-
         XDestroyImage(image);
 
     }
+  //  buttonpress(mdisplay,2);
+  //  buttonrelease(mdisplay,2);
+
+   // destroySrc();
+//    XDestroyWindow(mdisplay, desktop);
     return (*env)->NewStringUTF(env, "P");
 }
 
@@ -280,12 +266,6 @@ bool unix_socket() {
         return false;
     }
 
-    // 此处可以使用 display 来与 X 服务器进行交互
-
-    // 关闭套接字和 Display
-    /*
-    XCloseDisplay(mdisplay);
-    close(sockfd);*/
 
     return true;
 }
@@ -293,7 +273,7 @@ bool unix_socket() {
 
 JNIEXPORT void JNICALL
 Java_com_pangbai_dowork_tool_jni_stopDraw(JNIEnv *env, jclass clazz) {
-    destroySrc();
+    isRunning=false;
     // TODO: implement stopDraw()
 }
 

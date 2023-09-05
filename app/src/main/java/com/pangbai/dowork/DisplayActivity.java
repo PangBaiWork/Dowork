@@ -53,15 +53,7 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
         binding.surface.setLayoutParams(params);
         display.startXservice(this);
         Intent mIntent = new Intent(this, display.class);
-        mdisplayConnection = new displayConnection(binding.surface.getHolder().getSurface(), result -> {
-            if (binding != null)
-                if (result == 0) {
-                    Log.e("fullscreeen", "drawing");
-                    // Toast.makeText(this,"drawing",Toast.LENGTH_LONG).show();
-                } else {
-                    Log.e("fullscreeen", "stopdraw");
-                }
-        });
+        mdisplayConnection = new displayConnection(binding.surface.getHolder().getSurface());
         binding.surface.setOnTouchListener(display.screenTouch);
 
         bindService(mIntent, mdisplayConnection, Context.BIND_AUTO_CREATE);
@@ -82,23 +74,25 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
 
     @Override
     protected void onDestroy() {
+
+
+        jni.stopDraw();
+      //  display.isStarting=true;
+        binding=null;
         Log.e("displayActivity ","destroy");
-        try {
-            unbindService(mdisplayConnection);
-        } catch (Exception e) {
-        }
+        unbindService(mdisplayConnection);
         super.onDestroy();
     }
 
     @Override
     public void onClick(View view) {
         if (view==binding.inputStr){
-            dialogUtils.showInputDialog(this,
-                    "输入字符串",
-                    (dialogUtils.DialogInputListener) userInput -> {
-                Log.e("input",userInput.toString());
-                        jni.inputString(userInput.toString());
-                    });
+          /*  dialogUtils.showInputDialog(this,
+                    "输入字符串",new String[]{"输入","输入到xterm"},
+                    (dialogUtils.DialogInputListener) userInput -> jni.inputString(userInput.toString(),false),
+                    (dialogUtils.DialogInputListener) userInput -> jni.inputString(userInput.toString(),true));*/
+            dialogUtils.showInputDialog(this, "输入字符串",
+                    (dialogUtils.DialogInputListener) userInput -> jni.inputString(userInput.toString(),true));
         }else if (view==binding.inputDelete){
             jni.inputKeyByString("BackSpace");
         }else if (view==binding.inputEnter){

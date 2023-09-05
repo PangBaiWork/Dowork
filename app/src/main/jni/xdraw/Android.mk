@@ -27,8 +27,8 @@ LOCAL_LDLIBS += -landroid -llog
 LOCAL_CFLAGS += -fPIC
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
 
-LOCAL_STATIC_LIBRARIES :=android-support X11   xcb  Xtst Xext
-LOCAL_SHARED_LIBRARIES :=  Xau Xdmcp
+LOCAL_STATIC_LIBRARIES :=android-support X11 xcb  Xtst Xext Xau Xdmcp
+LOCAL_SHARED_LIBRARIES :=
 
 ifeq ($(TARGET_ARCH_ABI),x86)
     LOCAL_CFLAGS += -ffast-math -mtune=atom -mssse3 -mfpmath=sse 
@@ -54,8 +54,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := Xau
-LOCAL_SRC_FILES := $(LIB_DIR)/libXau.so
-include $(PREBUILT_SHARED_LIBRARY)
+LOCAL_SRC_FILES := $(LIB_DIR)/libXau.a
+include $(PREBUILT_STATIC_LIBRARY)
 
 LOCAL_PATH := $(call my-dir)
 
@@ -69,8 +69,8 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := Xdmcp
-LOCAL_SRC_FILES := $(LIB_DIR)/libXdmcp.so
-include $(PREBUILT_SHARED_LIBRARY)
+LOCAL_SRC_FILES := $(LIB_DIR)/libXdmcp.a
+include $(PREBUILT_STATIC_LIBRARY)
 
 LOCAL_PATH := $(call my-dir)
 

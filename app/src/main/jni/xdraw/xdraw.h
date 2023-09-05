@@ -14,3 +14,5 @@ int presskey(Display *dsp,int s);
 int releasekey(Display *dsp,int s);
 int xclick(int x,int y,bool isleft);
 bool isRunning;
+int buttonpress(Display *dsp, int type);
+int buttonrelease(Display *dsp, int type) ;

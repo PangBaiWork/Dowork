@@ -224,17 +224,20 @@ Java_com_pangbai_dowork_tool_jni_pressKey(JNIEnv *env, jclass clazz, jint key) {
     return 0;
 }
 
+
+bool isPrimary=false;
 void *thread_function(void *arg) {
-    copy( (char *)arg,1);
+    copy( (char *)arg,1,isPrimary);
     printf("这是新线程\n");
     return NULL;
 }
 //copy ,in cause of theard
 char *inputStr;
         JNIEXPORT jint JNICALL
-Java_com_pangbai_dowork_tool_jni_inputString(JNIEnv *env, jclass clazz, jstring str) {
+Java_com_pangbai_dowork_tool_jni_inputString(JNIEnv *env, jclass clazz, jstring str,jboolean primary) {
     if (mdisplay==NULL)
         return -1;
+    isPrimary=primary;
     const char *cString = (*env)->GetStringUTFChars(env, str,NULL);
     if (cString == NULL) {
         return -2; /* OutOfMemoryError already thrown */
@@ -255,27 +258,32 @@ Java_com_pangbai_dowork_tool_jni_inputString(JNIEnv *env, jclass clazz, jstring 
     }
 
 
+    if (primary){
+            buttonpress(mdisplay,2);
+            XFlush(mdisplay);
+            buttonrelease(mdisplay,2);
+            XFlush(mdisplay);
+    } else {
+                KeySym ctrlKey = XKeysymToKeycode(mdisplay, XK_Control_L);
+                KeySym vKey = XKeysymToKeycode(mdisplay, XK_v);
 
-    KeySym ctrlKey = XKeysymToKeycode(mdisplay, XK_Control_L);
-    KeySym vKey = XKeysymToKeycode(mdisplay, XK_v);
+                // 模拟按下 Ctrl 键
+                XTestFakeKeyEvent(mdisplay, ctrlKey, True, 0);
+                XFlush(mdisplay);
 
-    // 模拟按下 Ctrl 键
-    XTestFakeKeyEvent(mdisplay, ctrlKey, True, 0);
-    XFlush(mdisplay);
+                // 模拟按下 V 键
+                XTestFakeKeyEvent(mdisplay, vKey, True, 0);
+                XFlush(mdisplay);
 
-    // 模拟按下 V 键
-    XTestFakeKeyEvent(mdisplay, vKey, True, 0);
-    XFlush(mdisplay);
+                // 释放 V 键
+                XTestFakeKeyEvent(mdisplay, vKey, False, 0);
+                XFlush(mdisplay);
 
-    // 释放 V 键
-    XTestFakeKeyEvent(mdisplay, vKey, False, 0);
-    XFlush(mdisplay);
-
-    // 释放 Ctrl 键
-    XTestFakeKeyEvent(mdisplay, ctrlKey, False, 0);
-    XFlush(mdisplay);
-    //pthread_join(thread_id,NULL);
-
+                // 释放 Ctrl 键
+                XTestFakeKeyEvent(mdisplay, ctrlKey, False, 0);
+                XFlush(mdisplay);
+                //pthread_join(thread_id,NULL);
+            }
 
     // TODO: implement inputString()
 }

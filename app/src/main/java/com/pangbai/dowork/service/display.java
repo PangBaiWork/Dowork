@@ -61,8 +61,8 @@ public class display extends Service implements  OnClickListener {
     public static final int action_fullscreen = 6;
     public static final int value_internal = 1;
     public static final int value_external = 2;
-    public static Surface surface;
-    serviceCallback mFullscreenCallback;
+    public  Surface surface;
+
    public  static   View.OnTouchListener screenTouch=new OnTouchListener() {
        private  boolean scroll=false;
        private float[] initialY = new float[2];
@@ -88,7 +88,7 @@ public class display extends Service implements  OnClickListener {
            @Override
            public void onLongPress(MotionEvent e) {
                Log.e("gestrue","longPress");
-               jni.inputString("User传递字符串 ");
+            //   jni.inputString("User传递字符串 ");
            }
 
            @Override
@@ -132,9 +132,6 @@ public class display extends Service implements  OnClickListener {
         }
     };
 
-    public void setCallback(serviceCallback callback) {
-        this.mFullscreenCallback = callback;
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -169,7 +166,7 @@ public class display extends Service implements  OnClickListener {
     boolean canclick = false;
     WindowManager.LayoutParams param;
 
-    static boolean isStarting = false;
+ public    static boolean isStarting = false;
     //  static SurfaceView screen;
     OnTouchListener touch;
     public static Thread Xdraw;
@@ -178,26 +175,26 @@ public class display extends Service implements  OnClickListener {
     int screen[];
 
 
-     boolean bind=false;
+    public static boolean isFulllScreen=false;
     @Override
     public IBinder onBind(Intent intent) {
-            hideDisplay();
-            bind=true;
         return new MyBinder();
     }
+
+
     @Override
     public boolean onUnbind(Intent intent) {
         /**
          * caused error
          */
-
+        isFulllScreen=false;
         Log.e("displaybind","unbind");
-    surface=binding.surface.getHolder().getSurface();
-        mFullscreenCallback=null;
+        surface=binding.surface.getHolder().getSurface();
+       // jni.stopDraw();
       /*  jni.stopXvfb();*/
        // jni.stopDraw();
 
-        return  false;
+        return  true;
     }
     @Override
     public void onCreate() {
@@ -376,18 +373,17 @@ public class display extends Service implements  OnClickListener {
                     //don't start ,-1 for xclient ,-2 for xvfb and xclient
                     Log.e("X11", "return " + result);
                     if (!isStarting && result != -1 && result != -2) {
+
                         Log.e("X11", "start");
+
                         isStarting = true;
 
-                        if (mFullscreenCallback != null)
-                            mFullscreenCallback.callback(0);
-                        else
+                        if (!isFulllScreen)
                             updateFloatDisplay(screen[0], screen[1]);
                         jni.startx(surface);
-
-                        if (mFullscreenCallback != null)
+                       /* if (mFullscreenCallback != null)
                             mFullscreenCallback.callback(1);
-                        else
+                        else*/
                             hideDisplay();
 
                         isStarting = false;

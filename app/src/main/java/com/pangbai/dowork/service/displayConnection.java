@@ -12,11 +12,11 @@ public class displayConnection implements ServiceConnection {
 
 
     Surface surface;
-    serviceCallback callback;
+  //  serviceCallback callback;
 
-    public displayConnection(Surface surface, serviceCallback callback) {
+    public displayConnection(Surface surface) {
         this.surface = surface;
-        this.callback = callback;
+      //  this.callback = callback;
     }
 
     @Override
@@ -24,16 +24,16 @@ public class displayConnection implements ServiceConnection {
         // 设置回调
         display.MyBinder myBinder = (display.MyBinder) iBinder;
         display mService = myBinder.getService();
+       mService. hideDisplay();
+        mService.isFulllScreen=true;
         if (mService != null) {
             mService.surface = surface;
-            mService.setCallback(callback);
             jni.stopDraw();
         }
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        callback = null;
         surface = null;
     }
 
