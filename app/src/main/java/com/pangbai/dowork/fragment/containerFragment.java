@@ -166,7 +166,7 @@ public class containerFragment extends Fragment implements View.OnClickListener 
     public void onDestroyView() {
         if (!executorService.isShutdown())
             executorService.shutdownNow();
-        Toast.makeText(getActivity(), "destory", Toast.LENGTH_LONG).show();
+     //   Toast.makeText(getActivity(), "destory", Toast.LENGTH_LONG).show();
         adapter.ItemChange = null;
         super.onDestroyView();
     }

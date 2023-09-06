@@ -138,7 +138,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                 }
                 try {
                     //wait For service Start;
-                    if (display.mService == null)
+                 //   if (display.mService == null)
                         Thread.sleep(500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -216,7 +216,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                 serviceConnection = null;
                 binding.ctStartStop.setBackgroundResource(R.drawable.ct_start);
             } else {
-                Toast.makeText(getContext(), "s", Toast.LENGTH_LONG).show();
+          //      Toast.makeText(getContext(), "s", Toast.LENGTH_LONG).show();
                 dialogUtils.showInputDialog(getContext(),
                         "执行任务",
                         (dialogUtils.DialogInputListener) userInput -> {
@@ -246,7 +246,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
         String name = PrefStore.getProfileName(getContext());
         containerInfor.ct = containerInfor.getContainerInfor(name);
         if (containerInfor.ct == null) {
-            Toast.makeText(getContext(), "no container found", Toast.LENGTH_LONG).show();
+         //   Toast.makeText(getContext(), "no container found", Toast.LENGTH_LONG).show();
             return;
 
         }

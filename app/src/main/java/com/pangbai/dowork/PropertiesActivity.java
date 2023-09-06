@@ -176,7 +176,7 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
                 serviceConnection = new mainServiceConnection(result -> {
                     if (binding != null)
                         binding.ctActionRun.setBackgroundResource(R.drawable.ct_run_task);
-                    Toast.makeText(this,"j"+Init.isRoot,Toast.LENGTH_LONG).show();
+     //               Toast.makeText(this,"j"+Init.isRoot,Toast.LENGTH_LONG).show();
                 });
             bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
             binding.ctActionRun.setBackgroundResource(R.drawable.stop);

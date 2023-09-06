@@ -59,9 +59,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
                 dialogUtils.showConfirmationDialog(this,
-                        "权限申请",
-                        "为运行必要服务,请授予本软件权限,开发者承诺权限将只用于服务范围以内的用途",
-                        "授权",
+                        "权限申请以及隐私协议",
+                        "为运行必要服务,请授予本软件权限\n隐私协议:\n本软件承诺不收集任何用户私人信息, 权限仅用于软件服务内容",
+                        "同意",
                         "退出",
                         () -> {
                             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
