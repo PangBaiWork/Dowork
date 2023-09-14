@@ -2,10 +2,13 @@ package com.pangbai.dowork;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +39,7 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
         }
     };
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +55,11 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
         params.width = screen[0];
         params.height = screen[1];
         binding.surface.setLayoutParams(params);
+
+
         display.startXservice(this);
         Intent mIntent = new Intent(this, display.class);
+
         mdisplayConnection = new displayConnection(binding.surface.getHolder().getSurface());
         binding.surface.setOnTouchListener(display.screenTouch);
 
@@ -61,6 +68,8 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
         binding.inputMethod.setOnClickListener(this);
         binding.inputEnter.setOnClickListener(this);
         binding.inputDelete.setOnClickListener(this);
+        binding.surface.setZOrderMediaOverlay(true);
+
 
         setContentView(binding.getRoot());
     }
@@ -69,7 +78,7 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
     @Override
     protected void onResume() {
         super.onResume();
-
+      //  binding.surface.setZOrderMediaOverlay(true);
     }
 
     @Override

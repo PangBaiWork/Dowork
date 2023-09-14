@@ -3,10 +3,13 @@ package com.pangbai.dowork.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +48,8 @@ public class displayFragment extends Fragment implements View.OnClickListener, C
         binding.diaplayDepth.setText(String.valueOf(screen[2]));
         switchXServerUI(isXserverInternal(getContext()));
         binding.switchPulseaudio.setChecked(isAudioOn(getContext()));
+        int screen[]=getScreenParam(getContext());
+        binding.deviceScreen.setText("您的设备宽为"+screen[0]+",高为"+screen[1]);
 
         return binding.getRoot();
     }
@@ -117,6 +122,17 @@ public class displayFragment extends Fragment implements View.OnClickListener, C
         mIntent.putExtra("action", action);
         getContext().startService(mIntent);
 
+
+    }
+    public static int[] getScreenParam(Context context){
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (windowManager != null) {
+            Display display = windowManager.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            return new int[]{size.x,size.y};
+        }
+        return new int[]{800,600};
 
     }
 

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (!Settings.canDrawOverlays(this)) {
                 dialogUtils.showConfirmationDialog(this,
                         "权限申请以及隐私协议",
-                        "为运行必要服务,请授予本软件权限\n隐私协议:\n本软件承诺不收集任何用户私人信息, 权限仅用于软件服务内容",
+                        "为运行必要服务,请授予本软件权限\n隐私协议:\n为运行浮窗,导入容器,chroot等操作本软件需要必要权限\n本软件承诺不收集任何用户私人信息, 权限仅用于软件服务内容",
                         "同意",
                         "退出",
                         () -> {

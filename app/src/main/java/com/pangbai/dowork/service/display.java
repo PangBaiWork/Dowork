@@ -313,7 +313,7 @@ public class display extends Service implements  OnClickListener {
         if (process_Xvfb != null)
             return;
         Log.e("xvfb", "start");
-        cmdExer.execute(Init.binDirPath + "/Xvfb :0 -ac -listen tcp -screen 0 " +
+        cmdExer.execute(Init.binDirPath + "/Xvfb :0 -ac -wr -listen tcp -screen 0 " +
                 screen[0] + "x" + screen[1] + "x" + screen[2], false, false);
         process_Xvfb = cmdExer.process;
     }

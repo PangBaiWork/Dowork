@@ -217,6 +217,10 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                 binding.ctStartStop.setBackgroundResource(R.drawable.ct_start);
             } else {
           //      Toast.makeText(getContext(), "s", Toast.LENGTH_LONG).show();
+                if (!containerInfor.checkInstall(getContext())){
+                    Toast.makeText(getContext(),"容器未安装",Toast.LENGTH_LONG).show();
+                    return;
+                }
                 dialogUtils.showInputDialog(getContext(),
                         "执行任务",
                         (dialogUtils.DialogInputListener) userInput -> {
@@ -225,7 +229,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                             if (userInput.contains(">"))
                                 Toast.makeText(getContext(), "注意该任务的输出重定向将可能会定向到容器外部，请使用绝对路径", Toast.LENGTH_LONG);
                             mIntent.putExtra("action", mainService.action_exeCmd);
-                            mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh exec " + userInput);
+                            mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh exec -u root " + userInput);
                             getContext().startService(mIntent);
                             binding.ctStartStop.setBackgroundResource(R.drawable.stop);
                             serviceConnection = new mainServiceConnection(result -> {

@@ -15,8 +15,8 @@ android {
         applicationId "com.pangbai.dowork"
         minSdk 21
         targetSdk 28
-        versionCode 2
-        versionName "1.0"
+        versionCode 3
+        versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {//让gradle知道ndk的配置
             abiFilter "arm64-v8a"//so文件的平

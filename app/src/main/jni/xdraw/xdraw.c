@@ -119,6 +119,8 @@ Java_com_pangbai_dowork_tool_jni_startx(JNIEnv *env, jobject thiz, jobject jsurf
     ANativeWindow *mANativeWindow = NULL;
     isRunning=true;
     while (isRunning) {
+        //绘制停顿，防止性能浪费
+        usleep(15000);
         if (checkClientOnline() == -1){
             alog("destroy","no window");
 
