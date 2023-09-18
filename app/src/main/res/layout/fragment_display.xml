@@ -111,6 +111,13 @@
 		style="@style/defaultTextStyle"
 		android:textColor="@color/white"
 		android:id="@+id/device_screen" />
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="10dp"
+		style="@style/defaultTextStyle"
+		android:textColor="@color/white"
+		android:text="请确保width不超过最大高度,height不超过最大宽度" />
 
 
 
