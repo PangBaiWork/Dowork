@@ -14,11 +14,12 @@ The Project is planing
 * [x] Pulseaudio support
 * [x] Xserver input support(contain Chinese)
 * [x] roofts download online support(by rooftstool)
+* [x] Progress manager
 * [ ] Xserver cursor support
 * [ ] Main Setting
 * [ ] Adb support
 * [ ] Prevent the process of being killed
-* [ ] Progress manager
+
 ### Dependent project
 [Xvfb](https://gitlab.freedesktop.org/xorg/xserver)  
 [PulseAudio](https://github.com/pelya/pulseaudio-android)  
