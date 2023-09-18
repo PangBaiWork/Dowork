@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Debug;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,28 +15,37 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.pangbai.dowork.Command.CommandBuilder;
+import com.pangbai.dowork.Command.cmdExer;
 import com.pangbai.dowork.R;
 import com.pangbai.dowork.databinding.FragmentDashboardBinding;
 import com.pangbai.dowork.preference.DoworkPreference;
 import com.pangbai.dowork.service.display;
 import com.pangbai.dowork.service.mainService;
 import com.pangbai.dowork.service.mainServiceConnection;
+import com.pangbai.dowork.service.serviceCallback;
 import com.pangbai.dowork.tool.IO;
 import com.pangbai.dowork.tool.Init;
 import com.pangbai.dowork.tool.containerInfor;
+import com.pangbai.dowork.tool.procAdapter;
+import com.pangbai.dowork.tool.procMap;
 import com.pangbai.dowork.tool.uiThreadUtil;
 import com.pangbai.dowork.tool.util;
 import com.pangbai.dowork.*;
 import com.pangbai.linuxdeploy.PrefStore;
 import com.pangbai.view.dialogUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 //import leakcanary.LeakCanary;
 
-public class dashboardFragment extends Fragment implements View.OnClickListener {
+public class dashboardFragment extends Fragment implements View.OnClickListener, serviceCallback {
     FragmentDashboardBinding binding;
     //containerInfor currentContainer;
     mainServiceConnection serviceConnection;
@@ -49,6 +59,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         binding = FragmentDashboardBinding.inflate(getLayoutInflater());
+        binding.listProc.setLayoutManager(new LinearLayoutManager(getContext()));
 
     }
 
@@ -62,6 +73,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
         //  binding = FragmentDashboardBinding.inflate(getLayoutInflater());
         binding.ctTerminal.setOnClickListener(this);
         binding.ctStartStop.setOnClickListener(this);
+        binding.umount.setOnClickListener(this);
 
         executorService = Executors.newSingleThreadExecutor();
         if (mainService.isCmdRunning) {
@@ -98,6 +110,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                     size = IO.countDirSize(path);
                 else
                     size = null;
+                cmdExer.destroy();
 
                 Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
                 Debug.getMemoryInfo(memoryInfo);
@@ -138,8 +151,8 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                 }
                 try {
                     //wait For service Start;
-                 //   if (display.mService == null)
-                        Thread.sleep(500);
+                    //   if (display.mService == null)
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -151,11 +164,28 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                             binding.displayStatus.setText(status);
                     }
                 });
+                if (!Init.isRoot)
+                    return;
+                procAdapter adapter = getChrootProcAdapter();
+                uiThreadUtil.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adapter != null) {
+                            //   binding.processCount.setText("Process: "+adapter.getItemCount());
+                            binding.listProc.setAdapter(adapter);
+                            callback(adapter.getItemCount());
+                        } else {
+                            callback(0);
+                        }
+                        // adapter.notifyDataSetChanged();
+                    }
+                });
 
 
             }
         });
     }
+
 
     public String checkXStatus() {
         boolean x11, xserver, pulseaudio;
@@ -181,7 +211,24 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
         return "Root:" + (root ? allow : denied) + "\nWindow:" + (window ? allow : denied);
     }
 
+    public procAdapter getChrootProcAdapter() {
+        cmdExer.execute("ls -l /proc/*/root | grep /data/local", true, true);
 
+        if (cmdExer.result == null) return null;
+        Log.e("proc", cmdExer.result);
+        List<String> pids = util.getByTwoString(cmdExer.result, "proc/", "/root");
+        List<procMap> mprocMap = new ArrayList<>();
+        cmdExer.destroy();
+        for (String pid : pids) {
+            int com = cmdExer.execute("cat " + "/proc/" + pid + "/comm", true, true);
+            if (com != -1 && cmdExer.lastLine != null)
+                mprocMap.add(new procMap(pid, cmdExer.lastLine));
+        }
+        if (mprocMap.size() != 0)
+            return new procAdapter(mprocMap, this);
+        else
+            return null;
+    }
 
 
     @Override
@@ -216,9 +263,9 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                 serviceConnection = null;
                 binding.ctStartStop.setBackgroundResource(R.drawable.ct_start);
             } else {
-          //      Toast.makeText(getContext(), "s", Toast.LENGTH_LONG).show();
-                if (!containerInfor.checkInstall(getContext())){
-                    Toast.makeText(getContext(),"容器未安装",Toast.LENGTH_LONG).show();
+                //      Toast.makeText(getContext(), "s", Toast.LENGTH_LONG).show();
+                if (!containerInfor.checkInstall(getContext())) {
+                    Toast.makeText(getContext(), "容器未安装", Toast.LENGTH_LONG).show();
                     return;
                 }
                 dialogUtils.showInputDialog(getContext(),
@@ -239,6 +286,15 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
                             getActivity().bindService(mIntent, serviceConnection, Context.BIND_AUTO_CREATE);
                         });
             }
+        } else if (view==binding.umount) {
+            if (containerInfor.isProot(containerInfor.ct)){
+                Toast.makeText(getContext(),"Only for chroot",Toast.LENGTH_SHORT).show();
+                return;
+            }
+            CommandBuilder.stopChroot();
+            Toast.makeText(getContext(),"umounted",Toast.LENGTH_SHORT).show();
+            doInBackground(containerInfor.ct.path);
+
         }
     }
 
@@ -250,7 +306,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
         String name = PrefStore.getProfileName(getContext());
         containerInfor.ct = containerInfor.getContainerInfor(name);
         if (containerInfor.ct == null) {
-         //   Toast.makeText(getContext(), "no container found", Toast.LENGTH_LONG).show();
+            //   Toast.makeText(getContext(), "no container found", Toast.LENGTH_LONG).show();
             return;
 
         }
@@ -263,5 +319,10 @@ public class dashboardFragment extends Fragment implements View.OnClickListener 
         }*/
 
 
+    }
+
+    @Override
+    public void callback(int result) {
+        binding.processCount.setText("Process: " + result);
     }
 }

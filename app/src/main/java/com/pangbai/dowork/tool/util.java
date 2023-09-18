@@ -18,10 +18,25 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class util {
 
+  public  static List<String> getByTwoString(String input, String one, String two){
+      Pattern pattern = Pattern.compile(one+"(.*?)"+two);
+      Matcher matcher = pattern.matcher(input);
+      List<String> result=new ArrayList<>();
 
+      // 查找匹配项并输出内容
+      while (matcher.find()) {
+        result.add(matcher.group(1)); // 获取第一个捕获组的内容
+         // System.out.println("提取的内容: " + extracted);
+      }
+      return result;
+  }
     public static void startActivity(Context ct, Class activity, boolean anim) {
         Intent it = new Intent(ct.getApplicationContext(), activity);
         if (anim) {

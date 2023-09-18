@@ -199,11 +199,31 @@
 
 	</LinearLayout>
 
-    <ListView
-        android:id="@+id/ct_list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:id="@+id/list_proc"
         android:layout_width="match_parent"
-        android:layout_height="0"
+        android:layout_height="wrap_content"
         android:layout_below="@id/ct_current" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/process_count"
+        android:text="Process: ..."
+        android:layout_marginLeft="5dp"
+        android:textColor="@color/white"
+        style="@style/defaultTextStyle"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/umount"
+        android:background="@drawable/view_circle"
+        android:layout_marginTop="5dp"
+        android:text="umount container"
+        android:padding="6dp"
+        android:textColor="@color/black"
+        style="@style/defaultTextStyle"/>
+
 
     <com.pangbai.view.CustomTextView
         android:layout_marginTop="20dp"

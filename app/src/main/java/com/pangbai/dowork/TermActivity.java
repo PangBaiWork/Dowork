@@ -87,9 +87,9 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
 
     @Override
     protected void onDestroy() {
-        if (isChroot){
+     /* if (isChroot){
             CommandBuilder.stopChroot();
-        }
+        }*/
         TerminalSession session = mBuilder.cmdView.mTerminalSession;
         if (session != null && session.isRunning())
             session.finishIfRunning();
