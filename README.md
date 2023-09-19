@@ -2,8 +2,7 @@
 Integrated Android container manager  
 An container manager which include Rootfs-building/import/export  
 xserver,terminal ......  
-It is my first Open Source project  
-The Project is planing 
+[中文使用文档](http://pangbai.work/IT/dowork/)
 ### Todo
 * [x] fix Linuxdeploy-cli and support proot
 * [x] Container Manager
