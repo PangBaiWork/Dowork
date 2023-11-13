@@ -42,11 +42,11 @@ public class CommandBuilder {
         if (type == type_sh) {
             args = new String[]{"sh"};
         } else if (type == type_proot) {
-            args = new String[]{"sh", Init.linuxDeployDirPath + "/cli.sh", "shell","bash"};
+            args = new String[]{"sh", Init.linuxDeployDirPath + "/cli.sh", "shell", "bash"};
         } else {
             Log.e("linuxdeploy", "chroot");
             cmd = "/system/bin/su";
-            args = new String[]{"su", "-c", "sh", Init.linuxDeployDirPath + "/cli.sh", "shell"};
+            args = new String[]{"su", "-c", "sh", Init.linuxDeployDirPath + "/cli.sh", "shell -u user bash"};
         }
 
         cmdView.setTypeface(Typeface.createFromFile(Init.fontPath));
@@ -84,18 +84,20 @@ public class CommandBuilder {
                 "TERM=xterm-256color",
                 "LANG=en_US.UTF-8",
                 "ANDROID_DATA=/data",
-                "ANDROID_ROOT=/system"
+                "ANDROID_ROOT=/system",
+                "LD_PRELOAD=/data/user/0/com.pangbai.dowork/files/usr/lib/libtermux-exec.so"
         };
 
 
         return envp;
     }
-  public static void stopChroot() {
-        Log.e("chroot","umount");
 
-            cmdExer.execute(Init.linuxDeployDirPath +"/cli.sh umount",true,false);
+    public static void stopChroot() {
+        Log.e("chroot", "umount");
 
-  }
+        cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount", true, false);
+
+    }
 
     public static String[] getExeArgs(String cmd) {
         String args[] = {"sh", "-c", cmd};

@@ -82,7 +82,7 @@ public class PropertiesActivity extends AppCompatActivity implements View.OnClic
             if (containerInfor.checkInstall(this))
                 dialogUtils.showConfirmationDialog(this,"rootfs已安装","此容器Rootfs已安装,确定要重装吗",
                         "重装","取消",
-                        ()->installAndStop(),null);
+                        this::installAndStop,null);
             else
                 installAndStop();
 

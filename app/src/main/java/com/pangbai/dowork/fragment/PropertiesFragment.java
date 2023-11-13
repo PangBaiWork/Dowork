@@ -26,17 +26,13 @@ import com.pangbai.linuxdeploy.PrefStore;
 public class PropertiesFragment extends PreferenceFragmentCompat implements
         Preference.OnPreferenceClickListener, OnSharedPreferenceChangeListener {
 
-
-
-
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // 调用父类的方法，加载偏好设置布局
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         // 设置背景色为你想要的颜色
-       // int backgroundColor = getResources().getColor(R.color.custom_background_color);
+        // int backgroundColor = getResources().getColor(R.color.custom_background_color);
         view.setBackgroundColor(Color.WHITE);
-
         return view;
     }
 
@@ -140,8 +136,8 @@ public class PropertiesFragment extends PreferenceFragmentCompat implements
                 break;
             }
             case "mounts_editor": {
-               // Intent intent = new Intent(getContext(), MountsActivity.class);
-               // startActivity(intent);
+                // Intent intent = new Intent(getContext(), MountsActivity.class);
+                // startActivity(intent);
                 break;
             }
         }

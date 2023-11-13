@@ -22,12 +22,9 @@ import com.pangbai.dowork.tool.util;
 public class settingFragment extends PreferenceFragmentCompat {
     FragmentSettingBinding binding;
 
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getContext().setTheme(R.style.WhiteContextTheme);
     }
 
@@ -35,7 +32,7 @@ public class settingFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
         getPreferenceManager().setSharedPreferencesName("dowork_preference");
         addPreferencesFromResource(R.xml.setting_dowork);
-      //  setDividerHeight(util.Dp2Px(getContext(),8));
+        //  setDividerHeight(util.Dp2Px(getContext(),8));
     }
 
     @Override
@@ -47,7 +44,7 @@ public class settingFragment extends PreferenceFragmentCompat {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding=null;
+        binding = null;
     }
 }
 

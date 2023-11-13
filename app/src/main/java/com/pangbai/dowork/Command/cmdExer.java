@@ -8,9 +8,8 @@ import java.io.InputStreamReader;
 import java.util.Map;
 
 public class cmdExer {
-    public static Process process = null;
-    public static String lastLine = null;
-    public static String result = null;
+    public static Process process;
+    public static String lastLine, result;
 
     public static int execute(String command, boolean su) {
         return execute(command, su, true);
@@ -41,7 +40,7 @@ public class cmdExer {
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
-               result+=line;
+                result += line;
                 lastLine = line;
             }
 
@@ -63,13 +62,15 @@ public class cmdExer {
             }
         }
     }
-public static void  destroy(){
-        process=null;
-        result=null;
-        lastLine=null;
-}
-public static String getLastLine(){
+
+    public static void destroy() {
+        process = null;
+        result = null;
+        lastLine = null;
+    }
+
+    public static String getLastLine() {
         return lastLine;
-}
+    }
 
 }

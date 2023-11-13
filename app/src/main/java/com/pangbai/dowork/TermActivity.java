@@ -21,12 +21,9 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.pangbai.terminal.TerminalSession;
+import com.pangbai.view.dialogUtils;
 
 public class TermActivity extends AppCompatActivity implements OnClickListener {
-
-    @Override
-    public void onClick(View p1) {
-    }
 
 
     public DoworkPreference mTermSetting;
@@ -48,12 +45,12 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
         mTermSetting = new DoworkPreference(this);
         termBgView = binding.termbgview;
 
-        if (containerInfor.ct==null){
+        if (containerInfor.ct == null) {
             new Init(this);
             String name = PrefStore.getProfileName(this);
             containerInfor.ct = containerInfor.getContainerInfor(name);
         }
-        if (containerInfor.ct==null||containerInfor.ct.version.equals("Unknown"))
+        if (containerInfor.ct == null || containerInfor.ct.version.equals("Unknown"))
             mBuilder = new CommandBuilder(this, CommandBuilder.type_sh, termBgView);
         else {
             isChroot = !containerInfor.isProot(containerInfor.ct);
@@ -64,7 +61,6 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
         }
 
         binding.ExtraKey.addView(mBuilder.keysView);
-
 
 
         //mcommand.commandview.setBackground(
@@ -96,5 +92,26 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
         super.onDestroy();
     }
 
+    public void onBackPressed() {
 
+        if (isChroot)
+            dialogUtils.showConfirmationDialog(this,
+                    "退出终端",
+                    "是否同时卸载容器",
+                    "退出并卸载",
+                    "后台运行进程",
+                    () -> {
+                        CommandBuilder.stopChroot();
+                        finish();
+
+                    },
+                    () -> {
+                        finish();
+                    });
+    }
+
+    @Override
+    public void onClick(View view) {
+
+    }
 }

@@ -21,8 +21,7 @@ public class DoworkPreference {
     Context ct;
     public String[][] mExtraKeys;
     public SharedPreferences sharedPreferences;
-	public 	String fontSize="cmd_fontSize";
-
+    public String fontSize = "cmd_fontSize";
 
 
     public DoworkPreference(Context ct) {
@@ -112,7 +111,7 @@ public class DoworkPreference {
             return def;
         }
 
-        return  sharedPreferences.getBoolean(key, def);
+        return sharedPreferences.getBoolean(key, def);
     }
 
 

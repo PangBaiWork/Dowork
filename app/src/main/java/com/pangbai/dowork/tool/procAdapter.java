@@ -1,5 +1,6 @@
 package com.pangbai.dowork.tool;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class procAdapter extends RecyclerView.Adapter<procAdapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String text = map.get(position).name;

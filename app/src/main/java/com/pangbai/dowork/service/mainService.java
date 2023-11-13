@@ -113,9 +113,9 @@ public class mainService extends Service {
 
                         isCmdRunning = true;
                         String cmdStr = intent.getStringExtra("value");
-                        if (cmdStr.isEmpty())
+                        if (cmdStr != null && cmdStr.isEmpty())
                             return START_STICKY;
-                        String args[] = CommandBuilder.getExeArgs(shell + cmdStr);
+                        String[] args = CommandBuilder.getExeArgs(shell + cmdStr);
                         binding.floatCmdView.setVisibility(View.VISIBLE);
                         cmdView.setProcess(Init.busyboxPath, Init.linuxDeployDirPath, args, CommandBuilder.envpGet(), 0);
                         cmdView.runProcess();
@@ -123,7 +123,7 @@ public class mainService extends Service {
                     break;
                 case action_stopCmd:
                     //暂停
-                    if (!isProot && mThread ==null) {
+                    if (!isProot && mThread == null) {
                         stopChroot();
                     }
                     isCmdRunning = false;
@@ -140,7 +140,7 @@ public class mainService extends Service {
 
                     Toast.makeText(this, "Succeed", Toast.LENGTH_LONG).show();
                     //暂停
-                    if (!isProot && mThread==null) {
+                    if (!isProot && mThread == null) {
                         stopChroot();
                     }
 
@@ -150,12 +150,12 @@ public class mainService extends Service {
                     break;
                 case action_failed:
                     //暂停
-                    if (!isProot && mThread==null) {
+                    if (!isProot && mThread == null) {
                         stopChroot();
                     }
                     Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
-                    if (mCallback!=null)
-                         mCallback.callback(1);
+                    if (mCallback != null)
+                        mCallback.callback(1);
                     //cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount",Init.isRoot,false);
 
                     break;
@@ -190,7 +190,7 @@ public class mainService extends Service {
     }
 
     void stopChroot() {
-        Log.e("chroot","umount");
+        Log.e("chroot", "umount");
         mThread = new Thread(() -> {
             cmdExer.execute(Init.linuxDeployDirPath + "/cli.sh umount", true, true);
             mThread = null;
@@ -212,33 +212,31 @@ public class mainService extends Service {
     }
 
     private WindowManager.LayoutParams getCmdParams() {
-       mParam = new WindowManager.LayoutParams();
+        mParam = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //test
             //  params2.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY | WindowManager.LayoutParams.TYPE_STATUS_BAR;
-            mParam.type = mParam.TYPE_APPLICATION_OVERLAY;
+            mParam.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 
         } else {
-            mParam.type = mParam.TYPE_SYSTEM_OVERLAY;
+            mParam.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
         }
 
         mParam.format = PixelFormat.TRANSLUCENT;
-        mParam.flags = mParam.FLAG_NOT_FOCUSABLE;
+        mParam.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
         mParam.gravity = Gravity.CENTER_VERTICAL | Gravity.LEFT;
         Point screen = new Point();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            wm.getDefaultDisplay().getRealSize(screen);
-        }
-        DoworkPreference pref=new DoworkPreference(this);
-       int width= pref.getIntStoredAsString("floatcmd_width",300);
-        int height= pref.getIntStoredAsString("floatcmd_height",100);
-        ViewGroup.LayoutParams cmdParams=cmdView.getLayoutParams();
-        cmdParams.height=util.Dp2Px(this,height);
-        cmdParams.width=util.Dp2Px(this,width);
+        wm.getDefaultDisplay().getRealSize(screen);
+        DoworkPreference pref = new DoworkPreference(this);
+        int width = pref.getIntStoredAsString("floatcmd_width", 300);
+        int height = pref.getIntStoredAsString("floatcmd_height", 100);
+        ViewGroup.LayoutParams cmdParams = cmdView.getLayoutParams();
+        cmdParams.height = util.Dp2Px(this, height);
+        cmdParams.width = util.Dp2Px(this, width);
         cmdView.setLayoutParams(cmdParams);
         mParam.width = -2;
-        mParam.height=-2;
+        mParam.height = -2;
         mParam.alpha = 1.0f;
         return mParam;
     }
@@ -248,7 +246,6 @@ public class mainService extends Service {
             return mainService.this;
         }
     }
-
 
 
     @Override

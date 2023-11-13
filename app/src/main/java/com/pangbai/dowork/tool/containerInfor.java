@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class containerInfor {
     private static Map<String, Integer> iconMap;
@@ -103,7 +104,7 @@ public class containerInfor {
         File conf = new File(Init.linuxDeployDirPath + "/config/" + infor.name + ".conf");
         if (conf.exists()) {
             Map<String, String> ctInfor = ParamUtils.readConf(conf);
-            File container = new File(ctInfor.get("TARGET_PATH"));
+            File container = new File(Objects.requireNonNull(ctInfor.get("TARGET_PATH")));
             if (container.exists())
                 if (IO.deleteFolder(container))
                     return IO.deleteFolder(conf);
@@ -127,9 +128,7 @@ public class containerInfor {
             cmdExer.execute("mkdir " + ctPath,false, true);
             return false;
         }
-        if (IO.isFileExsit( ctPath + "/usr/lib/os-release"))
-            return true;
-        return false;
+        return IO.isFileExsit(ctPath + "/usr/lib/os-release");
 
     }
 

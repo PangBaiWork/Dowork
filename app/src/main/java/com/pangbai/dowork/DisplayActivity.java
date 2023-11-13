@@ -51,7 +51,7 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
             new Init(this);
         }
         ViewGroup.LayoutParams params = binding.surface.getLayoutParams();
-        int screen[] = display.getScreenFromPref(this);
+        int[] screen = display.getScreenFromPref(this);
         params.width = screen[0];
         params.height = screen[1];
         binding.surface.setLayoutParams(params);
@@ -78,7 +78,6 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
     @Override
     protected void onResume() {
         super.onResume();
-      //  binding.surface.setZOrderMediaOverlay(true);
     }
 
     @Override
@@ -86,13 +85,13 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
 
 
         jni.stopDraw();
-      //  display.isStarting=true;
         binding=null;
         Log.e("displayActivity ","destroy");
         unbindService(mdisplayConnection);
         super.onDestroy();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onClick(View view) {
         if (view==binding.inputStr){
@@ -101,7 +100,7 @@ public class DisplayActivity extends Activity implements View.OnClickListener{
                     (dialogUtils.DialogInputListener) userInput -> jni.inputString(userInput.toString(),false),
                     (dialogUtils.DialogInputListener) userInput -> jni.inputString(userInput.toString(),true));*/
             dialogUtils.showInputDialog(this, "输入字符串",
-                    (dialogUtils.DialogInputListener) userInput -> jni.inputString(userInput.toString(),true));
+                    (dialogUtils.DialogInputListener) userInput -> jni.inputString(userInput,true));
         }else if (view==binding.inputDelete){
             jni.inputKeyByString("BackSpace");
         }else if (view==binding.inputEnter){

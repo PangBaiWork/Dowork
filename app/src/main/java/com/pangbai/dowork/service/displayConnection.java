@@ -9,14 +9,10 @@ import android.view.Surface;
 import com.pangbai.dowork.tool.jni;
 
 public class displayConnection implements ServiceConnection {
-
-
     Surface surface;
-  //  serviceCallback callback;
 
     public displayConnection(Surface surface) {
         this.surface = surface;
-      //  this.callback = callback;
     }
 
     @Override
@@ -24,8 +20,8 @@ public class displayConnection implements ServiceConnection {
         // 设置回调
         display.MyBinder myBinder = (display.MyBinder) iBinder;
         display mService = myBinder.getService();
-       mService. hideDisplay();
-        mService.isFulllScreen=true;
+        mService.hideDisplay();
+        display.isFulllScreen = true;
         if (mService != null) {
             mService.surface = surface;
             jni.stopDraw();

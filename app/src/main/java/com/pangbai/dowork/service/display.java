@@ -50,7 +50,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.zip.Inflater;
 
-public class display extends Service implements  OnClickListener {
+public class display extends Service implements OnClickListener {
 
 
     public static final int action_startX = 1;
@@ -61,72 +61,70 @@ public class display extends Service implements  OnClickListener {
     public static final int action_fullscreen = 6;
     public static final int value_internal = 1;
     public static final int value_external = 2;
-    public  Surface surface;
+    public Surface surface;
 
-   public  static   View.OnTouchListener screenTouch=new OnTouchListener() {
-       private  boolean scroll=false;
-       private float[] initialY = new float[2];
-       private boolean scrollAllowed = true;
-       GestureDetector.SimpleOnGestureListener mGestureListener =new GestureDetector.SimpleOnGestureListener(){
+    public static View.OnTouchListener screenTouch = new OnTouchListener() {
+        private boolean scroll = false;
+        private float[] initialY = new float[2];
+        private boolean scrollAllowed = true;
+        GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
 
-           @Override
-           public boolean onSingleTapConfirmed(MotionEvent e) {
-               // 在这里处理单击事件
-               Log.e("Gesture","click");
-               jni.xclick((int) e.getX(), (int) e.getY(),true);
-               return true;
-           }
-           @Override
-           public boolean onDoubleTap(MotionEvent e) {
-               Log.e("gesture","2f");
-                  // Log.e("gesture","2f");
-               jni.xclick((int) e.getX(), (int) e.getY(),false);
-                   return true;
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                // 在这里处理单击事件
+                Log.e("Gesture", "click");
+                jni.xclick((int) e.getX(), (int) e.getY(), true);
+                return true;
+            }
 
-           }
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                Log.e("gesture", "2f");
+                jni.xclick((int) e.getX(), (int) e.getY(), false);
+                return true;
 
-           @Override
-           public void onLongPress(MotionEvent e) {
-               Log.e("gestrue","longPress");
-            //   jni.inputString("User传递字符串 ");
-           }
+            }
 
-           @Override
-           public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-               //Log.e("scroll","up");
-               if (!scrollAllowed)
-                   return true;
+            @Override
+            public void onLongPress(MotionEvent e) {
+                Log.e("gestrue", "longPress");
+                //   jni.inputString("User传递字符串 ");
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                //Log.e("scroll","up");
+                if (!scrollAllowed)
+                    return true;
                 uiThreadUtil.handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        scrollAllowed=true;
+                        scrollAllowed = true;
                     }
-                },100);
-                scrollAllowed=false;
-               if (distanceY<0){
-                       Log.e("scroll","up");
-                       jni.mouseScroll(true);
-               }else {
-                       Log.e("scroll","down");
-                       jni.mouseScroll(false);
-               }
-
-
-               return true;
-           }
-       };
-    GestureDetector detector;
-       @Override
-        public  boolean onTouch(View p1, MotionEvent p2) {
+                }, 100);
+                scrollAllowed = false;
+                if (distanceY < 0) {
+                    Log.e("scroll", "up");
+                    jni.mouseScroll(true);
+                } else {
+                    Log.e("scroll", "down");
+                    jni.mouseScroll(false);
+                }
+                return true;
+            }
+        };
+        GestureDetector detector;
+        @Override
+        public boolean onTouch(View p1, MotionEvent p2) {
             if (!isStarting)
                 return true;
 
-            if (detector==null)
-                detector=new GestureDetector(p1.getContext().getApplicationContext(), mGestureListener);
-                // Toast.makeText(getApplication(), "b", Toast.LENGTH_SHORT).show();
+            if (detector == null)
+                detector = new GestureDetector(p1.getContext().getApplicationContext(), mGestureListener);
+            // Toast.makeText(getApplication(), "b", Toast.LENGTH_SHORT).show();
 
-           detector.onTouchEvent(p2);
-           return true;
+            detector.onTouchEvent(p2);
+            return true;
 
 
         }
@@ -137,7 +135,7 @@ public class display extends Service implements  OnClickListener {
     @Override
     public void onClick(View view) {
         if (view == binding.displayFullscreen) {
-            Intent mintent=new Intent(this, DisplayActivity.class);
+            Intent mintent = new Intent(this, DisplayActivity.class);
             mintent.addFlags(FLAG_ACTIVITY_NEW_TASK);
             startActivity(mintent);
         } else if (view == binding.displayClosescreen) {
@@ -159,14 +157,12 @@ public class display extends Service implements  OnClickListener {
     }
 
 
-
-
     public static display mService = null;
     WindowManager wm;
     boolean canclick = false;
     WindowManager.LayoutParams param;
 
- public    static boolean isStarting = false;
+    public static boolean isStarting = false;
     //  static SurfaceView screen;
     OnTouchListener touch;
     public static Thread Xdraw;
@@ -175,7 +171,8 @@ public class display extends Service implements  OnClickListener {
     int screen[];
 
 
-    public static boolean isFulllScreen=false;
+    public static boolean isFulllScreen = false;
+
     @Override
     public IBinder onBind(Intent intent) {
         return new MyBinder();
@@ -187,15 +184,16 @@ public class display extends Service implements  OnClickListener {
         /**
          * caused error
          */
-        isFulllScreen=false;
-        Log.e("displaybind","unbind");
-        surface=binding.surface.getHolder().getSurface();
-       // jni.stopDraw();
-      /*  jni.stopXvfb();*/
-       // jni.stopDraw();
+        isFulllScreen = false;
+        Log.e("displaybind", "unbind");
+        surface = binding.surface.getHolder().getSurface();
+        // jni.stopDraw();
+        /*  jni.stopXvfb();*/
+        // jni.stopDraw();
 
-        return  true;
+        return true;
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -301,7 +299,6 @@ public class display extends Service implements  OnClickListener {
     }
 
 
-
     @Override
     public void onDestroy() {
         wm.removeView(binding.getRoot());
@@ -384,7 +381,7 @@ public class display extends Service implements  OnClickListener {
                        /* if (mFullscreenCallback != null)
                             mFullscreenCallback.callback(1);
                         else*/
-                            hideDisplay();
+                        hideDisplay();
 
                         isStarting = false;
                     }

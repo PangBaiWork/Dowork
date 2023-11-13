@@ -145,7 +145,10 @@ public final class SuperTerminalView extends TerminalView {
                  /*  View parent=(View)getParent();
                    if (parent!=null)
                        parent.setVisibility(View.GONE);*/
-                    SuperTerminalView.this.setVisibility(GONE);
+
+
+
+                  //
 
 
                  if (isViewInActivity(SuperTerminalView.this)){
@@ -154,9 +157,9 @@ public final class SuperTerminalView extends TerminalView {
                      mTerminalViewClient = null;
                      mkeys.removeAllViews();
                      mkeys=null;
-                     mTermActivity.finish();
+                    // mTermActivity.finish();
                     mTermActivity=null;}else {
-
+                     SuperTerminalView.this.setVisibility(GONE);
                      Intent mIntent=new Intent(getContext(), mainService.class);
                      mainService.isCmdRunning=false;
                      if (TerminalSession.EXITCODE==0)

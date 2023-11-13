@@ -103,7 +103,7 @@ public class ctAdapter extends RecyclerView.Adapter<MyViewHoder> {
 
             Intent mIntent = new Intent(view.getContext(), mainService.class);
             mIntent.putExtra("action", mainService.action_exeCmd);
-            mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh -p "+mList.get(myViewHoder.getAdapterPosition()).name+ " deploy -m -n bootstrap " );
+            mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh -p "+mList.get(myViewHoder.getAdapterPosition()).name+ " deploy  -m -n bootstrap " );
             view.getContext().startService(mIntent);
 
         });

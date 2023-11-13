@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Objects;
 
 public class IO {
 
@@ -23,7 +24,7 @@ public class IO {
     public static void copyAssetsDirToSDCard(Context context, String assetsDirName, String sdCardPath) {
         //   Log.d(TAG, "copyAssetsDirToSDCard() called with: context = [" + context + "], assetsDirName = [" + assetsDirName + "], sdCardPath = [" + sdCardPath + "]");
         try {
-            String list[] = context.getAssets().list(assetsDirName);
+            String[] list = context.getAssets().list(assetsDirName);
             if (list.length == 0) {
                 InputStream inputStream = context.getAssets().open(assetsDirName);
                 // finalByte= inputStream.available();
@@ -89,7 +90,7 @@ public class IO {
             out.close();
             out = null;
         } catch (Exception e) {
-            Log.e("copyFile", e.getMessage());
+            Log.e("copyFile", Objects.requireNonNull(e.getMessage()));
             System.exit(1);
         }
     }

@@ -276,7 +276,7 @@ public class dashboardFragment extends Fragment implements View.OnClickListener,
                             if (userInput.contains(">"))
                                 Toast.makeText(getContext(), "注意该任务的输出重定向将可能会定向到容器外部，请使用绝对路径", Toast.LENGTH_LONG);
                             mIntent.putExtra("action", mainService.action_exeCmd);
-                            mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh exec -u root " + userInput);
+                            mIntent.putExtra("value", Init.linuxDeployDirPath + "/cli.sh exec -u  " + userInput);
                             getContext().startService(mIntent);
                             binding.ctStartStop.setBackgroundResource(R.drawable.stop);
                             serviceConnection = new mainServiceConnection(result -> {
@@ -315,9 +315,6 @@ public class dashboardFragment extends Fragment implements View.OnClickListener,
         binding.ctIcon.setBackgroundResource(containerInfor.ct.iconId);
 
         doInBackground(containerInfor.ct.path);
-      /*
-        }*/
-
 
     }
 
