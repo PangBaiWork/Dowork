@@ -105,9 +105,9 @@ public class TermActivity extends AppCompatActivity implements OnClickListener {
                         finish();
 
                     },
-                    () -> {
-                        finish();
-                    });
+                    this::finish);
+        else
+            finish();
     }
 
     @Override

@@ -1,4 +1,4 @@
-#!/data/data/com.pangbai.dowork/files/usr/bin/sh
+#!/bin/sh 
 ################################################################################
 #
 # Linux Deploy CLI
@@ -204,7 +204,11 @@ chroot_exec()
     export PULSE_SERVER=/tmp/pulse
     local path="${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     if [ "$1" = "-u" ]; then
+        if [ "$2" = "user" ]; then
+        local username="$USER_NAME"
+        else
         local username="$2"
+        fi
         shift 2
     fi
     case "${METHOD}" in
@@ -779,9 +783,15 @@ container_shell()
     container_mounted || container_mount || return 1
 
     DO_ACTION='do_start'
-    component_exec core
-
+   # component_exec core
+   component_exec "${INCLUDE}"
+    
+    if [ -n "$USER_NAME" ] && [ "$METHOD" != "proot" ]; then
+    USER="$USER_NAME"
+    else
     USER="root"
+    fi
+   # USER="root"
     SHELL="$(user_shell $USER)"
     HOME="$(user_home $USER)"
     [ -n "${TERM}" ] || TERM="linux"

@@ -186,7 +186,7 @@
     <string name="title_init_path_preference">初始路径</string>
     <string name="dialog_title_init_path_preference">初始化：文件或目录</string>
     <!-- INIT_LEVEL -->
-    <string name="title_init_level_preference">初始化级别</string>
+    <string name="title_init_level_preference">初始化级别(for sysv)</string>
     <string name="dialog_title_init_level_preference">初始化：级别</string>
     <!-- INIT_USER -->
     <string name="title_init_user_preference">初始用户</string>
