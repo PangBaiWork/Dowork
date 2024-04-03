@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="容器">
+        <CheckBoxPreference
+            android:defaultValue="@string/screenlock"
+            android:key="container_size"
+            android:summary="可能导致chroot容器卸载失败"
+            android:title="空间占用计算" />
+
+
+
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="终端">
+        <EditTextPreference
+            android:defaultValue="@string/floatcmd_width"
+            android:dialogTitle="悬浮终端宽度"
+            android:inputType="numberDecimal"
+            android:key="floatcmd_width"
+            android:title="悬浮终端宽度" />
+        <EditTextPreference
+            android:defaultValue="@string/floatcmd_height"
+            android:dialogTitle="悬浮终端高度"
+            android:inputType="numberDecimal"
+            android:key="floatcmd_height"
+            android:title="悬浮终端高度" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/exe_State"
+        android:layout_alignLeft="@id/floatCmdView"/>
+    <com.pangbai.view.SuperTerminalView
+        android:id="@+id/floatCmdView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</RelativeLayout>

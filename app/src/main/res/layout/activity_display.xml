@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".DisplayActivity">
+    <SurfaceView
+        android:layout_height="600px"
+        android:layout_width="800px"
+        android:id="@+id/surface" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:id="@+id/display_control">
+    <LinearLayout
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_width="30dp"
+        android:orientation="vertical"
+        android:layout_height="60dp">
+        <RelativeLayout
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/input_delete"
+            android:background="@drawable/input_delete"/>
+        <RelativeLayout
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/input_enter"
+            android:background="@drawable/input_enter"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="30dp"
+        android:orientation="vertical"
+        android:id="@+id/input_bar"
+        android:layout_marginBottom="10dp"
+        android:layout_height="60dp">
+
+
+
+        <RelativeLayout
+            android:id="@+id/input_method"
+            android:background="@drawable/input_touch"
+            android:layout_width="30dp"
+
+            android:layout_height="30dp"/>
+        <RelativeLayout
+            android:id="@+id/input_str"
+            android:background="@drawable/input_str"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+        <RelativeLayout
+            android:visibility="gone"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/input_keyboard"
+            android:background="@drawable/input_keyboard"/>
+    </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

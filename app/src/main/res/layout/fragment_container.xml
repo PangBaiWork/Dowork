@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="30dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ct_bar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="6dp"
+            app:cardBackgroundColor="@color/colorAccent"
+            app:cardCornerRadius="20dp">
+
+            <TextView
+                android:id="@+id/ct_method"
+                style="@style/defaultTextStyle"
+                android:layout_width="110dp"
+                android:layout_height="40dp"
+                android:background="@drawable/view_circle"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="PROOT" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:orientation="horizontal">
+                <RelativeLayout
+                    android:id="@+id/ct_delete"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/add"
+                    android:layout_marginRight="4dp"
+                    android:rotation="45"/>
+                <RelativeLayout
+                    android:id="@+id/ct_rename"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/edit"
+                    android:layout_marginRight="4dp" />
+                <RelativeLayout
+                    android:id="@+id/ct_add"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/add" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ct_list"
+
+         android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/ct_bar"
+            android:layerType="hardware"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            android:paddingVertical="10dp"
+            android:scrollbars="none" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/ProgressWhiteStyle"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+</ScrollView>

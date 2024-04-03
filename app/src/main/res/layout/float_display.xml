@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/displaymove">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="15dp"
+		android:id="@+id/displayforebar"
+		android:background="@color/white">
+
+		<RelativeLayout
+			android:layout_width="15dp"
+			android:layout_height="15dp"
+			android:layout_marginLeft="3dp"
+			android:layout_alignParentLeft="true"
+			android:id="@+id/display_fullscreen"
+			android:background="@drawable/display_fullscreen"/>
+		<RelativeLayout
+			android:layout_width="15dp"
+			android:layout_height="15dp"
+			android:layout_marginLeft="3dp"
+			android:id="@+id/display_pin"
+			android:layout_toLeftOf="@id/display_closescreen"
+			android:layout_marginRight="3dp"
+			android:background="@drawable/display_pin"/>
+		<RelativeLayout
+			android:layout_width="15dp"
+			android:layout_height="15dp"
+			android:layout_marginRight="3dp"
+			android:layout_alignParentRight="true"
+			android:id="@+id/display_closescreen"
+			android:background="@drawable/display_fullscreen_exit"/>
+	</RelativeLayout>
+
+	<SurfaceView
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:id="@+id/surface"
+		android:layout_width="match_parent"/>
+
+</LinearLayout>
+

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:orientation="vertical"
+	android:padding="30dp"
+	android:layout_height="match_parent">
+
+	<LinearLayout
+		android:layout_gravity="center_horizontal"
+		android:layout_width="230dp"
+		android:gravity="center"
+		android:background="@drawable/view_circle"
+		android:layout_height="40dp">
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:layout_weight="1"
+			android:id="@+id/diaplay_internal"
+			style="@style/defaultTextStyle"
+			android:text="内置X服务器"/>
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:layout_weight="1"
+			style="@style/defaultTextStyle"
+			android:textColor="#ffffff"
+			android:background="#000000"
+			android:id="@+id/diaplay_external"
+			android:text="外部X服务器"/>
+
+	</LinearLayout>
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="20dp"
+		android:orientation="vertical">
+
+		<Switch
+			android:theme="@style/SwitchTheme"
+			android:id="@+id/switch_xserver"
+			style="@style/defaultTextStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:checked="true"
+			android:layout_gravity="center_horizontal"
+			android:switchPadding="10dp"
+			android:text="XServer状态"
+			android:textColor="@android:color/white" />
+		<Switch
+			android:theme="@style/SwitchTheme"
+			android:id="@+id/switch_pulseaudio"
+			style="@style/defaultTextStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:checked="true"
+			android:layout_gravity="center_horizontal"
+			android:switchPadding="10dp"
+			android:text="Pulseaudio状态"
+			android:textColor="@android:color/white" />
+
+		<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Screen Width"
+			android:textSize="18dp"
+			android:id="@+id/display_width"
+			android:textColor="@color/white"
+			android:theme="@style/WhiteContextTheme"/>
+		<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Screen Height"
+			android:textSize="18dp"
+			android:id="@+id/display_height"
+			android:textColor="@color/white"
+			android:theme="@style/WhiteContextTheme"/>
+		<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Screen Depth"
+			android:textSize="18dp"
+			android:id="@+id/diaplay_depth"
+			android:textColor="@color/white"
+			android:theme="@style/WhiteContextTheme"/>
+		<TextView
+			android:layout_marginTop="10dp"
+			android:layout_marginRight="10dp"
+			android:layout_gravity="right"
+			android:layout_width="80dp"
+			android:layout_height="40dp"
+			android:background="@drawable/view_circle"
+			android:gravity="center"
+			android:id="@+id/display_save"
+			style="@style/defaultTextStyle"
+			android:text="SAVE"/>
+
+
+
+
+	</LinearLayout>
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="30dp"
+		style="@style/defaultTextStyle"
+		android:textColor="@color/white"
+		android:id="@+id/device_screen" />
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="10dp"
+		style="@style/defaultTextStyle"
+		android:textColor="@color/white"
+		android:text="请确保width不超过最大高度,height不超过最大宽度" />
+
+
+
+
+
+</LinearLayout>
+

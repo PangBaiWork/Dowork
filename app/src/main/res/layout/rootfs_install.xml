@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/bottom_drawer_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="30dp"
+        android:orientation="vertical">
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputFilledExposedDropdownMenuStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            app:helperTextEnabled="true"
+            android:hint="Linux">
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/linux"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputFilledExposedDropdownMenuStyle"
+            android:hint="Version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/linux_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputFilledExposedDropdownMenuStyle"
+            android:hint="Mirror"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:helperTextEnabled="true"
+            android:layout_marginTop="10dp">
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/linux_mirror"
+                android:text="bfsu"
+               app:simpleItems="@array/mirror"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rootfs_install"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="创建"
+            app:icon="@drawable/save"
+            app:iconPadding="5dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
